@@ -20,9 +20,9 @@ function pdf(dp::DisplacedPoisson, k::Int)
         return 0
     else
         p = dp.λ^(k - dp.r) * exp(-dp.λ) / gamma(k - dp.r + 1)
-        diff = dp.r - floor(dp.r)
+        diff = ceil(dp.r) - dp.r
         if !iszero(diff)
-            return p / incomplete_gamma(1 - diff, dp.λ)
+            return p / incomplete_gamma(diff, dp.λ)
         else
             return p
         end
