@@ -21,6 +21,7 @@ function pdf(dp::DisplacedPoisson, k::Int)
     else
         p = dp.λ^(k - dp.r) * exp(-dp.λ) / gamma(k - dp.r + 1)
         diff = ceil(dp.r) - dp.r
+        # incomplete_gamma(a, b) is undefined for a = 0
         if !iszero(diff)
             return p / incomplete_gamma(diff, dp.λ)
         else
