@@ -1,7 +1,7 @@
 using SpecialFunctions: gamma
 using GSL: sf_gamma_inc_P
 using Distributions: DiscreteUnivariateDistribution
-import Distributions: pdf, rand
+import Distributions: pdf, rand, mode
 
 incomplete_gamma = sf_gamma_inc_P
 
@@ -37,6 +37,20 @@ function rand(dp::DisplacedPoisson)
     while cm < u
         k += 1
         cm += pdf(dp, k)
+    end
+    return k
+end
+
+function mode(dp::DisplacedPoisson)
+    k = 0
+    p = pdf(dp, k)
+    while true
+        p_next = pdf(dp, k + 1)
+        if p_next < p
+            break
+        end
+        p = p_next
+        k += 1
     end
     return k
 end
