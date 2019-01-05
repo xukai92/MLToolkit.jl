@@ -8,15 +8,16 @@ The displaced Poisson distribution (a.k.a the hyper-Poisson distribution).
 
 Ref: https://www.jstor.org/stable/2283992
 """
-struct DisplacedPoisson <: DiscreteUnivariateDistribution
-    λ::Float64
-    r::Float64
-    function DisplacedPoisson(λ::Float64, r::Float64)
+struct DisplacedPoisson{T<:Real} <: DiscreteUnivariateDistribution
+    λ::T
+    r::T
+    function DisplacedPoisson{T}(λ, r) where {T<:Real}
         @assert λ > 0 "λ is not positve"
         @assert r >= 0 "r is not non-negative"
         return new(λ, r)
     end
 end
+DisplacedPoisson(λ::T, r::T) where {T<:Real} = DisplacedPoisson{T}(λ, r)
 
 function pdf(dp::DisplacedPoisson, k::Int)
     if k < dp.r
@@ -33,8 +34,8 @@ function pdf(dp::DisplacedPoisson, k::Int)
     end
 end
 
-function rand(dp::DisplacedPoisson)
-    u = rand()
+function rand(dp::DisplacedPoisson{T}) where {T}
+    u = rand(T)
     cm = 0
     k = -1
     while cm < u
