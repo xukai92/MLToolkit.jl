@@ -1,19 +1,20 @@
 using Distributions: Beta, Bernoulli
 
-struct IBP
-    α::Float64
-    function IBP(α::Float64)
+struct IBP{T<:Real}
+    α::T
+    function IBP{T}(α) where {T<:Real}
         @assert α > 0 "α is not positve"
-        return new(α)
+        return new{T}(α)
     end
 end
+IBP(α::T) where {T<:Real} = IBP{T}(α)
 
 """
-    rand(ibp::IBP, Kmax::Int64, n::Int64)
+    rand(ibp::IBP, Kmax::Int, n::Int)
 
 Sample from IBP using the stick-breaking construction.
 """
-function rand(ibp::IBP, Kmax::Int64, n::Int64)
+function rand(ibp::IBP, Kmax::Int, n::Int)
     ν = rand(Beta(ibp.α, 1), Kmax)
     p = break_stick_ibp(ν)
     Z = hcat(rand.(Bernoulli.(p), n)...)
