@@ -1,1 +1,6 @@
-include("distributions.jl")
+using Test
+
+@testset "Tests" begin
+    include("activations.jl")
+    include("distributions.jl")
+end
