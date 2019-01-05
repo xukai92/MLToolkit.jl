@@ -14,14 +14,9 @@ end
 Sample from IBP using the stick-breaking construction.
 """
 function rand(ibp::IBP, Kmax::Int64, n::Int64)
-    ν = rand(Beta(alpha, 1), Kmax)
+    ν = rand(Beta(ibp.α, 1), Kmax)
     p = break_stick_ibp(ν)
-
-    Z = Matrix{Int64}(undef, n, Kmax)
-    for k = 1:K
-        Z[:,k] = rand(Bernoulli(p[k]), n)
-    end
-
+    Z = hcat(rand.(Bernoulli.(p), n)...)
     return Z
 end
 

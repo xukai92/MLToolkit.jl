@@ -18,4 +18,9 @@ using Distributions: Poisson
             @test m_p == m_dpeqv
         end
     end
+    @testset "IBP" begin
+        ibp = IBP(2.0)
+        Z = rand(ibp, 10, 5)
+        @test size(Z) == (5, 10)
+    end
 end
