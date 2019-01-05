@@ -12,8 +12,8 @@ struct DisplacedPoisson <: DiscreteUnivariateDistribution
     λ::Float64
     r::Float64
     function DisplacedPoisson(λ::Float64, r::Float64)
-        @assert λ > 0 "$λ is not positve"
-        @assert r >= 0 "$r is not non-negative"
+        @assert λ > 0 "λ is not positve"
+        @assert r >= 0 "r is not non-negative"
         return new(λ, r)
     end
 end

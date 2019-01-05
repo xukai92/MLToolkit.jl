@@ -1,6 +1,6 @@
 using MLToolkit, Test
 
-dims = (10, 10)
+dims = (10, 5)
 
 @testset "Activations" begin
     @testset "softplus" begin

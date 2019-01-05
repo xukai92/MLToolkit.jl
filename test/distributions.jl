@@ -1,4 +1,5 @@
-using MLToolkit, Distributions, Test
+using MLToolkit, Test
+using Distributions: Poisson
 
 @testset "Distributions" begin
     @testset "DisplacedPoisson" begin
