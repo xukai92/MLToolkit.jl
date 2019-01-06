@@ -9,7 +9,7 @@ export IBP
 include("distributions/normal.jl")
 export UnivariateNormal, DiagonalNormal, DenseNormal
 
-include("distributions/gumble.jl")
-export GumbelSoftmax
+include("distributions/gumbel.jl")
+export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli
 
 export logpdf, pdf, rand, kl, mode

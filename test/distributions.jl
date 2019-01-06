@@ -1,5 +1,5 @@
 using MLToolkit, Test
-using Distributions: Poisson, Normal, MvNormal, Dirichlet
+using Distributions: Poisson, Normal, MvNormal, Beta, Dirichlet
 using Statistics: mean, var
 using Knet: gpu, KnetArray
 using LinearAlgebra: I
@@ -99,13 +99,13 @@ const AT = gpu() != -1 ? KnetArray : Array
         end
     end
 
-    @testset "Gumble" begin
+    @testset "Gumbel" begin
         τ_atol_ratio = 2
         n = 100_000
 
-        @testset "GumbleSoftmax" begin
+        @testset "GumbelSoftmax" begin
             for _ = 1:NUM_RANDOM_TESTS
-                p = rand(Dirichlet([1.0, 1.0]), 1)
+                p = Matrix{FT}(rand(Dirichlet([1.0, 1.0]), 1))
 
                 gs = GumbelSoftmax{AT}(p)
                 x = hcat([rand(gs) for _ = 1:n]...)
@@ -113,5 +113,29 @@ const AT = gpu() != -1 ? KnetArray : Array
                 @test mean(x; dims=2) ≈ p atol=(2 * τ_atol_ratio * ATOL_RAND)
             end
         end
+
+        @testset "GumbelBernoulli" begin
+            for _ = 1:NUM_RANDOM_TESTS
+                p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
+                gs2d = GumbelSoftmax2D{AT}(p)
+                gb = GumbelBernoulli{AT}(p)
+
+                x = Array(hcat([rand(gs2d)[1,:] for _ = 1:5000]...))
+                @test mean(x; dims=2) ≈ p atol=ATOL_RAND
+
+
+                x = Array([rand(gb)[1,1] for _ = 1:5000])
+                @test mean(x; dims=1) ≈ p atol=ATOL_RAND
+            end
+        end
+
+        # @testset "GumbelBernoulliLogit" begin
+            # p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
+            # lp = log.(p ./ (1 .- p))
+            # lx = Array([sample_logit_from_bernoulli(AT(lp))[1] for _ = 1:5000])
+            # x = 1 ./ (1 .+ exp.(-lx))
+            # p_est = mean(x; dims=1)
+            # @test p_est ≈ p atol=ATOL_RAND
+        # end
     end
 end
