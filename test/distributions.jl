@@ -1,5 +1,5 @@
 using MLToolkit, Test
-using Distributions: Poisson, Normal, MvNormal, Beta, Dirichlet, Bernoulli
+using Distributions: Poisson, MvNormal, Beta, Dirichlet, Bernoulli
 using Statistics: mean, var
 using Knet: gpu, KnetArray
 using LinearAlgebra: I
@@ -43,13 +43,13 @@ const AT = gpu() != -1 ? KnetArray : Array
     @testset "Normal" begin
         d, n = 10, 500_000
 
-        @testset "DiagonalNormal" begin
+        @testset "BatchNormal" begin
             for _ = 1:NUM_RANDOM_TESTS
                 # rand
                 μ = randn(FT, d, 1); Σ = randn(FT, d, 1).^2
 
-                dn = DiagonalNormal{AT}(μ, Σ)
-                x = Array(hcat([rand(dn) for _ = 1:n]...))
+                bn = BatchNormal{AT}(μ, Σ)
+                x = Array(hcat([rand(bn) for _ = 1:n]...))
 
                 @test mean(x; dims=2) ≈ μ atol=(d * ATOL_RAND)
                 @test var(x; dims=2) ≈ Σ atol=(d * ATOL_RAND)
@@ -59,7 +59,7 @@ const AT = gpu() != -1 ? KnetArray : Array
                 x = rand(mvn, n)
                 lp = logpdf(mvn, x)
 
-                @test vec(logpdf(dn, x)) ≈ lp atol=(d * ATOL_DEFAULT)
+                @test vec(logpdf(bn, x)) ≈ lp atol=(d * ATOL_DEFAULT)
 
                 # kl
                 μ1 = zeros(FT, d, 1); Σ1 = ones(FT, d, 1)
@@ -71,12 +71,11 @@ const AT = gpu() != -1 ? KnetArray : Array
 
                 kl_12 = mean(logpdf(mvn1, x) - logpdf(mvn2, x))
 
-                dn1 = DiagonalNormal{AT}(μ1, Σ1)
-                dn2 = DiagonalNormal{AT}(μ2, Σ2)
-                @test sum(kl(dn1, dn2)) ≈ kl_12 atol=(d * ATOL_RAND)
+                bn1 = BatchNormal{AT}(μ1, Σ1)
+                bn2 = BatchNormal{AT}(μ2, Σ2)
+                @test sum(kl(bn1, bn2)) ≈ kl_12 atol=(d * ATOL_RAND)
 
-                un2 = UnivariateNormal(μ2[1], Σ2[1])
-                @test sum(kl(dn1, un2)) ≈ kl_12 atol=(d * ATOL_RAND)
+                @test sum(kl(bn1, BatchNormal(μ2[1,1], Σ2[1,1]))) ≈ kl_12 atol=(d * ATOL_RAND)
             end
         end
 

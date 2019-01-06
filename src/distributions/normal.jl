@@ -1,50 +1,36 @@
 using LinearAlgebra: det, tr, inv
 using Distributions: MvNormal
 
-abstract type AbstractNormal end
-
-struct UnivariateNormal{T<:Real} <: AbstractNormal
-    μ::T    # mean
-    Σ::T    # variance
-    function UnivariateNormal{T}(μ, Σ) where {T<:Real}
-        @assert Σ > 0 "Σ is not positve"
-        return new{T}(μ, Σ)
-    end
-end
-UnivariateNormal(μ::T, Σ::T) where {T<:Real} = UnivariateNormal{T}(μ, Σ)
-
 """
-Diagonal Normal distribution.
-
-NOTE: parameters are in batch.
+Normal distribution with parameters (possibly) in batch.
 """
-struct DiagonalNormal{T} <: AbstractNormal
+struct BatchNormal{T}
     μ::T    # mean
     Σ::T    # variance
 end
 
 """
-    rand(dn::DiagonalNormal{AT}) where {AT}
+    rand(dn::BatchNormal{AT}) where {AT}
 
-Sample from diagonal Normal distribution.
+Sample from the Normal distribution.
 
 NOTE: `dn.μ` and `dn.Σ` are assumed to be in batch.
 
 Ref: https://arxiv.org/pdf/1312.6114.pdf
 """
-function rand(dn::DiagonalNormal{AT}) where {AT}
+function rand(dn::BatchNormal{AT}) where {AT}
     ϵ = AT(randn(eltype(dn.μ), size(dn.μ)...))
     return dn.μ + sqrt.(dn.Σ) .* ϵ
 end
 
 """
-    logpdf(dn::DiagonalNormal, x)
+    logpdf(dn::BatchNormal, x)
 
 Compute ``Normal(x; μ, Σ)`` in an element-wise manner.
 
 NOTE: `n.μ`, `n.Σ` and `x` are assumed to be in batch.
 """
-function logpdf(dn::DiagonalNormal, x)
+function logpdf(dn::BatchNormal, x)
     FT = eltype(dn.μ)
     d = size(dn.μ, 1)
     diff = x .- dn.μ
@@ -52,14 +38,19 @@ function logpdf(dn::DiagonalNormal, x)
 end
 
 """
-    kl(dn1::DiagonalNormal, dn2::AbstractNormal)
+    kl(dn1::BatchNormal, dn2::BatchNormal)
 
 Compute ``KL(Normal_1||Normal_2)``.
 """
-function kl(dn1::DiagonalNormal, dn2::AbstractNormal)
+function kl(dn1::BatchNormal, dn2::BatchNormal)
     FT = eltype(dn1.μ)
+    if eltype(dn2.μ) != FT
+        @warn "FT are different for bn1 and bn2" eltype(bn1.μ) eltype(bn2.μ)
+    end
     diff = dn2.μ .- dn1.μ
-    return FT(0.5) .* sum(log.(dn2.Σ) .- log.(dn1.Σ) .- 1 .+ dn1.Σ ./ dn2.Σ .+ diff .* diff ./ dn2.Σ; dims=2)
+    Σ1 = dn1.Σ
+    Σ2 = dn2.Σ
+    return FT(0.5) .* sum(log.(Σ2) .- log.(Σ1) .- 1 .+ Σ1 ./ Σ2 .+ diff .* diff ./ Σ2; dims=2)
 end
 
 """

@@ -7,7 +7,7 @@ include("distributions/ibp.jl")
 export IBP
 
 include("distributions/normal.jl")
-export UnivariateNormal, DiagonalNormal
+export UnivariateNormal, BatchNormal
 
 include("distributions/gumbel.jl")
 export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli
