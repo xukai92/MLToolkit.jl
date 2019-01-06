@@ -13,7 +13,9 @@ end
 UnivariateNormal(μ::T, Σ::T) where {T<:Real} = UnivariateNormal{T}(μ, Σ)
 
 """
-Diagonal Normal distribution with parameters in batch.
+Diagonal Normal distribution.
+
+NOTE: parameters are in batch.
 """
 struct DiagonalNormal{T} <: AbstractNormal
     μ::T    # mean
@@ -26,7 +28,7 @@ struct DenseNormal <: AbstractNormal
 end
 
 """
-    rand(dn::DiagonalNormal{AT}) where AT
+    rand(dn::DiagonalNormal{AT}) where {AT}
 
 Sample from diagonal Normal distribution.
 
@@ -34,7 +36,7 @@ NOTE: `dn.μ` and `dn.Σ` are assumed to be in batch.
 
 Ref: https://arxiv.org/pdf/1312.6114.pdf
 """
-function rand(dn::DiagonalNormal{AT}) where AT
+function rand(dn::DiagonalNormal{AT}) where {AT}
     ϵ = AT(randn(eltype(dn.μ), size(dn.μ)...))
     return dn.μ + sqrt.(dn.Σ) .* ϵ
 end
