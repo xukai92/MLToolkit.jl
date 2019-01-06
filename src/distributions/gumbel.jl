@@ -112,5 +112,6 @@ Ref: https://arxiv.org/abs/1611.00712
 function logpdf(gbl::GumbelBernoulliLogit, logitx; τ=0.1)
     # WARNING: this function is not tested.
     exp_term = gbl.logitp .- logitx .* τ
-    return exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
+    lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
+    return lp
 end

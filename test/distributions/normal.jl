@@ -1,3 +1,4 @@
+using MLToolkit, Test
 using Distributions: MvNormal, Beta
 using Statistics: mean, var
 using LinearAlgebra: I
@@ -21,7 +22,7 @@ using LinearAlgebra: I
             x = rand(mvn, n)
             lp = logpdf(mvn, x)
 
-            @test vec(logpdf(bn, x)) ≈ lp atol=(d * ATOL)
+            @test vec(sum(logpdf(bn, x); dims=1)) ≈ lp atol=(d * ATOL)
 
             # kl
             μ1 = zeros(FT, d, 1); Σ1 = ones(FT, d, 1)

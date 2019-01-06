@@ -32,9 +32,8 @@ NOTE: `n.μ`, `n.Σ` and `x` are assumed to be in batch.
 """
 function logpdf(dn::BatchNormal, x)
     FT = eltype(dn.μ)
-    d = size(dn.μ, 1)
     diff = x .- dn.μ
-    return -FT(0.5) .* (d * log(2 * FT(pi)) .+ sum(log.(dn.Σ) .+ diff .* diff ./ dn.Σ; dims=1))
+    return -FT(0.5) .* (log(2 * FT(pi)) .+ log.(dn.Σ) .+ diff .* diff ./ dn.Σ)
 end
 
 """
@@ -50,7 +49,7 @@ function kl(dn1::BatchNormal, dn2::BatchNormal)
     diff = dn2.μ .- dn1.μ
     Σ1 = dn1.Σ
     Σ2 = dn2.Σ
-    return FT(0.5) .* sum(log.(Σ2) .- log.(Σ1) .- 1 .+ Σ1 ./ Σ2 .+ diff .* diff ./ Σ2; dims=2)
+    return FT(0.5) .* (log.(Σ2) .- log.(Σ1) .- 1 .+ Σ1 ./ Σ2 .+ diff .* diff ./ Σ2)
 end
 
 """

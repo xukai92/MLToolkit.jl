@@ -14,7 +14,7 @@ function logpdf(ab::BatchBernoulli, x)
     _one = one(FT)
     _eps = eps(FT)
     lp = x .* log.(ab.p .+ _eps) .+ (_one .- x) .* log.(_one + _eps .- ab.p)
-    return sum(lp; dims=1)
+    return lp
 end
 
 """
@@ -31,5 +31,5 @@ function kl(ab1::BatchBernoulli, ab2::BatchBernoulli)
     _eps = eps(FT)
     kl = ab1.p .* (log.(ab1.p .+ _eps) .- log.(ab2.p .+ _eps)) .+
          (_one .- ab1.p) .* (log.(_one + _eps .- ab1.p) .- log.(_one + _eps .- ab2.p))
-    return sum(kl; dims=2)
+    return kl
 end

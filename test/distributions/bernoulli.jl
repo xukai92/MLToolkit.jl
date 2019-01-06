@@ -4,7 +4,7 @@ using Statistics: mean
 
 @testset "Bernoulli" begin
     n = 100_000
-    
+
     @testset "BatchBernoulli" begin
         for _ = 1:NUM_RANDTESTS
             p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
