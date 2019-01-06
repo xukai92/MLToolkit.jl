@@ -7,7 +7,7 @@ using LinearAlgebra: I
 
 const NUM_RANDOM_TESTS = 5
 const ATOL_DEFAULT = 1e-6
-const ATOL_RAND = 1e-2
+const ATOL_RAND = 2e-2
 const FT = Float64
 # Test on GPU whenever possible
 const AT = gpu() != -1 ? KnetArray : Array
