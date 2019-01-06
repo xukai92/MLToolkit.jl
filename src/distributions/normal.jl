@@ -1,4 +1,5 @@
 using LinearAlgebra: det, tr, inv
+using Distributions: MvNormal
 
 abstract type AbstractNormal end
 
@@ -20,11 +21,6 @@ NOTE: parameters are in batch.
 struct DiagonalNormal{T} <: AbstractNormal
     μ::T    # mean
     Σ::T    # variance
-end
-
-struct DenseNormal <: AbstractNormal
-    μ::AbstractVector   # mean
-    Σ::AbstractMatrix   # covariance
 end
 
 """
@@ -67,13 +63,15 @@ function kl(dn1::DiagonalNormal, dn2::AbstractNormal)
 end
 
 """
-    kl(dn1::DenseNormal, dn2::DenseNormal)
+    kl(mvn1::MvNormal, mvn2::MvNormal)
 
-Compute ``KL(Normal_1||Normal_2)``.
+Compute ``KL(MvNormal_1||MvNormal_2)``.
 """
-function kl(dn1::DenseNormal, dn2::DenseNormal)
-    FT = eltype(dn1.μ)
-    d = length(dn1.μ)
-    diff = dn2.μ .- dn1.μ
-    return FT(0.5)* (log(det(dn2.Σ)) - log(det(dn1.Σ)) - d + tr(inv(dn2.Σ) * dn1.Σ) + diff' * inv(dn2.Σ) * diff)
+function kl(mvn1::MvNormal, mvn2::MvNormal)
+    FT = eltype(mvn1.μ)
+    d = length(mvn1.μ)
+    diff = mvn2.μ .- mvn1.μ
+    Σ1 = Matrix(mvn1.Σ)
+    Σ2 = Matrix(mvn2.Σ)
+    return FT(0.5) * (log(det(Σ2)) - log(det(Σ1)) - d + tr(inv(Σ2) * Σ1) + diff' * inv(Σ2) * diff)
 end

@@ -82,7 +82,7 @@ const AT = gpu() != -1 ? KnetArray : Array
 
         # NOTE: the test below is not for `KnetArray` because the lack of
         #       the support of `det` and `inv` for `KnetArray`.
-        @testset "DenseNormal" begin
+        @testset "MvNormal" begin
             for _ = 1:NUM_RANDOM_TESTS
                 μ1 = zeros(FT, d); Σ1 = Matrix{FT}(I, d, d)
                 μ2 = μ1 .+ rand(FT); Σ2 = Σ1 .* abs(rand(FT))
@@ -91,10 +91,7 @@ const AT = gpu() != -1 ? KnetArray : Array
                 x = rand(mvn1, n)
 
                 kl_12 = mean(logpdf(mvn1, x) - logpdf(mvn2, x))
-
-                dn1 = DenseNormal(μ1, Σ1)
-                dn2 = DenseNormal(μ2, Σ2)
-                @test kl(dn1, dn2) ≈ kl_12 atol=(d * ATOL_RAND)
+                @test kl(mvn1, mvn2) ≈ kl_12 atol=(d * ATOL_RAND)
             end
         end
     end
