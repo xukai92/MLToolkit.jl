@@ -1,4 +1,4 @@
-import Distributions: pdf, rand, mode
+import Distributions: logpdf, pdf, rand, mode
 
 include("distributions/displaced_poisson.jl")
 export DisplacedPoisson
@@ -6,4 +6,7 @@ export DisplacedPoisson
 include("distributions/ibp.jl")
 export IBP
 
-export pdf, rand, mode
+include("distributions/normal.jl")
+export UnivariateNormal, DiagonalNormal, DenseNormal
+
+export logpdf, pdf, rand, kl, mode
