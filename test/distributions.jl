@@ -1,7 +1,7 @@
 using MLToolkit, Test
 using Distributions: Poisson, Normal, MvNormal
 using Statistics: mean, var
-using Knet: gpu
+using Knet: gpu, KnetArray
 using LinearAlgebra: I
 
 const NUM_RANDOM_TESTS = 5
