@@ -6,17 +6,17 @@ using MLToolkit: _lbeta, _beta
 
     @testset "lbeta" begin
         for _ = 1:NUM_RANDTESTS
-            x = AT(randn(FT, dims...).^2)
-            y = AT(randn(FT, dims...).^2)
-            @test _lbeta.(x, y) ≈ lbeta.(x, y)
+            x = randn(FT, dims...).^2
+            y = randn(FT, dims...).^2
+            @test _lbeta.(AT(x), AT(y)) ≈ lbeta.(x, y)
         end
     end
 
     @testset "beta" begin
         for _ = 1:NUM_RANDTESTS
-            x = AT(randn(FT, dims...).^2)
-            y = AT(randn(FT, dims...).^2)
-            @test _beta.(x, y) ≈ beta.(x, y)
+            x = randn(FT, dims...).^2
+            y = randn(FT, dims...).^2
+            @test _beta.(AT(x), AT(y)) ≈ beta.(x, y)
         end
     end
 end

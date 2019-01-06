@@ -13,7 +13,7 @@ using Statistics: mean
             bb = BatchBernoulli{AT}(p)
 
             x = rand(b, n)
-            @test vec(logpdf(bb, reshape(x, 1, n))) ≈ logpdf.(b, x) atol=ATOL
+            @test vec(logpdf(bb, AT{FT,2}(reshape(x, 1, n)))) ≈ logpdf.(b, x) atol=ATOL
 
             q = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
             b2 = Bernoulli(q[1,1])
