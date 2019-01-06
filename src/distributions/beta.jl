@@ -1,32 +1,53 @@
-# Sampling functions
+struct Kumaraswamy{T}
+    a::T
+    b::T
+end
 
 """
-    sample_from_kumaraswamy(a, b)
+    rand(k::Kumaraswamy{AT}) where {AT}
 
 Sample from Kumaraswamy distribution.
 
-NOTE: `a` and `b` are assumed to be in batch
+NOTE: `k.a` and `k.b` are assumed to be in batch
 
 Ref: https://arxiv.org/abs/1605.06197
 """
-function sample_from_kumaraswamy(a, b)
-
-    d, n = size(a)
-
-    u = AT(rand(FT, d, n))
-
-    x = (one(FT) .- u.^(one(FT) ./ b)).^(one(FT) ./ a)
-
+function rand(kuma::Kumaraswamy{AT}) where {AT}
+    FT = eltype(kuma.a)
+    _one = one(FT)
+    u = AT(rand(FT, size(kuma.a)...))
+    x = (_one .- u.^(_one ./ kuma.b)).^(_one ./ kuma.a)
     return x
-
 end
 
-function sample_log_from_kumaraswamy(a, b)
-
-    d, n = size(a)
-    u = AT(rand(FT, d, n))
-    logx = log.(one(FT) .- exp.(log.(u) ./ (b .+ eps(FT))) .+ eps(FT)) ./ (a .+ eps(FT))
+function logrand(kuma::Kumaraswamy{AT}) where {AT}
+    FT = eltype(kuma.a)
+    _one = one(FT)
+    _eps = eps(FT)
+    u = AT(rand(FT, size(kuma.a)...))
+    logx = log.(_one .- exp.(log.(u) ./ (kuma.b .+ _eps)) .+ _eps) ./ (kuma.a .+ _eps)
     return logx
+end
+
+export Kumaraswamy
+
+
+
+"""
+    logpdf_kumaraswamy(a, b, x)
+
+Compute ``Kumaraswamy(x; a, b)``.
+
+NOTE: only `x` is assumed to be in batch
+
+NOTE: this function is not tested
+"""
+function logpdf_kumaraswamy(a, b, x)
+
+    lp = log(a) .+ log(b) .+ (a - one(FT)) .* log.(x) .+ (b - one(FT)) .* log.(one(FT) .- x.^a)
+
+    return lp
+
 end
 
 """
@@ -124,62 +145,4 @@ function kl_kumaraswamy_beta(a, b, α, β; M=10)
 
 end
 
-"""
-    cond_kl_bernoulli(x, p, q)
-
-Compute ``KL(Ber(x;p)||Ber(x;q))``.
-
-NOTE: `x`, `p` and `q` are assumed to be in batch
-
-NOTE: this function is not tested
-
-Ref: https://github.com/rachtsingh/ibp_vae/blob/3b76ed15e0d7479423f893404c8549246e93c13f/src/training/mf_concrete.py#L36-L38
-"""
-function cond_kl_bernoulli(x, p, q)
-
-    kl = (log.(p .+ eps(FT)) .* x .+ log.(one(FT) .- p .+ eps(FT)) .* (one(FT) .- x)) .-
-         (log.(q .+ eps(FT)) .* x .+ log.(one(FT) .- q .+ eps(FT)) .* (one(FT) .- x))
-
-    return kl
-
-end
-
-"""
-    cond_kl_bernoulli_by_logit(logitx, logitp1, logitp2; τ1=FT(0.1), τ2=FT(0.1))
-
-Compute ``KL(ExpConcrete(x;p1)||ExpConcrete(x;p2))`` using Monte Carlo.
-
-NOTE: `logitx`, `logitp1` and `logitp2` are assumed to be in batch
-
-Ref: https://github.com/rachtsingh/ibp_vae/blob/3b76ed15e0d7479423f893404c8549246e93c13f/src/training/common.py#L57-L66
-"""
-function cond_kl_bernoulli_by_logit(logitx, logitp1, logitp2; τ1=FT(0.1), τ2=FT(0.1))
-
-    lp1 = logpdf_bernoulli_by_logit(logitp1, logitx; τ=τ1)
-    lp2 = logpdf_bernoulli_by_logit(logitp2, logitx; τ=τ2)
-
-    kl = lp1 - lp2
-
-    return kl
-
-end
-
 # Log-pdf functions
-
-
-"""
-    logpdf_kumaraswamy(a, b, x)
-
-Compute ``Kumaraswamy(x; a, b)``.
-
-NOTE: only `x` is assumed to be in batch
-
-NOTE: this function is not tested
-"""
-function logpdf_kumaraswamy(a, b, x)
-
-    lp = log(a) .+ log(b) .+ (a - one(FT)) .* log.(x) .+ (b - one(FT)) .* log.(one(FT) .- x.^a)
-
-    return lp
-
-end

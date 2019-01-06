@@ -40,7 +40,7 @@ using StatsFuns: logit, logistic
 
             gbl = BatchGumbelBernoulliLogit{AT}(logit.(p))
 
-            logitx = Array([rand(gbl)[1] for _ = 1:n])
+            logitx = Array([logitrand(gbl)[1] for _ = 1:n])
             x = logistic.(logitx)
             @test mean(x; dims=1) ≈ p atol=ATOL_RAND
         end

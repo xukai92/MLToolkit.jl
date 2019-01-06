@@ -81,7 +81,7 @@ struct BatchGumbelBernoulliLogit{T}
 end
 
 """
-    sample_logit_from_bernoulli(lp; τ=FT(0.1))
+    logitrand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
 
 Sample logit from Bernoulli distributions by logit.
 
@@ -89,7 +89,7 @@ NOTE: `lp` is assumed to be in batch
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function rand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
+function logitrand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
     FT = eltype(gbl.logitp)
 
     u = AT(rand(FT, size(gbl.logitp)...))
@@ -101,7 +101,7 @@ function rand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
 end
 
 """
-    logpdf(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
+    logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
 
 Compute ``GumbelBernoulli(logitx; logitp)``.
 
@@ -109,7 +109,7 @@ NOTE: `logitp` and `logitx` are assumed to be in batch.
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function logpdf(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
+function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
     # WARNING: this function is not tested.
     exp_term = gbl.logitp .- logitx .* τ
     lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)

@@ -7,4 +7,4 @@ include("distributions/gumbel.jl")
 include("distributions/bernoulli.jl")
 include("distributions/beta.jl")
 
-export logpdf, pdf, rand, kl, mode
+export logpdf, pdf, logpdflogit, logrand, rand, logitrand, kl, mode
