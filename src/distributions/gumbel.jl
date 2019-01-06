@@ -52,6 +52,7 @@ end
 Sample from Gumbel-Bernoulli distributions.
 """
 function rand(gb::GumbelBernoulli{AT}; τ=0.1) where {AT}
+    # TODO: re-implement this `rand` using the same procedure for `GumbelBernoulliLogit`
     FT = eltype(gb.p)
     sz = size(gb.p)
 
@@ -86,7 +87,7 @@ Sample logit from Bernoulli distributions by logit.
 
 NOTE: `lp` is assumed to be in batch
 
-Ref: https://github.com/rachtsingh/ibp_vae/blob/3b76ed15e0d7479423f893404c8549246e93c13f/src/models/common.py#L57-L64
+Ref: https://arxiv.org/abs/1611.00712
 """
 function rand(gbl::GumbelBernoulliLogit{AT}; τ=0.1) where {AT}
     FT = eltype(gbl.logitp)
@@ -97,4 +98,19 @@ function rand(gbl::GumbelBernoulliLogit{AT}; τ=0.1) where {AT}
 
     logitx = (gbl.logitp + logit) ./ τ
     return logitx
+end
+
+"""
+    logpdf(gbl::GumbelBernoulliLogit, logitx; τ=0.1)
+
+Compute ``GumbelBernoulli(logitx; logitp)``.
+
+NOTE: `logitp` and `logitx` are assumed to be in batch.
+
+Ref: https://arxiv.org/abs/1611.00712
+"""
+function logpdf(gbl::GumbelBernoulliLogit, logitx; τ=0.1)
+    # WARNING: this function is not tested.
+    exp_term = gbl.logitp .- logitx .* τ
+    return exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
 end
