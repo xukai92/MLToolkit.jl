@@ -12,6 +12,7 @@ export NUM_RANDTESTS, ATOL, ATOL_RAND, FT, AT
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
+include("special.jl")
 include("activations.jl")
 include("distributions.jl")
 include("transformations.jl")

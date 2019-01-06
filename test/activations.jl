@@ -1,8 +1,8 @@
 using MLToolkit, Test
 
-dims = (10, 5)
-
 @testset "Activations" begin
+    dims = (10, 5)
+
     @testset "softplus" begin
         for _ = 1:10
             x = randn(dims...)
@@ -10,6 +10,7 @@ dims = (10, 5)
             @test all(y .> 0)
         end
     end
+    
     @testset "leaky_relu" begin
         for _ = 1:10
             x = randn(dims...)

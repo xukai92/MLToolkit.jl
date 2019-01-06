@@ -65,3 +65,5 @@ function kl(mvn1::MvNormal, mvn2::MvNormal)
     Σ2 = Matrix(mvn2.Σ)
     return FT(0.5) * (log(det(Σ2)) - log(det(Σ1)) - d + tr(inv(Σ2) * Σ1) + diff' * inv(Σ2) * diff)
 end
+
+export BatchNormal

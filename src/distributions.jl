@@ -11,18 +11,10 @@ end
 mckl(p, q; args...) = mckl(p, q, rand(p); args...)
 
 include("distributions/displaced_poisson.jl")
-export DisplacedPoisson
-
 include("distributions/ibp.jl")
-export IBP
-
 include("distributions/normal.jl")
-export UnivariateNormal, BatchNormal
-
 include("distributions/gumbel.jl")
-export BatchGumbelSoftmax, BatchGumbelSoftmax2D, BatchGumbelBernoulli, BatchGumbelBernoulliLogit
-
 include("distributions/bernoulli.jl")
-export BatchBernoulli
+include("distributions/beta.jl")
 
 export logpdf, pdf, rand, mckl, kl, mode

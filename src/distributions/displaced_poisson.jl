@@ -58,3 +58,5 @@ function mode(dp::DisplacedPoisson)
     end
     return k
 end
+
+export DisplacedPoisson
