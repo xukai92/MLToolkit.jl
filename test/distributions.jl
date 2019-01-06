@@ -1,6 +1,7 @@
 using MLToolkit, Test
 using Distributions: Poisson, MvNormal, Beta, Dirichlet, Bernoulli
 using Statistics: mean, var
+using StatsFuns: logit, logistic
 using Knet: gpu, KnetArray
 using LinearAlgebra: I
 
@@ -136,6 +137,7 @@ const AT = gpu() != -1 ? KnetArray : Array
         @testset "GumbelBernoulli" begin
             for _ = 1:NUM_RANDOM_TESTS
                 p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
+
                 gs2d = GumbelSoftmax2D{AT}(p)
                 gb = GumbelBernoulli{AT}(p)
 
@@ -148,13 +150,16 @@ const AT = gpu() != -1 ? KnetArray : Array
             end
         end
 
-        # @testset "GumbelBernoulliLogit" begin
-            # p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
-            # lp = log.(p ./ (1 .- p))
-            # lx = Array([sample_logit_from_bernoulli(AT(lp))[1] for _ = 1:5000])
-            # x = 1 ./ (1 .+ exp.(-lx))
-            # p_est = mean(x; dims=1)
-            # @test p_est ≈ p atol=ATOL_RAND
-        # end
+        @testset "GumbelBernoulliLogit" begin
+            for _ = 1:NUM_RANDOM_TESTS
+                p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
+
+                gbl = GumbelBernoulliLogit{AT}(logit.(p))
+
+                logitx = Array([rand(gbl)[1] for _ = 1:n])
+                x = logistic.(logitx)
+                @test mean(x; dims=1) ≈ p atol=ATOL_RAND
+            end
+        end
     end
 end

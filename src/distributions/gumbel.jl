@@ -64,6 +64,37 @@ function rand(gb::GumbelBernoulli{AT}; τ=0.1) where {AT}
     logit_max = max.(logit0, logit1)
     logit1_minus_max = logit1 .- logit_max
 
-    lx = logit1_minus_max .- log.(exp.(logit0 - logit_max) .+ exp.(logit1_minus_max))
-    return exp.(lx)
+    logx = logit1_minus_max .- log.(exp.(logit0 - logit_max) .+ exp.(logit1_minus_max))
+    return exp.(logx)
+end
+
+"""
+The Gumbel-Bernoulli distributions in logit space.
+
+NOTE: parameters are in batch.
+
+Ref: https://arxiv.org/abs/1611.01144
+"""
+struct GumbelBernoulliLogit{T}
+    logitp::T
+end
+
+"""
+    sample_logit_from_bernoulli(lp; τ=FT(0.1))
+
+Sample logit from Bernoulli distributions by logit.
+
+NOTE: `lp` is assumed to be in batch
+
+Ref: https://github.com/rachtsingh/ibp_vae/blob/3b76ed15e0d7479423f893404c8549246e93c13f/src/models/common.py#L57-L64
+"""
+function rand(gbl::GumbelBernoulliLogit{AT}; τ=0.1) where {AT}
+    FT = eltype(gbl.logitp)
+
+    u = AT(rand(FT, size(gbl.logitp)...))
+
+    logit = log.(u) - log.(one(FT) .- u)
+
+    logitx = (gbl.logitp + logit) ./ τ
+    return logitx
 end

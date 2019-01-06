@@ -10,7 +10,7 @@ include("distributions/normal.jl")
 export UnivariateNormal, BatchNormal
 
 include("distributions/gumbel.jl")
-export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli
+export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli, GumbelBernoulliLogit
 
 include("distributions/bernoulli.jl")
 export BatchBernoulli
