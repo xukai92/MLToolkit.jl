@@ -100,7 +100,8 @@ const AT = gpu() != -1 ? KnetArray : Array
     end
 
     @testset "Gumble" begin
-        n = 200_000
+        τ_atol_ratio = 2
+        n = 100_000
 
         @testset "GumbleSoftmax" begin
             for _ = 1:NUM_RANDOM_TESTS
@@ -109,7 +110,7 @@ const AT = gpu() != -1 ? KnetArray : Array
                 gs = GumbelSoftmax{AT}(p)
                 x = hcat([rand(gs) for _ = 1:n]...)
 
-                @test vec(mean(x; dims=2)) ≈ p atol=(2 * ATOL_RAND)
+                @test vec(mean(x; dims=2)) ≈ p atol=(2 * τ_atol_ratio * ATOL_RAND)
             end
         end
     end
