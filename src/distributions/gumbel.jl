@@ -1,4 +1,4 @@
-abstract type AbstractGumbelSoftmax{T} end
+abstract type AbstractBatchGumbelSoftmax{T} end
 
 """
 The Gumbel-Softmax distributions.
@@ -7,24 +7,24 @@ NOTE: parameters are in batch.
 
 Ref: https://arxiv.org/abs/1611.01144
 """
-struct GumbelSoftmax{T} <: AbstractGumbelSoftmax{T}
+struct BatchGumbelSoftmax{T} <: AbstractBatchGumbelSoftmax{T}
     p::T
 end
 
-struct GumbelSoftmax2D{T} <: AbstractGumbelSoftmax{T}
+struct BatchGumbelSoftmax2D{T} <: AbstractBatchGumbelSoftmax{T}
     p::T
-    function GumbelSoftmax2D{T}(p) where {T}
+    function BatchGumbelSoftmax2D{T}(p) where {T}
         FT = eltype(p)
         new(hcat(p, one(FT) .- p)')
     end
 end
 
 """
-    rand(gs::GumbelSoftmax{T}; τ=0.1)
+    rand(gs::BatchGumbelSoftmax{T}; τ=0.1)
 
 Sample from the Gumbel-Softmax distributions.
 """
-function rand(gs::AbstractGumbelSoftmax{AT}; τ=0.1) where {AT}
+function rand(gs::AbstractBatchGumbelSoftmax{AT}; τ=0.1) where {AT}
     FT = eltype(gs.p)
 
     u = rand(FT, size(gs.p)...)
@@ -42,17 +42,17 @@ NOTE: parameters are in batch.
 
 Ref: https://arxiv.org/abs/1611.01144
 """
-struct GumbelBernoulli{T}
+struct BatchGumbelBernoulli{T}
     p::T
 end
 
 """
-    rand(gb::GumbelBernoulli{AT}; τ=0.1) where {AT}
+    rand(gb::BatchGumbelBernoulli{AT}; τ=0.1) where {AT}
 
 Sample from Gumbel-Bernoulli distributions.
 """
-function rand(gb::GumbelBernoulli{AT}; τ=0.1) where {AT}
-    # TODO: re-implement this `rand` using the same procedure for `GumbelBernoulliLogit`
+function rand(gb::BatchGumbelBernoulli{AT}; τ=0.1) where {AT}
+    # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
     FT = eltype(gb.p)
     sz = size(gb.p)
 
@@ -76,7 +76,7 @@ NOTE: parameters are in batch.
 
 Ref: https://arxiv.org/abs/1611.01144
 """
-struct GumbelBernoulliLogit{T}
+struct BatchGumbelBernoulliLogit{T}
     logitp::T
 end
 
@@ -89,7 +89,7 @@ NOTE: `lp` is assumed to be in batch
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function rand(gbl::GumbelBernoulliLogit{AT}; τ=0.1) where {AT}
+function rand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
     FT = eltype(gbl.logitp)
 
     u = AT(rand(FT, size(gbl.logitp)...))
@@ -101,7 +101,7 @@ function rand(gbl::GumbelBernoulliLogit{AT}; τ=0.1) where {AT}
 end
 
 """
-    logpdf(gbl::GumbelBernoulliLogit, logitx; τ=0.1)
+    logpdf(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
 
 Compute ``GumbelBernoulli(logitx; logitp)``.
 
@@ -109,7 +109,7 @@ NOTE: `logitp` and `logitx` are assumed to be in batch.
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function logpdf(gbl::GumbelBernoulliLogit, logitx; τ=0.1)
+function logpdf(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
     # WARNING: this function is not tested.
     exp_term = gbl.logitp .- logitx .* τ
     lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)

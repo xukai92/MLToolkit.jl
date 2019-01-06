@@ -7,23 +7,23 @@ using StatsFuns: logit, logistic
     τ_atol_ratio = 2
     n = 100_000
 
-    @testset "GumbelSoftmax" begin
+    @testset "BatchGumbelSoftmax" begin
         for _ = 1:NUM_RANDTESTS
             p = Matrix{FT}(rand(Dirichlet([1.0, 1.0]), 1))
 
-            gs = GumbelSoftmax{AT}(p)
+            gs = BatchGumbelSoftmax{AT}(p)
             x = hcat([rand(gs) for _ = 1:n]...)
 
             @test mean(x; dims=2) ≈ p atol=(2 * τ_atol_ratio * ATOL_RAND)
         end
     end
 
-    @testset "GumbelBernoulli" begin
+    @testset "BatchGumbelBernoulli" begin
         for _ = 1:NUM_RANDTESTS
             p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
 
-            gs2d = GumbelSoftmax2D{AT}(p)
-            gb = GumbelBernoulli{AT}(p)
+            gs2d = BatchGumbelSoftmax2D{AT}(p)
+            gb = BatchGumbelBernoulli{AT}(p)
 
             x = Array(hcat([rand(gs2d)[1,:] for _ = 1:n]...))
             @test mean(x; dims=2) ≈ p atol=ATOL_RAND
@@ -34,11 +34,11 @@ using StatsFuns: logit, logistic
         end
     end
 
-    @testset "GumbelBernoulliLogit" begin
+    @testset "BatchGumbelBernoulliLogit" begin
         for _ = 1:NUM_RANDTESTS
             p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
 
-            gbl = GumbelBernoulliLogit{AT}(logit.(p))
+            gbl = BatchGumbelBernoulliLogit{AT}(logit.(p))
 
             logitx = Array([rand(gbl)[1] for _ = 1:n])
             x = logistic.(logitx)
