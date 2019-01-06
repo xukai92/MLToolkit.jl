@@ -100,7 +100,7 @@ const AT = gpu() != -1 ? KnetArray : Array
     end
 
     @testset "Gumble" begin
-        n = 100_000
+        n = 200_000
 
         @testset "GumbleSoftmax" begin
             for _ = 1:NUM_RANDOM_TESTS
