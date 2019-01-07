@@ -5,7 +5,7 @@ export DisplacedPoisson
 include("distributions/ibp.jl")
 export IBP
 include("distributions/normal.jl")
-export BatchNormal
+export BatchNormal, BatchNormalLogVar
 include("distributions/gumbel.jl")
 export BatchGumbelSoftmax, BatchGumbelSoftmax2D, BatchGumbelBernoulli, BatchGumbelBernoulliLogit
 include("distributions/bernoulli.jl")

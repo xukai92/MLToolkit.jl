@@ -1,9 +1,5 @@
-function exp_softplus(x)
-    return one(x) + exp(x)
-end
-
 function softplus(x)
-    return log(exp_softplus(x))
+    return log(one(x) + exp(x))
 end
 
 function leaky_relu(x; alpha=0.2)

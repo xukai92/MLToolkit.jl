@@ -8,9 +8,6 @@ using Test, MLToolkit
             x = randn(dims...)
             y = softplus.(x)
             @test all(y .> 0)
-
-            exp_y = exp_softplus.(x)
-            @test all(y .== log.(exp_y))
         end
     end
 
