@@ -38,6 +38,14 @@ Update all parameters of `model` using the gradient dict `d`.
 """
 update!(model::AbstractTrainable, g::Dict) = update!(Knet.params(model), g)
 
+function numparams(model::AbstractTrainable)
+    n = 0
+    for p in Knet.params(model)
+        n += prod(size(p))
+    end
+    return n
+end
+
 include("neural/activations.jl")
 export softplus, leaky_relu
 include("neural/layers.jl")
@@ -57,4 +65,4 @@ function (c::Chain)(x)
     return x
 end
 
-export initoptim!, grad, update!, AbstractTrainable, Chain
+export initoptim!, grad, update!, numparams, AbstractTrainable, Chain
