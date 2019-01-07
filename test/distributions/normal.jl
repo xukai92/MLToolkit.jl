@@ -4,7 +4,8 @@ using Statistics: mean, var
 using LinearAlgebra: I
 
 @testset "Normal" begin
-    d, n = 10, 500_000
+    d = 10
+    n = 500_000
 
     @testset "BatchNormal" begin
         for _ = 1:NUM_RANDTESTS

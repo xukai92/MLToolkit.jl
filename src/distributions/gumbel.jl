@@ -115,5 +115,3 @@ function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
     lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
     return lp
 end
-
-export BatchGumbelSoftmax, BatchGumbelSoftmax2D, BatchGumbelBernoulli, BatchGumbelBernoulliLogit

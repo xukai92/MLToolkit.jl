@@ -6,4 +6,5 @@ using Test
     include("distributions/normal.jl")
     include("distributions/bernoulli.jl")
     include("distributions/gumbel.jl")
+    include("distributions/beta.jl")
 end

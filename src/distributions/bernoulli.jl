@@ -33,5 +33,3 @@ function kl(ab1::BatchBernoulli, ab2::BatchBernoulli)
          (_one .- ab1.p) .* (log.(_one + _eps .- ab1.p) .- log.(_one + _eps .- ab2.p))
     return kl
 end
-
-export BatchBernoulli

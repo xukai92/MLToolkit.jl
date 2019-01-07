@@ -7,5 +7,3 @@ function leaky_relu(x; alpha=0.2)
     pos = max(0, x)
     return neg + pos
 end
-
-export softplus, leaky_relu

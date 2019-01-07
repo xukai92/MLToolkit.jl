@@ -9,5 +9,3 @@ _lbeta(α, β) = lgamma(α) + lgamma(β) - lgamma(α + β)
 _beta(α, β) = exp(_lbeta(α, β))
 lbeta(α, β) = _lbeta(α, β)
 beta(α, β) = _beta(α, β)
-
-export lbeta, beta

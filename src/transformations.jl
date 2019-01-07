@@ -29,5 +29,3 @@ function break_logstick_ibp(logν)
     logp = hcat(logp...)'
     return logp
 end
-
-export break_stick_ibp, break_logstick_ibp

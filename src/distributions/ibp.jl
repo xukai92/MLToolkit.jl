@@ -20,5 +20,3 @@ function rand(ibp::IBP, Kmax::Int, n::Int)
     Z = hcat(rand.(Bernoulli.(p), n)...)
     return Z
 end
-
-export IBP
