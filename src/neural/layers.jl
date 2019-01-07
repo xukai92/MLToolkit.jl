@@ -16,9 +16,9 @@ end
 """
 Create dense layer by input and output size.
 """
-function Dense(i::Integer, o::Integer; f::Function=identity)
-    w = param(o, i; atype=AT{FT,2})
-    b = param0(o; atype=AT{FT,1})
+function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
+    w = param(o_dim, i_dim; atype=AT{FT,2})
+    b = param0(o_dim; atype=AT{FT,1})
     return Dense(w, b, f)
 end
 
