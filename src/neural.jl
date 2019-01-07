@@ -1,7 +1,8 @@
 import AutoGrad: grad
 import Knet: update!
 
-using AutoGrad: Tape
+using AutoGrad: Tape, value
+using Knet: params
 
 abstract type AbstractTrainable end
 
