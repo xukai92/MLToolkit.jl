@@ -1,9 +1,16 @@
-using Test
+using Distributed, Test
+
+tests = [
+    "data",
+    "special",
+    "activations",
+    "distributions",
+    "transformations",
+]
 
 @testset "Tests" begin
-    include("data.jl")
-    include("special.jl")
-    include("activations.jl")
-    include("distributions.jl")
-    include("transformations.jl")
+    res = map(tests) do t
+        include("$t.jl")
+        return
+    end
 end

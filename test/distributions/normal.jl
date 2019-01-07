@@ -20,7 +20,7 @@ using LinearAlgebra: I
 
             # logpdf
             mvn = MvNormal(vec(μ), sqrt.(vec(Σ)))
-            x = Matrx{FT}(rand(mvn, n))
+            x = Matrix{FT}(rand(mvn, n))
             lp = logpdf(mvn, x)
 
             @test vec(sum(logpdf(bn, AT(x)); dims=1)) ≈ lp atol=(d * ATOL)
