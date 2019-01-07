@@ -135,7 +135,7 @@ function kl(kuma::BatchKumaraswamy, bb::BatchBeta; M::Integer=11)
         acc = acc .+ _one ./ (FT(m) .+ a_times_b) .* beta.(FT(m) ./ a, b)
     end
 
-    kl = (a .- α) ./ a .* (-FT(γ) .- digamma.(b) .- _one ./ b) .+ log.(atimesb) .+
+    kl = (a .- α) ./ a .* (-FT(γ) .- digamma.(b) .- _one ./ b) .+ log.(a_times_b) .+
          lbeta(α, β) .- (b .- _one) ./ b .+ (β - _one) .* b .* acc
     return kl
 end
