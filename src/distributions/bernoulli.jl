@@ -3,17 +3,17 @@ struct BatchBernoulli{T}
 end
 
 """
-    logpdf(ab::BatchBernoulli, x)
+    logpdf(bb::BatchBernoulli, x)
 
 Compute ``Ber(x; p)``.
 
 NOTE: `x` is assumed to be in batch.
 """
-function logpdf(ab::BatchBernoulli, x)
-    FT = eltype(ab.p)
+function logpdf(bb::BatchBernoulli, x)
+    FT = eltype(bb.p)
     _one = one(FT)
     _eps = eps(FT)
-    lp = x .* log.(ab.p .+ _eps) .+ (_one .- x) .* log.(_one + _eps .- ab.p)
+    lp = x .* log.(bb.p .+ _eps) .+ (_one .- x) .* log.(_one + _eps .- bb.p)
     return lp
 end
 
@@ -39,15 +39,15 @@ struct BatchBernoulliLogit{T}
 end
 
 """
-    logpdf(ab::BatchBernoulliLogit, x)
+    logpdf(bb::BatchBernoulliLogit, x)
 
 Compute ``Ber(x; p)``.
 
 NOTE: `x` is assumed to be in batch.
 """
-function logpdf(abl::BatchBernoulliLogit, x)
-    FT = eltype(abl.logitp)
+function logpdf(bbl::BatchBernoulliLogit, x)
+    FT = eltype(bbl.logitp)
     _one = one(FT)
-    lp = x .* abl.logitp .- log.(_one .+ exp.(abl.logitp))
+    lp = x .* bbl.logitp .- log.(_one .+ exp.(bbl.logitp))
     return lp
 end
