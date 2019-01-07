@@ -1,4 +1,4 @@
-using MLToolkit, Test
+using Test, MLToolkit
 using Distributions: MvNormal, Beta
 using Statistics: mean, var
 using LinearAlgebra: I

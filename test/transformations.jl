@@ -1,4 +1,4 @@
-using MLToolkit, Test
+using Test, MLToolkit
 using Distributions: Beta
 
 dims = (10, 5)

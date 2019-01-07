@@ -1,4 +1,4 @@
-using MLToolkit, Test
+using Test, MLToolkit
 
 @testset "Activations" begin
     dims = (10, 5)

@@ -1,4 +1,4 @@
-using MLToolkit, Test
+using Test, MLToolkit
 
 @testset "IBP" begin
     d, n = 10, 5

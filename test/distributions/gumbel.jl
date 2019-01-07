@@ -1,4 +1,4 @@
-using MLToolkit, Test
+using Test, MLToolkit
 using Distributions: Beta, Dirichlet
 using Statistics: mean
 using StatsFuns: logit, logistic

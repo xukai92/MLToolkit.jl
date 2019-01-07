@@ -18,6 +18,8 @@ include("activations.jl")
 export softplus, leaky_relu
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
+include("data.jl")
+export load_mnist
 
 include("distributions.jl")
 

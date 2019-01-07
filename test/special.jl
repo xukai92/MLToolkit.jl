@@ -1,4 +1,4 @@
-using MLToolkit, Test
+using Test, MLToolkit
 using MLToolkit: _lbeta, _beta
 
 @testset "Special" begin
