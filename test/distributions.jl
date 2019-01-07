@@ -1,10 +1,19 @@
-using Test
+using Distributed, Test
 
 @testset "Distributions" begin
-    include("distributions/displaced_poisson.jl")
-    include("distributions/ibp.jl")
-    include("distributions/normal.jl")
-    include("distributions/bernoulli.jl")
-    include("distributions/gumbel.jl")
-    include("distributions/beta.jl")
+    tests = [
+        "displaced_poisson",
+        "ibp",
+        "normal",
+        "bernoulli",
+        "gumbel",
+        "beta",
+    ]
+
+    res = map(tests) do t
+        @eval module $(Symbol("TestDistributions_", t))
+        include("distributions/" * $t * ".jl")
+        end
+        return
+    end
 end

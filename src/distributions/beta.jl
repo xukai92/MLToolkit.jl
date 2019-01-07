@@ -119,10 +119,8 @@ end
 Compute ``KL(Kumaraswamy(a, b)||Beta(α, β))``.
 
 NOTE: only `a` and `b` are assumed to be in batch
-
-NOTE: this function is not tested
 """
-function kl(kuma::BatchKumaraswamy, bb::BatchBeta; M=10)
+function kl(kuma::BatchKumaraswamy, bb::BatchBeta; M::Integer=11)
     a = kuma.a
     b = kuma.b
     α = bb.α
@@ -131,12 +129,13 @@ function kl(kuma::BatchKumaraswamy, bb::BatchBeta; M=10)
     _one = one(FT)
 
     @assert M > 0
-    acc = _one ./ (_one .+ a .* b) .* beta.(_one ./ a, b)
+    a_times_b = a .* b
+    acc = _one ./ (_one .+ a_times_b) .* beta.(_one ./ a, b)
     for m = 2:M
-        acc = acc .+ _one ./ (FT(m) .+ a .* b) .* beta.(FT(m) ./ a, b)
+        acc = acc .+ _one ./ (FT(m) .+ a_times_b) .* beta.(FT(m) ./ a, b)
     end
 
-    kl = (a .- α) ./ a .* (-FT(γ) .- digamma.(b) .- _one ./ b) .+ log.(a .* b) .+
+    kl = (a .- α) ./ a .* (-FT(γ) .- digamma.(b) .- _one ./ b) .+ log.(atimesb) .+
          lbeta(α, β) .- (b .- _one) ./ b .+ (β - _one) .* b .* acc
     return kl
 end

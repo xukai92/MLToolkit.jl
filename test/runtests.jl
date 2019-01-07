@@ -1,16 +1,18 @@
 using Distributed, Test
 
-tests = [
-    "data",
-    "special",
-    "activations",
-    "distributions",
-    "transformations",
-]
-
 @testset "Tests" begin
+    tests = [
+        "data",
+        "special",
+        "activations",
+        "distributions",
+        "transformations",
+    ]
+
     res = map(tests) do t
-        include("$t.jl")
+        @eval module $(Symbol("Test_", t))
+        include($t * ".jl")
+        end
         return
     end
 end
