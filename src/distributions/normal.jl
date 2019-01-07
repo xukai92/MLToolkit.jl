@@ -10,7 +10,7 @@ struct BatchNormal{T}
 end
 
 """
-    rand(dn::BatchNormal{AT}) where {AT}
+    rand(dn::BatchNormal)
 
 Sample from the Normal distribution.
 
@@ -18,7 +18,7 @@ NOTE: `dn.μ` and `dn.Σ` are assumed to be in batch.
 
 Ref: https://arxiv.org/pdf/1312.6114.pdf
 """
-function rand(dn::BatchNormal{AT}) where {AT}
+function rand(dn::BatchNormal)
     ϵ = AT(randn(eltype(dn.μ), size(dn.μ)...))
     return dn.μ + sqrt.(dn.Σ) .* ϵ
 end

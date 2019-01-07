@@ -25,11 +25,11 @@ function _u2gumbel(T, u)
 end
 
 """
-    rand(gs::BatchGumbelSoftmax{T}; τ=0.1)
+    rand(gs::AbstractBatchGumbelSoftmax; τ=0.1)
 
 Sample from the Gumbel-Softmax distributions.
 """
-function rand(gs::AbstractBatchGumbelSoftmax{AT}; τ=0.1) where {AT}
+function rand(gs::AbstractBatchGumbelSoftmax; τ=0.1)
     FT = eltype(gs.p)
     _eps = eps(FT)
 
@@ -53,11 +53,11 @@ struct BatchGumbelBernoulli{T}
 end
 
 """
-    rand(gb::BatchGumbelBernoulli{AT}; τ=0.1) where {AT}
+    rand(gb::BatchGumbelBernoulli; τ=0.1)
 
 Sample from Gumbel-Bernoulli distributions.
 """
-function rand(gb::BatchGumbelBernoulli{AT}; τ=0.1) where {AT}
+function rand(gb::BatchGumbelBernoulli; τ=0.1)
     # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
     FT = eltype(gb.p)
     sz = size(gb.p)
@@ -89,7 +89,7 @@ struct BatchGumbelBernoulliLogit{T}
 end
 
 """
-    logitrand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
+    logitrand(gbl::BatchGumbelBernoulliLogit; τ=0.1)
 
 Sample logit from Bernoulli distributions by logit.
 
@@ -97,7 +97,7 @@ NOTE: `lp` is assumed to be in batch
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function logitrand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
+function logitrand(gbl::BatchGumbelBernoulliLogit; τ=0.1)
     FT = eltype(gbl.logitp)
     _eps = eps(FT)
     _one = one(FT)

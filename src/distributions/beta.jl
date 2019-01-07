@@ -19,7 +19,7 @@ function _u2logkumaraswamysample(T, u, kuma::BatchKumaraswamy)
 end
 
 """
-    rand(kuma::BatchKumaraswamy{AT}) where {AT}
+    rand(kuma::BatchKumaraswamy) where
 
 Sample from Kumaraswamy distribution.
 
@@ -27,27 +27,33 @@ NOTE: `k.a` and `k.b` are assumed to be in batch
 
 Ref: https://arxiv.org/abs/1605.06197
 """
-function rand(kuma::BatchKumaraswamy{AT}) where {AT}
+function rand(kuma::BatchKumaraswamy)
     u = AT(rand(FT, size(kuma.a)...))
     x = _u2kumaraswamysample(eltype(kuma.a), u, kuma)
     return x
 end
 
-function rand(kuma::BatchKumaraswamy{T}, dims::Integer...) where {T<:Real}
+function rand(kuma::BatchKumaraswamy{FT}, dims::Integer...) where {T<:Real}
+    @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
+    @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
     u = rand(FT, dims...)
-    x = _u2kumaraswamysample(T, u, kuma)
+    u = dims == () ? u : AT(u)
+    x = _u2kumaraswamysample(FT, u, kuma)
     return x
 end
 
-function logrand(kuma::BatchKumaraswamy{AT}) where {AT}
+function logrand(kuma::BatchKumaraswamy)
     u = AT(rand(FT, size(kuma.a)...))
     logx = _u2logkumaraswamysample(eltype(kuma.a), u, kuma)
     return logx
 end
 
-function logrand(kuma::BatchKumaraswamy{T}, dims::Integer...) where {T<:Real}
+function logrand(kuma::BatchKumaraswamy{FT}, dims::Integer...) where {T<:Real}
+    @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
+    @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
     u = rand(FT, dims...)
-    logx = _u2logkumaraswamysample(T, u, kuma)
+    u = dims == () ? u : AT(u)
+    logx = _u2logkumaraswamysample(FT, u, kuma)
     return logx
 end
 
