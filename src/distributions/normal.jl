@@ -37,18 +37,18 @@ function logpdf(dn::BatchNormal, x)
 end
 
 """
-    kl(dn1::BatchNormal, dn2::BatchNormal)
+    kl(bn1::BatchNormal, bn2::BatchNormal)
 
 Compute ``KL(Normal_1||Normal_2)``.
 """
-function kl(dn1::BatchNormal, dn2::BatchNormal)
-    FT = eltype(dn1.μ)
-    if eltype(dn2.μ) != FT
+function kl(bn1::BatchNormal, bn2::BatchNormal)
+    FT = eltype(bn1.μ)
+    if eltype(bn2.μ) != FT
         @warn "FT are different for bn1 and bn2" eltype(bn1.μ) eltype(bn2.μ)
     end
-    diff = dn2.μ .- dn1.μ
-    Σ1 = dn1.Σ
-    Σ2 = dn2.Σ
+    diff = bn2.μ .- bn1.μ
+    Σ1 = bn1.Σ
+    Σ2 = bn2.Σ
     return FT(0.5) .* (log.(Σ2) .- log.(Σ1) .- 1 .+ Σ1 ./ Σ2 .+ diff .* diff ./ Σ2)
 end
 
