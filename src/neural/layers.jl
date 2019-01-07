@@ -1,3 +1,5 @@
+using Knet: param, param0
+
 """
 Dense layer
 """
