@@ -44,6 +44,20 @@ update!(model::AbstractTrainable, g::Dict) = update!(params(model), g)
 include("neural/activations.jl")
 export softplus, leaky_relu
 include("neural/layers.jl")
-export Dense, Chain
+export Dense, GaussianNode, BernoulliNode
 
-export initoptim!, grad, update!, AbstractTrainable
+"""
+Chaining multiple layers.
+"""
+struct Chain <: AbstractTrainable
+    layers
+end
+
+function (c::Chain)(x)
+    for l in c.layers
+        x = l(x)
+    end
+    return x
+end
+
+export initoptim!, grad, update!, AbstractTrainable, Chain

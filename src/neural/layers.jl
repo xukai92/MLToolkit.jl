@@ -23,15 +23,35 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
 end
 
 """
-Chaining multiple layers.
+A stochastic node for the Gaussian distribution. It returns `BatchNormal`.
 """
-struct Chain <: AbstractTrainable
-    layers
+struct GaussianNode <: AbstractTrainable
+    f::AbstractTrainable
 end
 
-function (c::Chain)(x)
-    for l in c.layers
-        x = l(x)
-    end
-    return x
+function GaussianNode(i_dim::Integer, z_dim::Integer)
+    return GaussianNode(Dense(i_dim, 2 * z_dim))
+end
+
+function (ge::GaussianNode)(x)
+    h = ge.f(x)
+    z_dim = round(Integer, size(h, 1) / 2)
+
+    return BatchNormal(h[1:z_dim,:], softplus.(h[z_dim+1:end,:]))
+end
+
+"""
+A stochastic node for the Bernoulli distribution. It returns `BatchBernoulliLogit`.
+"""
+struct BernoulliNode <: AbstractTrainable
+    f::AbstractTrainable
+end
+
+function BernoulliNode(i_dim::Integer, z_dim::Integer)
+    return BernoulliNode(Dense(i_dim, z_dim))
+end
+
+function (ge::BernoulliNode)(x)
+    logitp = ge.f(x)
+    return BatchBernoulliLogit(logitp)
 end

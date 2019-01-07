@@ -31,9 +31,8 @@ Compute ``Normal(x; μ, Σ)`` in an element-wise manner.
 NOTE: `n.μ`, `n.Σ` and `x` are assumed to be in batch.
 """
 function logpdf(dn::BatchNormal, x)
-    FT = eltype(dn.μ)
     diff = x .- dn.μ
-    return -(log(2 * FT(pi)) .+ log.(dn.Σ) .+ diff .* diff ./ dn.Σ) ./ 2
+    return -(log(2 * eltype(dn.μ)(pi)) .+ log.(dn.Σ) .+ diff .* diff ./ dn.Σ) ./ 2
 end
 
 struct BatchNormalLogVar{T}
@@ -47,7 +46,6 @@ function rand(dn::BatchNormalLogVar)
 end
 
 function logpdf(dn::BatchNormalLogVar, x)
-    FT = eltype(dn.μ)
     diff = x .- dn.μ
     return -(log(2 * eltype(dn.μ)(pi)) .+ dn.logΣ .+ diff .* diff ./ exp.(dn.logΣ)) ./ 2
 end
@@ -58,19 +56,18 @@ end
 Compute ``KL(Normal_1||Normal_2)``.
 """
 function kldiv(bn1::BatchNormal, bn2::BatchNormal)
-    FT = eltype(bn1.μ)
-    if eltype(bn2.μ) != FT
-        @warn "FT are different for bn1 and bn2" eltype(bn1.μ) eltype(bn2.μ)
+    if eltype(bn1.μ) != eltype(bn2.μ)
+        @warn "Float type are different for bn1 and bn2" eltype(bn1.μ) eltype(bn2.μ)
     end
     diff = bn2.μ .- bn1.μ
     Σ1 = bn1.Σ
     Σ2 = bn2.Σ
-    return FT(0.5) .* (log.(Σ2) .- log.(Σ1) .- 1 .+ Σ1 ./ Σ2 .+ diff .* diff ./ Σ2)
+    return (log.(Σ2) .- log.(Σ1) .- 1 .+ Σ1 ./ Σ2 .+ diff .* diff ./ Σ2) / 2
 end
 
 function kldiv(bnlv1::BatchNormalLogVar, bn2::BatchNormal)
     if eltype(bnlv1.μ) != eltype(bn2.μ)
-        @warn "FT are different for bnlv1 and bn2" eltype(bnlv1.μ) eltype(bn2.μ)
+        @warn "Float type are different for bnlv1 and bn2" eltype(bnlv1.μ) eltype(bn2.μ)
     end
     diff = bn2.μ .- bnlv1.μ
     logΣ1 = bnlv1.logΣ
