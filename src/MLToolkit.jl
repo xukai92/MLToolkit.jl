@@ -1,10 +1,12 @@
 module MLToolkit
 
-using Knet: gpu, KnetArray
+# Package level imports all go here
+import AutoGrad, Knet
 
+# Constants
 const FT = Float64
 # Use GPU whenever possible
-const AT = gpu() != -1 ? KnetArray : Array
+const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array
 const NUM_RANDTESTS = 5
 const ATOL = FT == Float64 ? 1e-6 : 1e-4
 const ATOL_RAND = FT == Float64 ? 2e-2 : 5e-1

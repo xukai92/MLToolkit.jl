@@ -1,5 +1,3 @@
-using Knet: param, param0, mat
-
 """
 Dense layer
 """
@@ -10,21 +8,20 @@ struct Dense <: AbstractTrainable
 end
 
 function (d::Dense)(x)
-    return d.f.(d.w * mat(x) .+ d.b)
+    return d.f.(d.w * Knet.mat(x) .+ d.b)
 end
 
 """
 Create dense layer by input and output size.
 """
 function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
-    w = param(o_dim, i_dim; atype=AT{FT,2})
-    b = param0(o_dim; atype=AT{FT,1})
+    w = Knet.param(o_dim, i_dim; atype=AT{FT,2})
+    b = Knet.param0(o_dim; atype=AT{FT,1})
     return Dense(w, b, f)
 end
 
-"""
-A stochastic node for the Gaussian distribution. It returns `BatchNormal`.
-"""
+# Stochastic nodes
+
 struct GaussianNode <: AbstractTrainable
     f::AbstractTrainable
 end
@@ -40,9 +37,21 @@ function (ge::GaussianNode)(x)
     return BatchNormal(h[1:z_dim,:], softplus.(h[z_dim+1:end,:]))
 end
 
-"""
-A stochastic node for the Bernoulli distribution. It returns `BatchBernoulliLogit`.
-"""
+struct GaussianLogVarNode <: AbstractTrainable
+    f::AbstractTrainable
+end
+
+function GaussianLogVarNode(i_dim::Integer, z_dim::Integer)
+    return GaussianLogVarNode(Dense(i_dim, 2 * z_dim))
+end
+
+function (ge::GaussianLogVarNode)(x)
+    h = ge.f(x)
+    z_dim = round(Integer, size(h, 1) / 2)
+
+    return BatchNormalLogVar(h[1:z_dim,:], h[z_dim+1:end,:])
+end
+
 struct BernoulliNode <: AbstractTrainable
     f::AbstractTrainable
 end
@@ -52,6 +61,19 @@ function BernoulliNode(i_dim::Integer, z_dim::Integer)
 end
 
 function (ge::BernoulliNode)(x)
+    p = Knet.sigm.(ge.f(x))
+    return BatchBernoulli(p)
+end
+
+struct BernoulliLogitNode <: AbstractTrainable
+    f::AbstractTrainable
+end
+
+function BernoulliLogitNode(i_dim::Integer, z_dim::Integer)
+    return BernoulliLogitNode(Dense(i_dim, z_dim))
+end
+
+function (ge::BernoulliLogitNode)(x)
     logitp = ge.f(x)
     return BatchBernoulliLogit(logitp)
 end
