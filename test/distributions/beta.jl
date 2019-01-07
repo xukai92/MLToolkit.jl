@@ -62,12 +62,12 @@ using Statistics: mean
             @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈
                   kldiv(BatchBeta(a1, b1), BatchBeta(a2, b2)) atol=ATOL_RAND
 
-            kuma = BatchKumaraswamy(a1, b2)
+            kuma = BatchKumaraswamy(a1, b1)
             bb = BatchBeta(a2, b2)
 
             x = vec([rand(kuma) for _ = 1:n])
             kl_mc = mean(logpdf(kuma, x) - logpdf.(Beta(a2, b2), x))
-            @test kldiv(kuma, bb) ≈ kl_mc atol=ATOL_RAND
+            @test kldiv(kuma, bb) ≈ kl_mc atol=(2 * ATOL_RAND)
         end
     end
 end
