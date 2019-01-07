@@ -41,6 +41,8 @@ Update all parameters of `model` using the gradient dict `d`.
 """
 update!(model::AbstractTrainable, g::Dict) = update!(params(model), g)
 
+include("neural/activations.jl")
+export exp_softplus, softplus, leaky_relu
 include("neural/layers.jl")
 export Dense, Chain
 

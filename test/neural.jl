@@ -6,6 +6,7 @@ using Distributed, Test
 
     tests = [
         "layers",
+        "activations",
     ]
 
     res = map(tests) do t

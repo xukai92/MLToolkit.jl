@@ -15,8 +15,6 @@ greet() = print("Welcome to Kai's machine learning toolkit!")
 
 include("special.jl")
 export lbeta, beta
-include("activations.jl")
-export exp_softplus, softplus, leaky_relu
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("data.jl")
