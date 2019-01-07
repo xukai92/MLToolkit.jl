@@ -9,7 +9,7 @@ export BatchNormal
 include("distributions/gumbel.jl")
 export BatchGumbelSoftmax, BatchGumbelSoftmax2D, BatchGumbelBernoulli, BatchGumbelBernoulliLogit
 include("distributions/bernoulli.jl")
-export BatchBernoulli
+export BatchBernoulli, BatchBernoulliLogit
 include("distributions/beta.jl")
 export BatchKumaraswamy, BatchBeta
 

@@ -33,3 +33,21 @@ function kl(ab1::BatchBernoulli, ab2::BatchBernoulli)
          (_one .- ab1.p) .* (log.(_one + _eps .- ab1.p) .- log.(_one + _eps .- ab2.p))
     return kl
 end
+
+struct BatchBernoulliLogit{T}
+    logitp::T
+end
+
+"""
+    logpdf(ab::BatchBernoulliLogit, x)
+
+Compute ``Ber(x; p)``.
+
+NOTE: `x` is assumed to be in batch.
+"""
+function logpdf(abl::BatchBernoulliLogit, x)
+    FT = eltype(abl.logitp)
+    _one = one(FT)
+    lp = x .* abl.logitp .- log.(_one .+ exp.(abl.logitp))
+    return lp
+end
