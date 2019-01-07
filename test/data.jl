@@ -14,7 +14,7 @@ include(Knet.dir("data","fashion-mnist.jl"))
             @test size(X_te_sub) == (784, te_sz)
             @test size(y_te_sub) == (te_sz,)
 
-            X_tr_sub, y_tr_sub, X_te_sub, y_te_sub = load_mnist(mnist, tr_sz, te_sz; flatten=false)
+            X_tr_sub, y_tr_sub, X_te_sub, y_te_sub = load_mnist(fmnist, tr_sz, te_sz; flatten=false)
             @test size(X_tr_sub) == (28, 28, 1, tr_sz)
             @test size(y_tr_sub) == (tr_sz,)
             @test size(X_te_sub) == (28, 28, 1, te_sz)
