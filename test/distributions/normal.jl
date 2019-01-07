@@ -20,7 +20,7 @@ using LinearAlgebra: I
 
             # logpdf
             mvn = MvNormal(vec(μ), sqrt.(vec(Σ)))
-            x = rand(mvn, n)
+            x = Matrx{FT}(rand(mvn, n))
             lp = logpdf(mvn, x)
 
             @test vec(sum(logpdf(bn, AT(x)); dims=1)) ≈ lp atol=(d * ATOL)
@@ -32,14 +32,13 @@ using LinearAlgebra: I
             mvn1 = MvNormal(vec(μ1), sqrt.(vec(Σ1)))
             mvn2 = MvNormal(vec(μ2), sqrt.(vec(Σ2)))
             x = rand(mvn1, n)
-
-            kl_12 = mean(logpdf(mvn1, x) - logpdf(mvn2, x))
+            kl_mc = mean(logpdf(mvn1, x) - logpdf(mvn2, x))
 
             bn1 = BatchNormal{AT}(μ1, Σ1)
             bn2 = BatchNormal{AT}(μ2, Σ2)
-            @test sum(kl(bn1, bn2)) ≈ kl_12 atol=(d * ATOL_RAND)
+            @test sum(kl(bn1, bn2)) ≈ kl_mc atol=(d * ATOL_RAND)
 
-            @test sum(kl(bn1, BatchNormal(μ2[1,1], Σ2[1,1]))) ≈ kl_12 atol=(d * ATOL_RAND)
+            @test sum(kl(bn1, BatchNormal(μ2[1,1], Σ2[1,1]))) ≈ kl_mc atol=(d * ATOL_RAND)
         end
     end
 

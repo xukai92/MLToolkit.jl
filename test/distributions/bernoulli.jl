@@ -19,9 +19,9 @@ using Statistics: mean
             b2 = Bernoulli(q[1,1])
             bb2 = BatchBernoulli{AT}(q)
 
-            kl_12 = mean(logpdf.(b, x) - logpdf.(b2, x))
+            kl_mc = mean(logpdf.(b, x) - logpdf.(b2, x))
 
-            @test sum(kl(bb, bb2)) ≈ kl_12 atol=ATOL_RAND
+            @test sum(kl(bb, bb2)) ≈ kl_mc atol=ATOL_RAND
         end
     end
 end

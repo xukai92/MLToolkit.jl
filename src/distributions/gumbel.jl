@@ -19,6 +19,11 @@ struct BatchGumbelSoftmax2D{T} <: AbstractBatchGumbelSoftmax{T}
     end
 end
 
+function _u2gumbel(T, u)
+    _eps = eps(T)
+    return -log.(-log.(u .+ _eps) .+ _eps)
+end
+
 """
     rand(gs::BatchGumbelSoftmax{T}; τ=0.1)
 
@@ -26,11 +31,12 @@ Sample from the Gumbel-Softmax distributions.
 """
 function rand(gs::AbstractBatchGumbelSoftmax{AT}; τ=0.1) where {AT}
     FT = eltype(gs.p)
+    _eps = eps(FT)
 
     u = rand(FT, size(gs.p)...)
-    g = AT(-log.(-log.(u)))
+    g = AT(_u2gumbel(FT, u))
 
-    logit = g .+ log.(gs.p)
+    logit = g .+ log.(gs.p .+ _eps)
     exp_logit = exp.(logit ./ τ)
     return exp_logit ./ sum(exp_logit; dims=1)
 end
@@ -55,12 +61,14 @@ function rand(gb::BatchGumbelBernoulli{AT}; τ=0.1) where {AT}
     # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
     FT = eltype(gb.p)
     sz = size(gb.p)
+    _eps = eps(FT)
+    _one = one(FT)
 
-    u0 = rand(FT, sz...); g0 = AT(-log.(-log.(u0)))
-    u1 = rand(FT, sz...); g1 = AT(-log.(-log.(u1)))
+    u0 = rand(FT, sz...); g0 = AT(_u2gumbel(FT, u0))
+    u1 = rand(FT, sz...); g1 = AT(_u2gumbel(FT, u1))
 
-    logit0 = (g0 .+ log.(one(FT) .- gb.p)) ./ τ
-    logit1 = (g1 .+ log.(gb.p)) ./ τ
+    logit0 = (g0 .+ log.(_one + _eps .- gb.p)) ./ τ
+    logit1 = (g1 .+ log.(gb.p .+ _eps)) ./ τ
 
     logit_max = max.(logit0, logit1)
     logit1_minus_max = logit1 .- logit_max
@@ -91,10 +99,12 @@ Ref: https://arxiv.org/abs/1611.00712
 """
 function logitrand(gbl::BatchGumbelBernoulliLogit{AT}; τ=0.1) where {AT}
     FT = eltype(gbl.logitp)
+    _eps = eps(FT)
+    _one = one(FT)
 
     u = AT(rand(FT, size(gbl.logitp)...))
 
-    logit = log.(u) - log.(one(FT) .- u)
+    logit = log.(u .+ _eps) - log.(_one + _eps .- u)
 
     logitx = (gbl.logitp + logit) ./ τ
     return logitx
