@@ -22,7 +22,7 @@ using StatsFuns: logit
 
             kl_mc = mean(logpdf.(b, x) - logpdf.(b2, x))
 
-            @test sum(kl(bb, bb2)) ≈ kl_mc atol=ATOL_RAND
+            @test sum(kldiv(bb, bb2)) ≈ kl_mc atol=ATOL_RAND
         end
     end
 

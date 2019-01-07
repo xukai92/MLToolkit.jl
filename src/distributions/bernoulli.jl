@@ -18,11 +18,11 @@ function logpdf(bb::BatchBernoulli, x)
 end
 
 """
-    kl(ab1::BatchBernoulli, ab2::BatchBernoulli)
+    kldiv(ab1::BatchBernoulli, ab2::BatchBernoulli)
 
 Compute ``KL(Ber_1||Ber_2)``.
 """
-function kl(ab1::BatchBernoulli, ab2::BatchBernoulli)
+function kldiv(ab1::BatchBernoulli, ab2::BatchBernoulli)
     FT = eltype(ab1.p)
     if eltype(ab2.p) != FT
         @warn "FT are different for ab1 and ab2" eltype(ab1.p) eltype(ab2.p)

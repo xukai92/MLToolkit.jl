@@ -41,7 +41,7 @@ using Statistics: mean
 
             kl_12 = mean(logpdf(dir1, x) - logpdf(dir2, x))
 
-            @test kl(dir1, dir2) ≈ kl_12 atol=(d * ATOL_RAND)
+            @test kldiv(dir1, dir2) ≈ kl_12 atol=(d * ATOL_RAND)
         end
     end
 
@@ -51,22 +51,22 @@ using Statistics: mean
                                      (3.0, 3.0, 1.0, 1.0, 0.267864),
                                      (3.0, 0.5, 0.5, 3.0, 7.21574),
                                      (0.5, 3.0, 3.0, 0.5, 7.21574)]
-            @test kl(BatchBeta(a1, b1), BatchBeta(a2, b2)) ≈ ans atol=100ATOL
-            @test kl(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈ ans atol=100ATOL
+            @test kldiv(BatchBeta(a1, b1), BatchBeta(a2, b2)) ≈ ans atol=100ATOL
+            @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈ ans atol=100ATOL
         end
 
         for _ = 1:NUM_RANDTESTS
             (a1, b1, a2, b2) = 1.0 .+ rand(4).^2
 
-            @test kl(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈
-                  kl(BatchBeta(a1, b1), BatchBeta(a2, b2)) atol=ATOL_RAND
+            @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈
+                  kldiv(BatchBeta(a1, b1), BatchBeta(a2, b2)) atol=ATOL_RAND
 
             kuma = BatchKumaraswamy(a1, b2)
             bb = BatchBeta(a2, b2)
 
             x = vec([rand(kuma) for _ = 1:n])
             kl_mc = mean(logpdf(kuma, x) - logpdf.(Beta(a2, b2), x))
-            @test kl(kuma, bb) ≈ kl_mc atol=ATOL_RAND
+            @test kldiv(kuma, bb) ≈ kl_mc atol=ATOL_RAND
         end
     end
 end

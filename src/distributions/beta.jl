@@ -74,13 +74,13 @@ function logpdf(kuma::BatchKumaraswamy, x)
 end
 
 """
-    kl(d1::Dirichlet, d2::Dirichlet)
+    kldiv(d1::Dirichlet, d2::Dirichlet)
 
 Compute ``KL(Dir(α)||Dir(β))`` where ``α = [α_1, \\dots, α_K]`` and ``β = [β_1, \\dots, β_K]``.
 
 Ref: http://bariskurt.com/kullback-leibler-divergence-between-two-dirichlet-and-beta-distributions/
 """
-function kl(d1::Dirichlet, d2::Dirichlet)
+function kldiv(d1::Dirichlet, d2::Dirichlet)
     α = d1.alpha
     β = d2.alpha
 
@@ -99,11 +99,11 @@ struct BatchBeta{T}
 end
 
 """
-    kl(bb1::BatchBeta, bb2::BatchBeta)
+    kldiv(bb1::BatchBeta, bb2::BatchBeta)
 
 Compute ``KL(Beta(α1, β1)||Beta(α2, β2))``.
 """
-function kl(bb1::BatchBeta, bb2::BatchBeta)
+function kldiv(bb1::BatchBeta, bb2::BatchBeta)
     α1 = bb1.α
     β1 = bb1.β
     α2 = bb2.α
@@ -120,13 +120,13 @@ function kl(bb1::BatchBeta, bb2::BatchBeta)
 end
 
 """
-    kl(kuma::BatchKumaraswamy, bb::BatchBeta; M=10)
+    kldiv(kuma::BatchKumaraswamy, bb::BatchBeta; M=10)
 
 Compute ``KL(Kumaraswamy(a, b)||Beta(α, β))``.
 
 NOTE: only `a` and `b` are assumed to be in batch
 """
-function kl(kuma::BatchKumaraswamy, bb::BatchBeta; M::Integer=11)
+function kldiv(kuma::BatchKumaraswamy, bb::BatchBeta; M::Integer=11)
     a = kuma.a
     b = kuma.b
     α = bb.α

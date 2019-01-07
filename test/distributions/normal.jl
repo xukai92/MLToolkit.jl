@@ -36,9 +36,9 @@ using LinearAlgebra: I
 
             bn1 = BatchNormal{AT}(μ1, Σ1)
             bn2 = BatchNormal{AT}(μ2, Σ2)
-            @test sum(kl(bn1, bn2)) ≈ kl_mc atol=(d * ATOL_RAND)
+            @test sum(kldiv(bn1, bn2)) ≈ kl_mc atol=(d * ATOL_RAND)
 
-            @test sum(kl(bn1, BatchNormal(μ2[1,1], Σ2[1,1]))) ≈ kl_mc atol=(d * ATOL_RAND)
+            @test sum(kldiv(bn1, BatchNormal(μ2[1,1], Σ2[1,1]))) ≈ kl_mc atol=(d * ATOL_RAND)
         end
     end
 
@@ -53,7 +53,7 @@ using LinearAlgebra: I
             x = rand(mvn1, n)
 
             kl_12 = mean(logpdf(mvn1, x) - logpdf(mvn2, x))
-            @test kl(mvn1, mvn2) ≈ kl_12 atol=(d * ATOL_RAND)
+            @test kldiv(mvn1, mvn2) ≈ kl_12 atol=(d * ATOL_RAND)
         end
     end
 end

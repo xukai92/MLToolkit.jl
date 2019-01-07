@@ -13,4 +13,4 @@ export BatchBernoulli, BatchBernoulliLogit
 include("distributions/beta.jl")
 export BatchKumaraswamy, BatchBeta
 
-export logpdf, pdf, logpdflogit, logrand, rand, logitrand, kl, mode
+export logpdf, pdf, logpdflogit, logrand, rand, logitrand, kldiv, mode
