@@ -9,16 +9,16 @@ abstract type AbstractTrainable end
 Initialise optimizer for each trainable parameters.
 """
 function initoptim!(model::AbstractTrainable, otype; args...)
-    for param in params(model)
-        param.opt = otype(; args...)
+    for p in params(model)
+        p.opt = otype(; args...)
     end
 end
 
 """
-Get the gradient dictionary for `params` from the result tape `x`.
+Get the gradient dictionary for `ps` from the result tape `x`.
 """
-function grad(x::Tape, params::Array)
-    return Dict(param => grad(x, param) for param in params)
+function grad(x::Tape, ps::Array)
+    return Dict(p => grad(x, p) for p in ps)
 end
 
 """
@@ -29,9 +29,9 @@ grad(x::Tape, model::AbstractTrainable) = grad(x, params(model))
 """
 Update all parameters in `params` using the gradient dict `d`.
 """
-function update!(params::Array, g::Dict)
-    for param in params
-        update!(value(param), g[param], param.opt)
+function update!(ps::Array, g::Dict)
+    for p in ps
+        update!(value(p), g[p], p.opt)
     end
 end
 
