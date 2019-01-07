@@ -61,9 +61,10 @@ end
     logpdf(kuma::BatchKumaraswamy, x)
 
 Compute ``Kumaraswamy(x; a, b)``.
+
+WARN: this function is not tested.
 """
 function logpdf(kuma::BatchKumaraswamy, x)
-    # WARNING: this function is not tested.
     _one = one(FT)
     _eps = eps(FT)
     lp = log(kuma.a) .+

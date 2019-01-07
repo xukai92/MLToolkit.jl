@@ -30,6 +30,7 @@ using Statistics: mean
             x = Array(exp.(logrand(kuma2, n)))
             @test mean(x) ≈ beta_mean atol=ATOL_RAND
         end
+        @warn "`logpdf(kuma::BatchKumaraswamy, x)` is not tested."
     end
 
     @testset "Dirichlet" begin

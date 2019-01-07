@@ -44,5 +44,7 @@ using StatsFuns: logit, logistic
             x = logistic.(logitx)
             @test mean(x; dims=1) ≈ p atol=ATOL_RAND
         end
+
+        @warn "`logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)` is not tested."
     end
 end

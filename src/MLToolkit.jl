@@ -23,5 +23,6 @@ include("data.jl")
 export load_mnist
 
 include("distributions.jl")
+include("neural.jl")
 
 end

@@ -117,10 +117,11 @@ Compute ``GumbelBernoulli(logitx; logitp)``.
 
 NOTE: `logitp` and `logitx` are assumed to be in batch.
 
+WARN: this function is not tested.
+
 Ref: https://arxiv.org/abs/1611.00712
 """
 function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
-    # WARNING: this function is not tested.
     exp_term = gbl.logitp .- logitx .* τ
     lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
     return lp
