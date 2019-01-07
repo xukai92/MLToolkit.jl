@@ -1,4 +1,4 @@
-using Knet: param, param0
+using Knet: param, param0, mat
 
 """
 Dense layer
