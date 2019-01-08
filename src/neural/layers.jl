@@ -26,7 +26,7 @@ struct DynamicOut <: AbstractTrainable
 end
 
 function DynamicOut(i_dim::Integer, h_dim::Integer; rnnType=:relu, f=identity)
-    rnn = RNN(i_dim, h_dim; rnnType=rnnType, dataType=FT)
+    rnn = Knet.RNN(i_dim, h_dim; rnnType=rnnType, dataType=FT)
     mlp = Dense(h_dim, 1; f=f)
     return DynamicOut(rnn, mlp)
 end
@@ -45,7 +45,7 @@ struct DynamicIn <: AbstractTrainable
 end
 
 function DynamicIn(h_dim::Integer, o_dim::Integer; rnnType=:relu, f=identity)
-    rnn = RNN(1, h_dim; rnnType=rnnType, dataType=FT)
+    rnn = Knet.RNN(1, h_dim; rnnType=rnnType, dataType=FT)
     mlp = Dense(h_dim, o_dim; f=f)
     return DynamicIn(rnn, mlp)
 end
