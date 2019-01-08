@@ -50,6 +50,11 @@ include("neural/activations.jl")
 export softplus, leaky_relu
 include("neural/layers.jl")
 export Dense, DynamicIn, DynamicOut
+include("neural/nodes.jl")
+export GaussianNode, DynamicGaussianNode
+export GaussianLogVarNode, DynamicGaussianLogVarNode
+export BernoulliNode, DynamicBernoulliNode
+export BernoulliLogitNode, DynamicBernoulliLogitNode
 
 """
 Chaining multiple layers.
@@ -64,8 +69,5 @@ function (c::Chain)(x)
     end
     return x
 end
-
-# NOTE: the file below exports nodes inside
-include("neural/nodes.jl")
 
 export initoptim!, grad, update!, numparams, AbstractTrainable, Chain

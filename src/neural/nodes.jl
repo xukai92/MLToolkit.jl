@@ -13,8 +13,6 @@ for (node_sym, out_sym) in [(:GaussianNode, :Dense),
         function (gn::$node_sym)(x, d::Integer...)
             return BatchNormal(gn.μ(x, d...), gn.Σ(x, d...))
         end
-
-        export node_sym
     end
 end
 
@@ -33,8 +31,6 @@ for (node_sym, out_sym) in [(:GaussianLogVarNode, :Dense),
         function (glvn::$node_sym)(x, d::Integer...)
             return BatchNormalLogVar(glvn.μ(x, d...), glvn.logΣ(x, d...))
         end
-
-        export node_sym
     end
 end
 
@@ -52,8 +48,6 @@ for (node_sym, out_sym) in [(:BernoulliNode, :Dense),
         function (bn::$node_sym)(x, d::Integer...)
             return BatchBernoulli(bn.p(x, d...))
         end
-
-        export node_sym
     end
 end
 
@@ -71,7 +65,5 @@ for (node_sym, out_sym) in [(:BernoulliLogitNode, :Dense),
         function (bln::$node_sym)(x, d::Integer...)
             return BatchBernoulliLogit(bln.logitp(x, d...))
         end
-
-        export node_sym
     end
 end
