@@ -1,10 +1,25 @@
+module MNIST
+    import Knet
+    include(Knet.dir("data","mnist.jl"))
+    export mnist
+end
+using .MNIST: mnist
+
+module FMNIST
+    import Knet
+    include(Knet.dir("data","fashion-mnist.jl"))
+    export fmnist
+end
+using .FMNIST: fmnist
+
+
 """
-    load_mnist(mf::Function, tr_sz::Integer, te_sz::Integer; flatten::Bool=true)
+    load_mnist(mnist_sym::Symbol, tr_sz::Integer, te_sz::Integer; flatten::Bool=true)
 
 Load a subset of MNIST-like dataset.
 """
-function load_mnist(mf::Function, tr_sz::Integer, te_sz::Integer; flatten::Bool=true)
-    x_tr, y_tr, x_te, y_te = mf()
+function load_mnist(mnist_sym::Symbol, tr_sz::Integer, te_sz::Integer; flatten::Bool=true)
+    x_tr, y_tr, x_te, y_te = eval(mnist_sym)()
 
     if flatten
         x_tr_sub = Matrix{FT}(undef, 28 * 28, tr_sz)
