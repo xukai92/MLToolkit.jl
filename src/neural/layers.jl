@@ -53,7 +53,7 @@ struct BernoulliNode <: AbstractTrainable
 end
 
 function BernoulliNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
-    return BernoulliNode(ltype(i_dim, z_dim; f=sigm))
+    return BernoulliNode(ltype(i_dim, z_dim; f=Knet.sigm))
 end
 
 function (bn::BernoulliNode)(x)
