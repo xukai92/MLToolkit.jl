@@ -5,6 +5,7 @@ using Distributed, Test
     @warn "`neural.jl` is not tested."
 
     tests = [
+        "nodes",
         "layers",
         "activations",
     ]

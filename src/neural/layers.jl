@@ -20,54 +20,38 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
     return Dense(w, b, f)
 end
 
-# Stochastic nodes
-
-struct GaussianNode <: AbstractTrainable
-    μ::AbstractTrainable
-    Σ::AbstractTrainable
+struct DynamicOut <: AbstractTrainable
+    rnn
+    mlp::AbstractTrainable
 end
 
-function GaussianNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
-    return GaussianNode(ltype(i_dim, z_dim), ltype(i_dim, z_dim; f=softplus))
+function DynamicOut(i_dim::Integer, h_dim::Integer; rnnType=:relu, f=identity)
+    rnn = RNN(i_dim, h_dim; rnnType=rnnType, dataType=FT)
+    mlp = Dense(h_dim, 1; f=f)
+    return DynamicOut(rnn, mlp)
 end
 
-function (gn::GaussianNode)(x)
-    return BatchNormal(gn.μ(x), gn.Σ(x))
+function (dy::DynamicOut)(x, d::Integer)
+    (x_dim, batch_size) = size(x)
+    h = dy.rnn(reshape(hcat([x for _ = 1:d]...), x_dim, batch_size, d))
+    # The `reshape` below was double-checked - don't waste time on debugging it
+    y = dy.mlp(reshape(h, size(h, 1), batch_size * d))
+    return reshape(y, batch_size, d)'
 end
 
-struct GaussianLogVarNode <: AbstractTrainable
-    μ::AbstractTrainable
-    logΣ::AbstractTrainable
+struct DynamicIn <: AbstractTrainable
+    rnn
+    mlp::AbstractTrainable
 end
 
-function GaussianLogVarNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
-    return GaussianLogVarNode(ltype(i_dim, z_dim), ltype(i_dim, z_dim))
+function DynamicIn(h_dim::Integer, o_dim::Integer; rnnType=:relu, f=identity)
+    rnn = RNN(1, h_dim; rnnType=rnnType, dataType=FT)
+    mlp = Dense(h_dim, o_dim; f=f)
+    return DynamicIn(rnn, mlp)
 end
 
-function (glvn::GaussianLogVarNode)(x)
-    return BatchNormalLogVar(glvn.μ(x), glvn.logΣ(x))
-end
-
-struct BernoulliNode <: AbstractTrainable
-    p::AbstractTrainable
-end
-
-function BernoulliNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
-    return BernoulliNode(ltype(i_dim, z_dim; f=Knet.sigm))
-end
-
-function (bn::BernoulliNode)(x)
-    return BatchBernoulli(bn.p(x))
-end
-
-struct BernoulliLogitNode <: AbstractTrainable
-    logitp::AbstractTrainable
-end
-
-function BernoulliLogitNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
-    return BernoulliLogitNode(ltype(i_dim, z_dim))
-end
-
-function (bln::BernoulliLogitNode)(x)
-    return BatchBernoulliLogit(bln.logitp(x))
+function (dy::DynamicIn)(x)
+    (x_dim, batch_size) = size(x)
+    h = dy.rnn(reshape(x', 1, batch_size, x_dim))[:,:,end] # only the last hidden state is used
+    return dy.mlp(h)
 end
