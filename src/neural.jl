@@ -63,11 +63,25 @@ struct Chain <: AbstractTrainable
     layers
 end
 
+"""
+Run chained layers.
+"""
 function (c::Chain)(x)
     for l in c.layers
         x = l(x)
     end
     return x
+end
+
+"""
+Run chained layers with `args...` applied to the last one.
+"""
+function (c::Chain)(x, args...)
+    n = length(c.layers)
+    for i = 1:n-1
+        x = c.layers[i](x)
+    end
+    return c.layers[n](x, args...)
 end
 
 export initoptim!, grad, update!, numparams, AbstractTrainable, Chain
