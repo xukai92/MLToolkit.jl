@@ -8,7 +8,7 @@ struct Dense <: AbstractTrainable
 end
 
 function (d::Dense)(x)
-    return d.f.(d.w * Knet.mat(x) .+ d.b)
+    return d.f.(d.w * x .+ d.b)
 end
 
 """
