@@ -23,57 +23,51 @@ end
 # Stochastic nodes
 
 struct GaussianNode <: AbstractTrainable
-    f::AbstractTrainable
+    μ::AbstractTrainable
+    Σ::AbstractTrainable
 end
 
-function GaussianNode(i_dim::Integer, z_dim::Integer)
-    return GaussianNode(Dense(i_dim, 2 * z_dim))
+function GaussianNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
+    return GaussianNode(ltype(i_dim, z_dim), ltype(i_dim, z_dim; f=softplus))
 end
 
-function (ge::GaussianNode)(x)
-    h = ge.f(x)
-    z_dim = round(Integer, size(h, 1) / 2)
-
-    return BatchNormal(h[1:z_dim,:], softplus.(h[z_dim+1:end,:]))
+function (gn::GaussianNode)(x)
+    return BatchNormal(gn.μ(x), gn.Σ(x))
 end
 
 struct GaussianLogVarNode <: AbstractTrainable
-    f::AbstractTrainable
+    μ::AbstractTrainable
+    logΣ::AbstractTrainable
 end
 
-function GaussianLogVarNode(i_dim::Integer, z_dim::Integer)
-    return GaussianLogVarNode(Dense(i_dim, 2 * z_dim))
+function GaussianLogVarNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
+    return GaussianLogVarNode(ltype(i_dim, z_dim), ltype(i_dim, z_dim))
 end
 
-function (ge::GaussianLogVarNode)(x)
-    h = ge.f(x)
-    z_dim = round(Integer, size(h, 1) / 2)
-
-    return BatchNormalLogVar(h[1:z_dim,:], h[z_dim+1:end,:])
+function (glvn::GaussianLogVarNode)(x)
+    return BatchNormalLogVar(glvn.μ(x), glvn.logΣ(x))
 end
 
 struct BernoulliNode <: AbstractTrainable
-    f::AbstractTrainable
+    p::AbstractTrainable
 end
 
-function BernoulliNode(i_dim::Integer, z_dim::Integer)
-    return BernoulliNode(Dense(i_dim, z_dim))
+function BernoulliNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
+    return BernoulliNode(ltype(i_dim, z_dim; f=sigm))
 end
 
-function (ge::BernoulliNode)(x)
-    p = Knet.sigm.(ge.f(x))
-    return BatchBernoulli(p)
+function (bn::BernoulliNode)(x)
+    return BatchBernoulli(bn.p(x))
 end
 
 struct BernoulliLogitNode <: AbstractTrainable
-    f::AbstractTrainable
+    logitp::AbstractTrainable
 end
 
-function BernoulliLogitNode(i_dim::Integer, z_dim::Integer)
-    return BernoulliLogitNode(Dense(i_dim, z_dim))
+function BernoulliLogitNode(i_dim::Integer, z_dim::Integer; ltype=Dense)
+    return BernoulliLogitNode(ltype(i_dim, z_dim))
 end
 
-function (ge::BernoulliLogitNode)(x)
-    logitp = ge.f(x)
-    return BatchBernoulliLogit(logitp)
+function (bln::BernoulliLogitNode)(x)
+    return BatchBernoulliLogit(bln.logitp(x))
 end
