@@ -58,3 +58,6 @@ function mode(dp::DisplacedPoisson)
     end
     return k
 end
+
+Base.show(io::IO, dp::DisplacedPoisson) =
+    print(io, "DisplacedPoisson($(round(dp.λ; sigdigits=3)), $(round(dp.r; sigdigits=3)))")

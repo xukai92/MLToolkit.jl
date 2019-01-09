@@ -18,5 +18,7 @@ using Distributions: Poisson
         m_p = mode(p)
         m_dpeqv = mode(dpeqv)
         @test m_p == m_dpeqv
+
+        @test string(dpeqv) == "DisplacedPoisson($(round(λ; sigdigits=3)), 0.0)"
     end
 end
