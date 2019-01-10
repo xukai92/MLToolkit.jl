@@ -18,7 +18,8 @@ using .FMNIST: fmnist
 
 Load a subset of MNIST-like dataset.
 """
-function load_mnist(mnist_sym::Symbol, tr_sz::Integer, te_sz::Integer; flatten::Bool=true)
+function load_mnist(mnist_sym::Symbol, tr_sz::Integer=60_000, te_sz::Integer=10_000;
+                    flatten::Bool=true)
     x_tr, y_tr, x_te, y_te = eval(mnist_sym)()
 
     if flatten
@@ -57,7 +58,7 @@ function make_imggrid(x, n_rows, n_cols; flat=true, gap::Integer=1)
     if !flat
         x = rehsape(x, size(x, 1)^2, size(x, 4))
     end
-    d², n = size(x)
+    d² = size(x, 1)
     d = round(Int, sqrt(d²))
     x_show = 0.5 * ones(FT, n_rows * (d + gap) + gap, n_cols * (d + gap) + gap)
     i = 1
