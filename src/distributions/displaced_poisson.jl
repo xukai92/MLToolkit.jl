@@ -59,5 +59,8 @@ function mode(dp::DisplacedPoisson)
     return k
 end
 
+minimum(dp::DisplacedPoisson) = ceil(Integer, dp.r)
+maximum(dp::DisplacedPoisson) = Inf
+
 Base.show(io::IO, dp::DisplacedPoisson) =
     print(io, "DisplacedPoisson($(round(dp.λ; sigdigits=3)), $(round(dp.r; sigdigits=3)))")

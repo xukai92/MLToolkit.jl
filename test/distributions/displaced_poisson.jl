@@ -19,6 +19,9 @@ using Distributions: Poisson
         m_dpeqv = mode(dpeqv)
         @test m_p == m_dpeqv
 
+        @test minimum(dpeqv) == 0
+        @test maximum(dpeqv) == Inf
+
         @test string(dpeqv) == "DisplacedPoisson($(round(λ; sigdigits=3)), 0.0)"
     end
 end
