@@ -58,15 +58,13 @@ The difference between a layer and a model is that for models, loss are defined.
 All `NeuralModel` should be compatible with the following signature.
 ```julia
 Base.show(nm::NeuralModel)
-loss(nm::NeuralModel, data)
-eval(nm::NeuralModel, data)
+(nm::NeuralModel)(data, training::Val{true})    # loss
+(nm::NeuralModel)(data, training::Val{false})   # evaluate metric
 ```
 """
 abstract type NeuralModel <: AbstractTrainable end
 Base.show(nm::NeuralModel) = error("Method not implemented")
-loss(nm::NeuralModel, data) = error("Method not implemented")
-# Callback function - if no specific metric implemented, re-use the loss function
-eval(nm::NeuralModel, data) = loss(nm, data)
+loss(nm::NeuralModel, data) = nm(data)[1]
 
 """
 Train the model on a dataset.
@@ -80,7 +78,7 @@ It returns batch averaged loss in the end.
 function train!(model::NeuralModel, dataloader)
     loss_list = []
     for data_batch in dataloader
-        losstape = Knet.@diff loss(model, data_batch)
+        losstape = Knet.@diff model(data_batch, Val(:true))
         graddict = grad(losstape, model)
         update!(model, graddict)
         push!(loss_list, Knet.value(losstape))
@@ -96,7 +94,7 @@ It returns batch averaged metric value in the end.
 function evaluate(model::NeuralModel, dataloader)
     loss_list = []
     for data_batch in dataloader
-        push!(loss_list, eval(model, data_batch))
+        push!(loss_list, model(data_batch, Val(:false))[1]
     end
     return mean(loss_list)
 end
@@ -113,4 +111,4 @@ export Chain
 
 export initoptim!, grad, update!, numparams
 export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
-export NeuralModel, loss, eval, train!, evaluate
+export NeuralModel, train!, evaluate
