@@ -2,6 +2,9 @@ import AutoGrad: grad
 import Knet: update!
 
 abstract type AbstractTrainable end
+abstract type AbstractLayer <: AbstractTrainable end
+abstract type StaticLayer <: AbstractLayer end
+abstract type StochasticLayer <: AbstractLayer end
 
 """
 Initialise optimizer for each trainable parameters.
@@ -50,18 +53,29 @@ include("neural/activations.jl")
 export softplus, leaky_relu
 include("neural/layers.jl")
 export Dense, DynamicIn, DynamicOut
-include("neural/nodes.jl")
-export GaussianNode, DynamicGaussianNode
-export GaussianLogVarNode, DynamicGaussianLogVarNode
-export BernoulliNode, DynamicBernoulliNode
-export BernoulliLogitNode, DynamicBernoulliLogitNode
+export GaussianDense, GaussianDynamicIn, GaussianDynamicOut
+export GaussianLogVarDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut
+export BernoulliDense, BernoulliDynamicIn, BernoulliDynamicOut
+export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 
 """
 Chaining multiple layers.
+
+NOTE: only chainning layers are allowed but not models. As models are assumed to output loss when being called.
 """
-struct Chain <: AbstractTrainable
-    layers
+struct Chain <: Layer
+    layers::Tuple
+    function Chain(layers)
+        n = length(c.layers)
+        for i = 1:n-1
+            @assert layers[i] isa StaticLayer "The layers in middle should be `StaticLayer`."
+        end
+        @assert layers[i] isa AbstractLayer "The last layer should be a `AbstractLayer`"
+        return new(layers)
+    end
 end
+Chain(layers::AbstractLayer...) = Chain(layers)
+Chain(layers) = Chain(layers...)
 
 """
 Run chained layers.
@@ -84,4 +98,5 @@ function (c::Chain)(x, args...)
     return c.layers[n](x, args...)
 end
 
-export initoptim!, grad, update!, numparams, AbstractTrainable, Chain
+export initoptim!, grad, update!, numparams,
+export AbstractTrainable, Layer, StaticLayer, StochasticLayer, Chain

@@ -1,7 +1,7 @@
 """
 Dense layer
 """
-struct Dense <: AbstractTrainable
+struct Dense <: StaticLayer
     w
     b
     f::Function
@@ -20,9 +20,9 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
     return Dense(w, b, f)
 end
 
-struct DynamicOut <: AbstractTrainable
-    rnn
-    mlp::AbstractTrainable
+struct DynamicOut <: StaticLayer
+    rnn::Knet.RNN
+    mlp::StaticLayer
 end
 
 function DynamicOut(i_dim::Integer, h_dim::Integer; rnnType=:relu, f=identity)
@@ -39,9 +39,9 @@ function (dy::DynamicOut)(x, d::Integer)
     return reshape(y, batch_size, d)'
 end
 
-struct DynamicIn <: AbstractTrainable
-    rnn
-    mlp::AbstractTrainable
+struct DynamicIn <: StaticLayer
+    rnn::Knet.RNN
+    mlp::StaticLayer
 end
 
 function DynamicIn(h_dim::Integer, o_dim::Integer; rnnType=:relu, f=identity)
@@ -54,4 +54,77 @@ function (dy::DynamicIn)(x)
     (x_dim, batch_size) = size(x)
     h = dy.rnn(reshape(x', 1, batch_size, x_dim))[:,:,end] # only the last hidden state is used
     return dy.mlp(h)
+end
+
+const STATIC_SYM_LIST = [:Dense, :DynamicIn, :DynamicOut]
+
+for static_sym in STATIC_SYM_LIST
+    sto_sym = Symbol("Gaussian$static_sym")
+    @eval begin
+        struct $sto_sym <: StochasticLayer
+            μ::StaticLayer
+            Σ::StaticLayer
+        end
+
+        function $sto_sym(i_dim::Integer, h_dim::Integer)
+            return $sto_sym($static_sym(i_dim, h_dim), $static_sym(i_dim, h_dim; f=softplus))
+        end
+
+        function (gn::$sto_sym)(x, d::Integer...)
+            return BatchNormal(gn.μ(x, d...), gn.Σ(x, d...))
+        end
+    end
+end
+
+for static_sym in STATIC_SYM_LIST
+    sto_sym = Symbol("GaussianLogVar$static_sym")
+    @eval begin
+        struct $static_sym <: StochasticLayer
+            μ::StaticLayer
+            logΣ::StaticLayer
+        end
+
+        function $static_sym(i_dim::Integer, z_dim::Integer)
+            return $static_sym(static_sym(i_dim, z_dim), static_sym(i_dim, z_dim))
+        end
+
+        function (glvn::$static_sym)(x, d::Integer...)
+            return BatchNormalLogVar(glvn.μ(x, d...), glvn.logΣ(x, d...))
+        end
+    end
+end
+
+for static_sym in STATIC_SYM_LIST
+    sto_sym = Symbol("Bernoulli$static_sym")
+    @eval begin
+        struct $sto_sym <: StochasticLayer
+            p::StaticLayer
+        end
+
+        function $sto_sym(i_dim::Integer, z_dim::Integer)
+            return $sto_sym(static_sym(i_dim, z_dim; f=Knet.sigm))
+        end
+
+        function (bn::$sto_sym)(x, d::Integer...)
+            return BatchBernoulli(bn.p(x, d...))
+        end
+    end
+end
+
+for static_sym in STATIC_SYM_LIST
+    sto_sym = Symbol("BernoulliLogit$static_sym")
+
+    @eval begin
+        struct $sto_sym <: StochasticLayer
+            logitp::StaticLayer
+        end
+
+        function $sto_sym(i_dim::Integer, z_dim::Integer)
+            return $sto_sym($static_sym(i_dim, z_dim))
+        end
+
+        function (bln::$sto_sym)(x, d::Integer...)
+            return BatchBernoulliLogit(bln.logitp(x, d...))
+        end
+    end
 end
