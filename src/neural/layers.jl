@@ -60,7 +60,7 @@ const STATIC_SYM_LIST = [:Dense, :DynamicIn, :DynamicOut]
 
 for static_sym in STATIC_SYM_LIST
     sto_sym = Symbol("Gaussian$static_sym")
-    
+
     @eval begin
         struct $sto_sym <: StochasticLayer
             μ::StaticLayer
@@ -87,7 +87,7 @@ for static_sym in STATIC_SYM_LIST
         end
 
         function $sto_sym(i_dim::Integer, z_dim::Integer)
-            return $sto_sym(static_sym(i_dim, z_dim), static_sym(i_dim, z_dim))
+            return $sto_sym($static_sym(i_dim, z_dim), $static_sym(i_dim, z_dim))
         end
 
         function (glvn::$sto_sym)(x, d::Integer...)
