@@ -20,7 +20,7 @@ export lbeta, beta
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("data.jl")
-export load_mnist, BatchDataLoader
+export load_mnist, make_imggrid, BatchDataLoader
 
 include("distributions.jl")
 include("neural.jl")

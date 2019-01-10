@@ -20,6 +20,20 @@ using Knet: KnetArray
         end
     end
 
+    @testset "make_imggrid" begin
+        d = 5
+        rand_img = rand(d^2, 100)
+        n_rows = n_cols = 3
+        gap = 1
+        imggrid = make_imggrid(rand_img, n_rows, n_cols)
+        @test all(imggrid[1,:] .== 0.5)
+        @test all(imggrid[end,:] .== 0.5)
+        @test all(imggrid[:,1] .== 0.5)
+        @test all(imggrid[:,end] .== 0.5)
+        @test size(imggrid) == (n_rows * d + gap * (n_rows + 1),
+                                n_cols * d + gap * (n_cols + 1))
+    end
+
     @testset "BatchDataLoader" begin
         sz = 100
         x, y, _, _ = load_mnist(:mnist, sz, sz; flatten=true)
