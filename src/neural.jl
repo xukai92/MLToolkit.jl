@@ -66,7 +66,7 @@ NOTE: only chainning layers are allowed but not models. As models are assumed to
 struct Chain <: AbstractLayer
     layers::Tuple
     function Chain(layers::Tuple)
-        n = length(c.layers)
+        n = length(layers)
         for i = 1:n-1
             @assert layers[i] isa StaticLayer "The layers in middle should be `StaticLayer`."
         end
