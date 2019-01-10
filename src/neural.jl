@@ -83,7 +83,7 @@ function train!(model::NeuralModel, dataloader)
         losstape = Knet.@diff loss(model, data_batch)
         graddict = grad(losstape, model)
         update!(model, graddict)
-        push!(loss_list, value(losstape))
+        push!(loss_list, Knet.value(losstape))
     end
     return mean(loss_list)
 end
@@ -112,4 +112,5 @@ export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 export Chain
 
 export initoptim!, grad, update!, numparams
-export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer, NeuralModel
+export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
+export NeuralModel, loss, eval, train!, evaluate
