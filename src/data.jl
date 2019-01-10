@@ -81,4 +81,13 @@ function Base.iterate(bdl::BatchDataLoader, batch_n=0)
     return data_batch, batch_n
 end
 
+function Base.rand(bld::BatchDataLoader)
+    i_rand = rand(1:length(bld))
+    for (i, data_batch) in enumerate(bld)
+        if i == i_rand
+            return data_batch
+        end
+    end
+end
+
 Base.length(bdl::BatchDataLoader) = bdl.num_batchs
