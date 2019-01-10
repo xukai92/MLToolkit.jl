@@ -74,6 +74,13 @@ function make_imggrid(x, n_rows, n_cols; flat=true, gap::Integer=1)
     return x_show
 end
 
+function make_imggrid(x; kargs...)
+    n = size(x, 2)
+    l = ceil(Integer, sqrt(n))
+    n_rows = l * (l - 1) > n ? l - 1 : l
+    return make_imggrid(x, l, n_rows; kargs...)
+end
+
 struct BatchDataLoader
     data::Tuple
     batch_size::Integer
