@@ -16,12 +16,14 @@ using LinearAlgebra: I
             x = Array(hcat([rand(bn) for _ = 1:n]...))
 
             @test mean(x; dims=2) ≈ μ atol=(d * ATOL_RAND)
+            @test mean(x; dims=2) ≈ Array(mean(bn)) atol=(d * ATOL_RAND)
             @test var(x; dims=2) ≈ Σ atol=(d * ATOL_RAND)
 
             bnlv = BatchNormalLogVar{AT}(μ, log.(Σ))
             x = Array(hcat([rand(bnlv) for _ = 1:n]...))
 
             @test mean(x; dims=2) ≈ μ atol=(d * ATOL_RAND)
+            @test mean(x; dims=2) ≈ Array(mean(bnlv)) atol=(d * ATOL_RAND)
             @test var(x; dims=2) ≈ Σ atol=(d * ATOL_RAND)
 
             # logpdf

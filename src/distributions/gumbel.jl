@@ -41,6 +41,8 @@ function rand(gs::AbstractBatchGumbelSoftmax; τ=0.1)
     return exp_logit ./ sum(exp_logit; dims=1)
 end
 
+mean(gs::AbstractBatchGumbelSoftmax) = gs.p
+
 """
 The Gumbel-Bernoulli distributions.
 
@@ -76,6 +78,8 @@ function rand(gb::BatchGumbelBernoulli; τ=0.1)
     logx = logit1_minus_max .- log.(exp.(logit0 - logit_max) .+ exp.(logit1_minus_max))
     return exp.(logx)
 end
+
+mean(gb::BatchGumbelBernoulli) = gb.p
 
 """
 The Gumbel-Bernoulli distributions in logit space.
@@ -126,3 +130,5 @@ function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)
     lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
     return lp
 end
+
+mean(gbl::BatchGumbelBernoulliLogit) = Knet.sigm.(gbl.logitp)

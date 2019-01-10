@@ -15,6 +15,7 @@ using StatsFuns: logit, logistic
             x = hcat([rand(gs) for _ = 1:n]...)
 
             @test mean(x; dims=2) ≈ p atol=(2 * τ_atol_ratio * ATOL_RAND)
+            @test mean(x; dims=2) ≈ mean(gs) atol=(2 * τ_atol_ratio * ATOL_RAND)
         end
     end
 
@@ -30,7 +31,7 @@ using StatsFuns: logit, logistic
 
             x = Array([rand(gb)[1,1] for _ = 1:n])
             @test mean(x; dims=1) ≈ p atol=ATOL_RAND
-
+            @test mean(x; dims=1) ≈ Array(mean(gb)) atol=ATOL_RAND
         end
     end
 
@@ -43,6 +44,7 @@ using StatsFuns: logit, logistic
             logitx = Array([logitrand(gbl)[1] for _ = 1:n])
             x = logistic.(logitx)
             @test mean(x; dims=1) ≈ p atol=ATOL_RAND
+            @test mean(x; dims=1) ≈ Array(mean(gbl)) atol=ATOL_RAND
         end
 
         @warn "`logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)` is not tested."

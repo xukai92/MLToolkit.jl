@@ -17,7 +17,8 @@ function logpdf(bb::BatchBernoulli, x)
     return lp
 end
 
-mode(bb::BatchBernoulli) = bb.p
+mean(bb::BatchBernoulli) = bb.p
+mode(bb::BatchBernoulli) = (bb.p .> eltype(bb.p)(0.5)) .* 1
 
 """
     kldiv(ab1::BatchBernoulli, ab2::BatchBernoulli)
@@ -54,4 +55,8 @@ function logpdf(bbl::BatchBernoulliLogit, x)
     return lp
 end
 
-mode(bbl::BatchBernoulliLogit) = Knet.sigm.(bbl.logitp)
+mean(bbl::BatchBernoulliLogit) = Knet.sigm.(bbl.logitp)
+function mode(bbl::BatchBernoulliLogit)
+    p = Knet.sigm.(bbl.logitp)
+    return (p .> eltype(p)(0.5)) .* 1
+end
