@@ -35,6 +35,8 @@ function logpdf(dn::BatchNormal, x)
     return -(log(2 * eltype(dn.μ)(pi)) .+ log.(dn.Σ) .+ diff .* diff ./ dn.Σ) ./ 2
 end
 
+mode(bn::BatchNormal) = bn.μ
+
 struct BatchNormalLogVar{T}
     μ::T    # mean
     logΣ::T # log-variance
@@ -49,6 +51,8 @@ function logpdf(dn::BatchNormalLogVar, x)
     diff = x .- dn.μ
     return -(log(2 * eltype(dn.μ)(pi)) .+ dn.logΣ .+ diff .* diff ./ exp.(dn.logΣ)) ./ 2
 end
+
+mode(bn::BatchNormalLogVar) = bn.μ
 
 """
     kldiv(bn1::BatchNormal, bn2::BatchNormal)

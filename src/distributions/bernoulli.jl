@@ -17,6 +17,8 @@ function logpdf(bb::BatchBernoulli, x)
     return lp
 end
 
+mode(bb::BatchBernoulli) = bb.p
+
 """
     kldiv(ab1::BatchBernoulli, ab2::BatchBernoulli)
 
@@ -51,3 +53,5 @@ function logpdf(bbl::BatchBernoulliLogit, x)
     lp = x .* bbl.logitp .- log.(_one .+ exp.(bbl.logitp))
     return lp
 end
+
+mode(bbl::BatchBernoulliLogit) = Knet.sigm.(bbl.logitp)
