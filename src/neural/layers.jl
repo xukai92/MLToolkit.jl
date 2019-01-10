@@ -60,6 +60,7 @@ const STATIC_SYM_LIST = [:Dense, :DynamicIn, :DynamicOut]
 
 for static_sym in STATIC_SYM_LIST
     sto_sym = Symbol("Gaussian$static_sym")
+    
     @eval begin
         struct $sto_sym <: StochasticLayer
             μ::StaticLayer
@@ -78,6 +79,7 @@ end
 
 for static_sym in STATIC_SYM_LIST
     sto_sym = Symbol("GaussianLogVar$static_sym")
+
     @eval begin
         struct $sto_sym <: StochasticLayer
             μ::StaticLayer
@@ -96,6 +98,7 @@ end
 
 for static_sym in STATIC_SYM_LIST
     sto_sym = Symbol("Bernoulli$static_sym")
+
     @eval begin
         struct $sto_sym <: StochasticLayer
             p::StaticLayer
