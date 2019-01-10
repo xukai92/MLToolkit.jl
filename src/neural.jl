@@ -1,5 +1,5 @@
 import AutoGrad: grad
-import Knet: update!
+import Knet: update!, train!
 
 abstract type AbstractTrainable end
 abstract type AbstractLayer <: AbstractTrainable end
