@@ -7,44 +7,6 @@ abstract type StaticLayer <: AbstractLayer end
 abstract type StochasticLayer <: AbstractLayer end
 
 """
-Neural models.
-
-The difference between a layer and a model is that for models, loss are defined.
-
-All `NeuralModel` should be compatible with the following signature.
-```julia
-Base.show(nm::NeuralModel)
-loss(nm::NeuralModel, data)
-eval(nm::NeuralModel, data)
-```
-"""
-abstract type NeuralModel <: AbstractTrainable end
-Base.show(nm::NeuralModel) = error("Method not implemented")
-loss(nm::NeuralModel, data) = error("Method not implemented")
-# Callback function - if no specific metric implemented, re-use the loss function
-eval(nm::NeuralModel, data) = loss(nm, data)
-
-"""
-Train the model on a dataset.
-
-For each batch in the dataset, do:
-1. Compute the gradient of loss;
-2. Update model parameters using the optimizers set for each parameters.
-
-It returns batch averaged loss in the end.
-"""
-function train!(model::NeuralModel, dataloader)
-    loss_list = []
-    for data_batch in dataloader
-        losstape = @diff loss(model, data_batch)
-        graddict = grad(losstape, model)
-        update!(model, graddict)
-        push!(loss_list, value(losstape))
-    end
-    return mean(loss_list)
-end
-
-"""
 Evaluate the model on a dataset.
 
 It returns batch averaged metric value in the end.
@@ -99,6 +61,44 @@ function numparams(model::AbstractTrainable)
         n += prod(size(p))
     end
     return n
+end
+
+"""
+Neural models.
+
+The difference between a layer and a model is that for models, loss are defined.
+
+All `NeuralModel` should be compatible with the following signature.
+```julia
+Base.show(nm::NeuralModel)
+loss(nm::NeuralModel, data)
+eval(nm::NeuralModel, data)
+```
+"""
+abstract type NeuralModel <: AbstractTrainable end
+Base.show(nm::NeuralModel) = error("Method not implemented")
+loss(nm::NeuralModel, data) = error("Method not implemented")
+# Callback function - if no specific metric implemented, re-use the loss function
+eval(nm::NeuralModel, data) = loss(nm, data)
+
+"""
+Train the model on a dataset.
+
+For each batch in the dataset, do:
+1. Compute the gradient of loss;
+2. Update model parameters using the optimizers set for each parameters.
+
+It returns batch averaged loss in the end.
+"""
+function train!(model::NeuralModel, dataloader)
+    loss_list = []
+    for data_batch in dataloader
+        losstape = Knet.@diff loss(model, data_batch)
+        graddict = grad(losstape, model)
+        update!(model, graddict)
+        push!(loss_list, value(losstape))
+    end
+    return mean(loss_list)
 end
 
 include("neural/activations.jl")
