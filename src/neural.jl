@@ -70,7 +70,7 @@ struct Chain <: AbstractLayer
         for i = 1:n-1
             @assert layers[i] isa StaticLayer "The layers in middle should be `StaticLayer`."
         end
-        @assert layers[i] isa AbstractLayer "The last layer should be a `AbstractLayer`"
+        @assert layers[n] isa AbstractLayer "The last layer should be a `AbstractLayer`"
         return new(layers)
     end
 end
