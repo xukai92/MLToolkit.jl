@@ -7,19 +7,6 @@ abstract type StaticLayer <: AbstractLayer end
 abstract type StochasticLayer <: AbstractLayer end
 
 """
-Evaluate the model on a dataset.
-
-It returns batch averaged metric value in the end.
-"""
-function evaluate(model::NeuralModel, dataloader)
-    loss_list = []
-    for data_batch in dataloader
-        push!(loss_list, eval(model, data_batch))
-    end
-    return mean(loss_list)
-end
-
-"""
 Initialise optimizer for each trainable parameters.
 """
 function initoptim!(model::AbstractTrainable, otype; args...)
@@ -97,6 +84,19 @@ function train!(model::NeuralModel, dataloader)
         graddict = grad(losstape, model)
         update!(model, graddict)
         push!(loss_list, value(losstape))
+    end
+    return mean(loss_list)
+end
+
+"""
+Evaluate the model on a dataset.
+
+It returns batch averaged metric value in the end.
+"""
+function evaluate(model::NeuralModel, dataloader)
+    loss_list = []
+    for data_batch in dataloader
+        push!(loss_list, eval(model, data_batch))
     end
     return mean(loss_list)
 end
