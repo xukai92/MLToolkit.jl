@@ -32,6 +32,7 @@ Update all parameters in `ps` using the gradient dict `d`.
 """
 function update!(ps::Array, g::Dict)
     for p in ps
+        @assert p.opt == nothing "$p has no optimizer set up"
         update!(AutoGrad.value(p), g[p], p.opt)
     end
 end
