@@ -79,16 +79,16 @@ end
 for static_sym in STATIC_SYM_LIST
     sto_sym = Symbol("GaussianLogVar$static_sym")
     @eval begin
-        struct $static_sym <: StochasticLayer
+        struct $sto_sym <: StochasticLayer
             μ::StaticLayer
             logΣ::StaticLayer
         end
 
-        function $static_sym(i_dim::Integer, z_dim::Integer)
-            return $static_sym(static_sym(i_dim, z_dim), static_sym(i_dim, z_dim))
+        function $sto_sym(i_dim::Integer, z_dim::Integer)
+            return $sto_sym(static_sym(i_dim, z_dim), static_sym(i_dim, z_dim))
         end
 
-        function (glvn::$static_sym)(x, d::Integer...)
+        function (glvn::$sto_sym)(x, d::Integer...)
             return BatchNormalLogVar(glvn.μ(x, d...), glvn.logΣ(x, d...))
         end
     end

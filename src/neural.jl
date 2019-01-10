@@ -63,9 +63,9 @@ Chaining multiple layers.
 
 NOTE: only chainning layers are allowed but not models. As models are assumed to output loss when being called.
 """
-struct Chain <: Layer
+struct Chain <: AbstractLayer
     layers::Tuple
-    function Chain(layers)
+    function Chain(layers::Tuple)
         n = length(c.layers)
         for i = 1:n-1
             @assert layers[i] isa StaticLayer "The layers in middle should be `StaticLayer`."
@@ -98,5 +98,5 @@ function (c::Chain)(x, args...)
     return c.layers[n](x, args...)
 end
 
-export initoptim!, grad, update!, numparams,
-export AbstractTrainable, Layer, StaticLayer, StochasticLayer, Chain
+export initoptim!, grad, update!, numparams
+export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer, Chain
