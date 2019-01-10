@@ -64,7 +64,6 @@ Base.show(nm::NeuralModel)
 """
 abstract type NeuralModel <: AbstractTrainable end
 Base.show(nm::NeuralModel) = error("Method not implemented")
-loss(nm::NeuralModel, data) = nm(data)[1]
 
 """
 Train the model on a dataset.
@@ -75,10 +74,10 @@ For each batch in the dataset, do:
 
 It returns batch averaged loss in the end.
 """
-function train!(model::NeuralModel, dataloader)
+function train!(model::NeuralModel, dataloader; kargs...)
     loss_list = []
     for data_batch in dataloader
-        losstape = Knet.@diff model(data_batch, Val(:true))
+        losstape = Knet.@diff model(data_batch, Val(:true); kargs...)
         graddict = grad(losstape, model)
         update!(model, graddict)
         push!(loss_list, Knet.value(losstape))
@@ -91,10 +90,10 @@ Evaluate the model on a dataset.
 
 It returns batch averaged metric value in the end.
 """
-function evaluate(model::NeuralModel, dataloader)
+function evaluate(model::NeuralModel, dataloader; kargs...)
     loss_list = []
     for data_batch in dataloader
-        push!(loss_list, model(data_batch, Val(:false))[1]
+        push!(loss_list, model(data_batch, Val(:false); kargs...)[1])
     end
     return mean(loss_list)
 end
