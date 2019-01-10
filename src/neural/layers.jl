@@ -102,7 +102,7 @@ for static_sym in STATIC_SYM_LIST
         end
 
         function $sto_sym(i_dim::Integer, z_dim::Integer)
-            return $sto_sym(static_sym(i_dim, z_dim; f=Knet.sigm))
+            return $sto_sym($static_sym(i_dim, z_dim; f=Knet.sigm))
         end
 
         function (bn::$sto_sym)(x, d::Integer...)
