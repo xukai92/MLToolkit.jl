@@ -58,7 +58,7 @@ function make_imggrid(x, n_rows, n_cols; flat=true, gap::Integer=1)
     if !flat
         x = rehsape(x, size(x, 1)^2, size(x, 4))
     end
-    d² = size(x, 1)
+    d², n = size(x)
     d = round(Int, sqrt(d²))
     x_show = 0.5 * ones(FT, n_rows * (d + gap) + gap, n_cols * (d + gap) + gap)
     i = 1
