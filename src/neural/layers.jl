@@ -131,3 +131,43 @@ for static_sym in STATIC_SYM_LIST
         end
     end
 end
+
+"""
+Chaining multiple layers.
+
+NOTE: only chainning layers are allowed but not models. As models are assumed to output loss when being called.
+"""
+struct Chain <: AbstractLayer
+    layers::Tuple
+    function Chain(layers::Tuple)
+        n = length(layers)
+        for i = 1:n-1
+            @assert layers[i] isa StaticLayer "The layers in middle should be `StaticLayer`."
+        end
+        @assert layers[n] isa AbstractLayer "The last layer should be a `AbstractLayer`"
+        return new(layers)
+    end
+end
+Chain(layers::AbstractLayer...) = Chain(layers)
+Chain(layers) = Chain(layers...)
+
+"""
+Run chained layers.
+"""
+function (c::Chain)(x)
+    for l in c.layers
+        x = l(x)
+    end
+    return x
+end
+
+"""
+Run chained layers with `args...` applied to the last one.
+"""
+function (c::Chain)(x, args...)
+    n = length(c.layers)
+    for i = 1:n-1
+        x = c.layers[i](x)
+    end
+    return c.layers[n](x, args...)
+end
