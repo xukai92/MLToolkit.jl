@@ -67,10 +67,10 @@ WARN: this function is not tested.
 function logpdf(kuma::BatchKumaraswamy, x)
     _one = one(FT)
     _eps = eps(FT)
-    lp = log(kuma.a) .+
-         log(kuma.b) .+
+    lp = log.(kuma.a) .+
+         log.(kuma.b) .+
          (kuma.a .- _one) .* log.(x .+ _eps) .+
-         (kuma.b .- _one) .* log.(_one .- x.^kuma.a)
+         (kuma.b .- _one) .* log.(_one + _eps .- x.^kuma.a)
     return lp
 end
 

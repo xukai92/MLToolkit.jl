@@ -16,7 +16,7 @@ export NUM_RANDTESTS, ATOL, ATOL_RAND, FT, AT
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 include("special.jl")
-export lbeta, beta
+export lbeta, beta, logit
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("data.jl")

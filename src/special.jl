@@ -9,3 +9,10 @@ _lbeta(α, β) = lgamma(α) + lgamma(β) - lgamma(α + β)
 _beta(α, β) = exp(_lbeta(α, β))
 lbeta(α, β) = _lbeta(α, β)
 beta(α, β) = _beta(α, β)
+
+import StatsFuns: logit
+function logit(x)
+    _eps = eps(FT)
+    _one = one(FT)
+    return log(x + _eps) - log(_one - x + _eps)
+end
