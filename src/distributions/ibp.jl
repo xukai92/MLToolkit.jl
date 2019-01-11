@@ -10,14 +10,14 @@ end
 IBP(α::T) where {T<:Real} = IBP{T}(α)
 
 """
-    rand(ibp::IBP, Kmax::Int, n::Int)
+    rand(ibp::IBP, n::Int, k_max::Int)
 
 Sample from IBP using the stick-breaking construction.
-The returned sample is of size `n`-by-`Kmax`,
+The returned sample is of size `n`-by-`k_max`,
 which is not a Julia convension by a math convension.
 """
-function rand(ibp::IBP, Kmax::Int, n::Int)
-    ν = rand(Beta(ibp.α, 1), Kmax)
+function rand(ibp::IBP, n::Int, k_max::Int)
+    ν = rand(Beta(ibp.α, 1), k_max)
     p = break_stick_ibp(ν)
     Z = hcat(rand.(Bernoulli.(p), n)...)
     return Z
