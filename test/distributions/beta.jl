@@ -69,5 +69,7 @@ using Statistics: mean
             kl_mc = mean(logpdf(kuma, x) - logpdf.(Beta(a2, b2), x))
             @test kldiv(kuma, bb) ≈ kl_mc atol=(2 * ATOL_RAND)
         end
+
+        @warn "`logpdf(bb::BatchBeta, x)` is not tested."
     end
 end

@@ -19,4 +19,6 @@ using MLToolkit: _lbeta, _beta
             @test _beta.(AT(x), AT(y)) ≈ beta.(x, y)
         end
     end
+
+    @warn "`logit` is not tested."
 end

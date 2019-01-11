@@ -99,6 +99,15 @@ struct BatchBeta{T}
     β::T
 end
 
+function logpdf(bb::BatchBeta, x)
+    _one = one(FT)
+    _eps = eps(FT)
+    lp = (bb.α .- _one) .* log.(x .+ _eps) .+
+         (bb.β .- _one) .* log.(_one + _eps .- x) .-
+         lbeta.(bb.α, bb.β)
+    return lp
+end
+
 """
     kldiv(bb1::BatchBeta, bb2::BatchBeta)
 

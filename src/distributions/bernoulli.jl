@@ -17,6 +17,14 @@ function logpdf(bb::BatchBernoulli, x)
     return lp
 end
 
+function rand(bb::BatchBernoulli)
+    FT = eltype(bb.p)
+
+    u = rand(FT, size(bb.p)...)
+    x = AT((Array(bb.p) .> u) * one(FT))
+    return x
+end
+
 mean(bb::BatchBernoulli) = bb.p
 mode(bb::BatchBernoulli) = (bb.p .> eltype(bb.p)(0.5)) .* 1
 
