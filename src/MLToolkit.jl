@@ -21,6 +21,8 @@ include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("data.jl")
 export load_mnist, make_imggrid, BatchDataLoader
+include("scripting.jl")
+export parse_args
 
 include("distributions.jl")
 include("neural.jl")

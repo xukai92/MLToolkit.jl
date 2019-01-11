@@ -5,6 +5,7 @@ using Distributed, Test
         "data",
         "neural",
         "special",
+        "scripting",
         "distributions",
         "transformations",
     ]
