@@ -1,5 +1,5 @@
 using Test, MLToolkit
-using ArgParse: @add_arg_table, ArgParseSettings
+using ArgParse: ArgParseSettings, @add_arg_table
 
 @testset "Scripting" begin
     @testset "parse_args" begin
