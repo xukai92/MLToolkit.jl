@@ -21,6 +21,8 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
 end
 
 struct DynamicOut <: StaticLayer
+    i_dim::Integer
+    h_dim::Integer
     rnn::Knet.RNN
     mlp::StaticLayer
 end
@@ -31,7 +33,7 @@ function DynamicOut(i_dim::Integer, h_dim::Integer; rnnType=:relu, f=identity)
     return DynamicOut(rnn, mlp)
 end
 
-function (dy::DynamicOut)(x, d::Integer)
+function (dy::DynamicOut)(x, d::Integer=dy.h_dim)
     (x_dim, batch_size) = size(x)
     h = dy.rnn(reshape(hcat([x for _ = 1:d]...), x_dim, batch_size, d))
     # The `reshape` below was double-checked - don't waste time on debugging it
