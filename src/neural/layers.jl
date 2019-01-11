@@ -27,9 +27,10 @@ struct DynamicOut <: StaticLayer
     mlp::StaticLayer
 end
 
-function DynamicOut(i_dim::Integer, h_dim::Integer; rnnType=:relu, f=identity)
-    rnn = Knet.RNN(i_dim, h_dim; rnnType=rnnType, dataType=FT)
-    mlp = Dense(h_dim, 1; f=f)
+function DynamicOut(i_dim::Integer, h_dim::Integer;
+                    rnnType=:relu, bidirectional=false, f=identity)
+    rnn = Knet.RNN(i_dim, h_dim; rnnType=rnnType, bidirectional=bidirectional, dataType=FT)
+    mlp = Dense(h_dim * (bidirectional ? 2 : 1), 1; f=f)
     return DynamicOut(rnn, mlp)
 end
 
