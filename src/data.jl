@@ -93,7 +93,7 @@ end
 
 function BatchDataLoader(batch_size::Integer, data...; drop_last=false, atype=nothing)
     num_data = length(data)
-    data_length = size(first(data), 2)
+    data_length = last(size(first(data)))
     for i = 2:num_data
         @assert data_length == last(size(data[i])) "Data lengthes are inconsistent!"
     end
