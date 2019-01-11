@@ -21,8 +21,6 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
 end
 
 struct DynamicOut <: StaticLayer
-    i_dim::Integer
-    h_dim::Integer
     rnn::Knet.RNN
     mlp::StaticLayer
 end
