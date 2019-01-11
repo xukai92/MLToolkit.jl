@@ -106,6 +106,7 @@ export GaussianDense, GaussianDynamicIn, GaussianDynamicOut
 export GaussianLogVarDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut
 export BernoulliDense, BernoulliDynamicIn, BernoulliDynamicOut
 export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
+export GumbelBernoulliLogitDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
 export Chain
 
 export initoptim!, grad, update!, numparams

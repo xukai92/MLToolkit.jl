@@ -58,76 +58,61 @@ end
 
 const STATIC_SYM_LIST = [:Dense, :DynamicIn, :DynamicOut]
 
-for static_sym in STATIC_SYM_LIST
-    sto_sym = Symbol("Gaussian$static_sym")
+const UNARY_DIST_DICT = Dict(
+    :Bernoulli => (:BatchBernoulli, :p, :(Knet.sigm)),
+    :BernoulliLogit => (:BatchBernoulliLogit, :logitp, :identity),
+    :GumbelBernoulliLogit => (:BatchGumbelBernoulliLogit, :logitp, :identity),
+)
 
-    @eval begin
-        struct $sto_sym <: StochasticLayer
-            μ::StaticLayer
-            Σ::StaticLayer
-        end
+for dist_sym in keys(UNARY_DIST_DICT)
+    (batch_dist_sym, field_sym, f_sym) = UNARY_DIST_DICT[dist_sym]
+    for static_sym in STATIC_SYM_LIST
+        sto_sym = Symbol("$dist_sym$static_sym")
 
-        function $sto_sym(i_dim::Integer, h_dim::Integer)
-            return $sto_sym($static_sym(i_dim, h_dim), $static_sym(i_dim, h_dim; f=softplus))
-        end
+        @eval begin
+            struct $sto_sym <: StochasticLayer
+                $field_sym::StaticLayer
+            end
 
-        function (gn::$sto_sym)(x, d::Integer...)
-            return BatchNormal(gn.μ(x, d...), gn.Σ(x, d...))
-        end
-    end
-end
+            function $sto_sym(i_dim::Integer, z_dim::Integer)
+                return $sto_sym($static_sym(i_dim, z_dim; f=$f_sym))
+            end
 
-for static_sym in STATIC_SYM_LIST
-    sto_sym = Symbol("GaussianLogVar$static_sym")
-
-    @eval begin
-        struct $sto_sym <: StochasticLayer
-            μ::StaticLayer
-            logΣ::StaticLayer
-        end
-
-        function $sto_sym(i_dim::Integer, z_dim::Integer)
-            return $sto_sym($static_sym(i_dim, z_dim), $static_sym(i_dim, z_dim))
-        end
-
-        function (glvn::$sto_sym)(x, d::Integer...)
-            return BatchNormalLogVar(glvn.μ(x, d...), glvn.logΣ(x, d...))
+            function (sto::$sto_sym)(x, d::Integer...)
+                return $batch_dist_sym(sto.$field_sym(x, d...))
+            end
         end
     end
 end
 
-for static_sym in STATIC_SYM_LIST
-    sto_sym = Symbol("Bernoulli$static_sym")
+const BINARY_DIST_DICT = Dict(
+    :Gaussian => (:BatchNormal, :μ, :identity,
+                                :Σ, :softplus),
+    :GaussianLogVar => (:BatchNormalLogVar, :μ, :identity,
+                                            :logΣ, :identity),
+)
 
-    @eval begin
-        struct $sto_sym <: StochasticLayer
-            p::StaticLayer
-        end
+for dist_sym in keys(BINARY_DIST_DICT)
+    (batch_dist_sym, field_sym_1, f_sym_1,
+                     field_sym_2, f_sym_2) = BINARY_DIST_DICT[dist_sym]
+    for static_sym in STATIC_SYM_LIST
+        sto_sym = Symbol("$dist_sym$static_sym")
 
-        function $sto_sym(i_dim::Integer, z_dim::Integer)
-            return $sto_sym($static_sym(i_dim, z_dim; f=Knet.sigm))
-        end
+        @eval begin
+            struct $sto_sym <: StochasticLayer
+                $field_sym_1::StaticLayer
+                $field_sym_2::StaticLayer
+            end
 
-        function (bn::$sto_sym)(x, d::Integer...)
-            return BatchBernoulli(bn.p(x, d...))
-        end
-    end
-end
+            function $sto_sym(i_dim::Integer, z_dim::Integer)
+                return $sto_sym($static_sym(i_dim, z_dim; f=$f_sym_1),
+                                $static_sym(i_dim, z_dim; f=$f_sym_2))
+            end
 
-for static_sym in STATIC_SYM_LIST
-    sto_sym = Symbol("BernoulliLogit$static_sym")
-
-    @eval begin
-        struct $sto_sym <: StochasticLayer
-            logitp::StaticLayer
-        end
-
-        function $sto_sym(i_dim::Integer, z_dim::Integer)
-            return $sto_sym($static_sym(i_dim, z_dim))
-        end
-
-        function (bln::$sto_sym)(x, d::Integer...)
-            return BatchBernoulliLogit(bln.logitp(x, d...))
+            function (sto::$sto_sym)(x, d::Integer...)
+                return $batch_dist_sym(sto.$field_sym_1(x, d...),
+                                       sto.$field_sym_2(x, d...))
+            end
         end
     end
 end

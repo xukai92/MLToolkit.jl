@@ -1,5 +1,5 @@
 using LinearAlgebra: det, tr, inv
-using Distributions: MvNormal
+using Distributions: Normal, MvNormal
 
 """
 Normal distribution with parameters (possibly) in batch.
@@ -21,6 +21,10 @@ Ref: https://arxiv.org/pdf/1312.6114.pdf
 function rand(dn::BatchNormal)
     ϵ = AT(randn(eltype(dn.μ), size(dn.μ)...))
     return dn.μ + sqrt.(dn.Σ) .* ϵ
+end
+
+function rand(dn::BatchNormal{T}, dims...) where {T<:Real}
+    return rand(Normal(dn.μ, sqrt(dn.Σ)), dims...)
 end
 
 """
