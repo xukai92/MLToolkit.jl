@@ -104,6 +104,7 @@ include("neural/layers.jl")
 export Dense, DynamicIn, DynamicOut
 export GaussianDense, GaussianDynamicIn, GaussianDynamicOut
 export GaussianLogVarDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut
+export KumaraswamyDense, KumaraswamyDynamicIn, KumaraswamyDynamicOut
 export BernoulliDense, BernoulliDynamicIn, BernoulliDynamicOut
 export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 export GumbelBernoulliLogitDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
