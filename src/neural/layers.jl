@@ -25,14 +25,14 @@ struct DynamicOut <: StaticLayer
     mlp::StaticLayer
 end
 
-function DynamicOut(i_dim::Integer, h_dim::Integer;
-                    rnnType=:relu, bidirectional=false, f=identity)
-    rnn = Knet.RNN(i_dim, h_dim; rnnType=rnnType, bidirectional=bidirectional, dataType=FT)
-    mlp = Dense(h_dim * (bidirectional ? 2 : 1), 1; f=f)
+function DynamicOut(i_dim::Integer, r_dim::Integer;
+                    rnnType=:relu, f=identity)
+    rnn = Knet.RNN(i_dim, r_dim; rnnType=rnnType, dataType=FT)
+    mlp = Dense(r_dim, 1; f=f)
     return DynamicOut(rnn, mlp)
 end
 
-function (dy::DynamicOut)(x, d::Integer=dy.h_dim)
+function (dy::DynamicOut)(x, d::Integer=dy.r_dim)
     (x_dim, batch_size) = size(x)
     h = dy.rnn(reshape(hcat([x for _ = 1:d]...), x_dim, batch_size, d))
     # The `reshape` below was double-checked - don't waste time on debugging it
@@ -45,9 +45,10 @@ struct DynamicIn <: StaticLayer
     mlp::StaticLayer
 end
 
-function DynamicIn(h_dim::Integer, o_dim::Integer; rnnType=:relu, f=identity)
-    rnn = Knet.RNN(1, h_dim; rnnType=rnnType, dataType=FT)
-    mlp = Dense(h_dim, o_dim; f=f)
+function DynamicIn(r_dim::Integer, o_dim::Integer;
+                   rnnType=:relu, bidirectional=false, f=identity)
+    rnn = Knet.RNN(1, r_dim; rnnType=rnnType,bidirectional=bidirectional, dataType=FT)
+    mlp = Dense(r_dim * (bidirectional ? 2 : 1), o_dim; f=f)
     return DynamicIn(rnn, mlp)
 end
 
