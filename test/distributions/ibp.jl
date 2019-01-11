@@ -4,7 +4,7 @@ using Test, MLToolkit
     d, n = 10, 5
     for _ = 1:NUM_RANDTESTS
         ibp = IBP(2.0)
-        Z = rand(ibp, d, n)
+        Z = rand(ibp, n, d)
         @test size(Z) == (n, d)
         Z = rand(ibp, n)
         @test size(Z, 1) == n
