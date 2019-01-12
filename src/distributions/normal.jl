@@ -6,7 +6,7 @@ Normal distribution with parameters (possibly) in batch.
 """
 struct BatchNormal{T}
     μ::T    # mean
-    Σ::T    # variance
+    Σ       # variance
 end
 
 """
@@ -44,7 +44,7 @@ mode(bn::BatchNormal) = bn.μ
 
 struct BatchNormalLogVar{T}
     μ::T    # mean
-    logΣ::T # log-variance
+    logΣ    # log-variance
 end
 
 function rand(dn::BatchNormalLogVar)
