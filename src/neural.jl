@@ -19,7 +19,7 @@ Update all parameters in `ps` by back-propgating `losstape`.
 """
 function update!(ps::Array, losstape::AutoGrad.Tape)
     for p in ps
-        g = grad(losstape, p)
+        g = Knet.grad(losstape, p)
         @assert p.opt != nothing "$p has no optimizer set up"
         update!(value(p), g, p.opt)
     end
