@@ -65,14 +65,21 @@ For each batch in the dataset, do:
 
 It returns batch averaged loss in the end.
 """
-function train!(model::NeuralModel, dataloader; kargs...)
+function train!(model::NeuralModel, dataloader; kwargs...)
     loss_list = []
-    l = length(dataloader)
-    ks = keys(kargs)
+    # Pop `:epoch` out from from `kwargs` if exist
+    local epoch = nothing
+    if :epoch in keys(kwargs)
+        epoch = kwargs[:epoch]
+        kwargs = Dict(kwargs...)
+        pop!(kwargs, :epoch)
+    end
     for (i, data_batch) in enumerate(dataloader)
-        # Calculate the iteration till now given the epoch
-        iter = :epoch in ks ? l * (kargs[:epoch] - 1) + i : nothing
-        losstape = Knet.@diff model(data_batch, Val(:true); iter=iter, kargs...)
+        # Calculate the iteration till now if given the epoch
+        if epoch != nothing
+            kwargs[:iter] = length(dataloader) * (epoch - 1) + i
+        end
+        losstape = Knet.@diff model(data_batch, Val(:true); kwargs...)
         update!(model, losstape)
         push!(loss_list, Knet.value(losstape))
     end
