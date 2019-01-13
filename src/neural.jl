@@ -1,4 +1,3 @@
-import AutoGrad: grad
 import Knet: update!, train!
 
 abstract type AbstractTrainable end
@@ -16,32 +15,24 @@ function initoptim!(model::AbstractTrainable, otype; args...)
 end
 
 """
-Get the gradient dictionary for `ps` from the result tape `x`.
+Update all parameters in `ps` by back-propgating `losstape`.
 """
-function grad(x::AutoGrad.Tape, ps::Array)
-    return Dict(p => grad(x, p) for p in ps)
-end
-
-"""
-Get the gradient dictionary for all parameters of `model` from the result tape `x`.
-"""
-grad(x::AutoGrad.Tape, model::AbstractTrainable) = grad(x, Knet.params(model))
-
-"""
-Update all parameters in `ps` using the gradient dict `d`.
-"""
-function update!(ps::Array, g::Dict)
+function update!(ps::Array, losstape::AutoGrad.Tape)
     for p in ps
+        g = grad(losstape, p)
         @assert p.opt != nothing "$p has no optimizer set up"
-        update!(AutoGrad.value(p), g[p], p.opt)
+        update!(value(p), g, p.opt)
     end
 end
 
 """
-Update all parameters of `model` using the gradient dict `d`.
+Update all parameters of `model` by back-propgating `losstape`.
 """
-update!(model::AbstractTrainable, g::Dict) = update!(Knet.params(model), g)
+update!(model::AbstractTrainable, losstape::AutoGrad.Tape) = update!(Knet.params(model), losstape)
 
+"""
+Compute the number of parameters.
+"""
 function numparams(model::AbstractTrainable)
     n = 0
     for p in Knet.params(model)
@@ -78,8 +69,7 @@ function train!(model::NeuralModel, dataloader; kargs...)
     loss_list = []
     for data_batch in dataloader
         losstape = Knet.@diff model(data_batch, Val(:true); kargs...)
-        graddict = grad(losstape, model)
-        update!(model, graddict)
+        update!(model, losstape)
         push!(loss_list, Knet.value(losstape))
     end
     return mean(loss_list)
@@ -110,6 +100,6 @@ export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 export GumbelBernoulliLogitDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
 export Chain
 
-export initoptim!, grad, update!, numparams
+export initoptim!, update!, numparams
 export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
 export NeuralModel, train!, evaluate
