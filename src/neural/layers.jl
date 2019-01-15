@@ -54,7 +54,14 @@ end
 
 function (dy::DynamicIn)(x)
     (x_dim, batch_size) = size(x)
-    h = dy.rnn(reshape(x', 1, batch_size, x_dim))[:,:,end] # only the last hidden state is used
+    y = dy.rnn(reshape(x', 1, batch_size, x_dim))
+    # Only the last hidden state is used
+    h = if dy.rnn.direction == 0
+        y[:,:,end]
+    else
+        h_dim = dy.rnn.hiddenSize
+        vcat(y[:,:,end][1:h_dim,:], y[:,:,1][h_dim+1:end,:])
+    end
     return dy.mlp(h)
 end
 
