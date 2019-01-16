@@ -70,8 +70,8 @@ const STATIC_SYM_LIST = [:Dense, :DynamicIn, :DynamicOut]
 const UNARY_DIST_DICT = Dict(
     :Bernoulli => (:BatchBernoulli, :p, :(Knet.sigm)),
     :BernoulliLogit => (:BatchBernoulliLogit, :logitp, :identity),
-    :GumbelBernoulliLogit => (:BatchGumbelBernoulliLogit, :logitp, :identity)
-    :GumbelSoftmax => (:BatchGumbelSoftmax, :p, :(Knet.sigm)),
+    :GumbelBernoulliLogit => (:BatchGumbelBernoulliLogit, :logitp, :identity),
+    :GumbelSoftmax => (:BatchGumbelSoftmax, :p, :identity),
 )
 
 for dist_sym in keys(UNARY_DIST_DICT)
