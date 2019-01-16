@@ -72,7 +72,9 @@ function train!(model::NeuralModel, dataloader; kwargs...)
     if :epoch in keys(kwargs)
         epoch = kwargs[:epoch]
         kwargs = Dict(kwargs...)
-        pop!(kwargs, :epoch)
+        # NOTE: the line below is uncommented because `:epoch` is useful for annealing
+        #       so we need to deal with possible unwanted keyword agurments manually
+        # pop!(kwargs, :epoch)
     end
     for (i, data_batch) in enumerate(dataloader)
         # Calculate the iteration till now if given the epoch
