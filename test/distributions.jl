@@ -8,11 +8,12 @@ using Distributed, Test
         "bernoulli",
         "gumbel",
         "beta",
+        "npd",
     ]
 
     res = map(tests) do t
         @eval module $(Symbol("TestDistributions_", t))
-        include("distributions/" * $t * ".jl")
+            include("distributions/" * $t * ".jl")
         end
         return
     end

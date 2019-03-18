@@ -6,13 +6,14 @@ using Distributed, Test
         "neural",
         "special",
         "scripting",
+        "monte_carlo",
         "distributions",
         "transformations",
     ]
 
     res = map(tests) do t
         @eval module $(Symbol("Test_", t))
-        include($t * ".jl")
+            include($t * ".jl")
         end
         return
     end

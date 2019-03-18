@@ -1,4 +1,4 @@
-import Distributions: logpdf, pdf, rand, mean, mode, minimum, maximum
+import Distributions: logpdf, pdf, cdf, ccdf, rand, mean, mode, minimum, maximum
 
 include("distributions/displaced_poisson.jl")
 export DisplacedPoisson
@@ -12,6 +12,8 @@ include("distributions/bernoulli.jl")
 export BatchBernoulli, BatchBernoulliLogit
 include("distributions/beta.jl")
 export BatchKumaraswamy, BatchBeta
+include("distributions/npd.jl")
+export LogitNPD, getlogitρ, getρ, getlogρ
 
-export logpdf, pdf, rand, mean, mode, minimum, maximum
+export logpdf, pdf, cdf, ccdf, rand, mean, mode, minimum, maximum
 export logpdflogit, logrand, logitrand, kldiv

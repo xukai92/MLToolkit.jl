@@ -23,9 +23,9 @@ using StatsFuns: logit
             kl_mc = mean(logpdf.(b, x) - logpdf.(b2, x))
 
             @test sum(kldiv(bb, bb2)) ≈ kl_mc atol=ATOL_RAND
-
-            @warn "`rand(bb::BatchBernoulli)` is not tested."
         end
+
+        @warn "`rand(bb::BatchBernoulli)` is not tested."
     end
 
     @testset "BatchBernoulliLogit" begin

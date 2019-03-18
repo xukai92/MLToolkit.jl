@@ -2,6 +2,7 @@ using Distributions: Beta, Bernoulli, Poisson
 
 struct IBP{T<:Real}
     α::T
+    # TODO: IBP{T} -> IBP below and Line 11 could be removed
     function IBP{T}(α) where {T<:Real}
         @assert α > 0 "α is not positve"
         return new{T}(α)

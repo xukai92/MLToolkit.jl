@@ -57,7 +57,9 @@ using Statistics: mean
         end
 
         for _ = 1:NUM_RANDTESTS
-            (a1, b1, a2, b2) = 1.0 .+ rand(4).^2
+            # Generate a1, b1, a2, b2 that are not too far away from each other
+            (a1, b1) = 1.0 .+ rand(2).^2
+            (a2, b2) = [a1, b1] .+ rand(2).^2
 
             @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈
                   kldiv(BatchBeta(a1, b1), BatchBeta(a2, b2)) atol=ATOL_RAND

@@ -1,4 +1,3 @@
-using Distributions: DiscreteUnivariateDistribution
 using SpecialFunctions: gamma
 using GSL: sf_gamma_inc_P
 incomplete_gamma = sf_gamma_inc_P
@@ -8,7 +7,7 @@ The displaced Poisson distribution (a.k.a the hyper-Poisson distribution).
 
 Ref: https://www.jstor.org/stable/2283992
 """
-struct DisplacedPoisson{T<:Real} <: DiscreteUnivariateDistribution
+struct DisplacedPoisson{T<:Real} <: Distributions.DiscreteUnivariateDistribution
     λ::T
     r::T
     function DisplacedPoisson{T}(λ, r) where {T<:Real}

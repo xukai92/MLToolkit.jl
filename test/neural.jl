@@ -1,7 +1,6 @@
 using Distributed, Test
 
 @testset "Neural" begin
-
     @warn "`neural.jl` is not tested."
 
     tests = [
@@ -11,7 +10,7 @@ using Distributed, Test
 
     res = map(tests) do t
         @eval module $(Symbol("TestNeural_", t))
-        include("neural/" * $t * ".jl")
+            include("neural/" * $t * ".jl")
         end
         return
     end
