@@ -20,4 +20,9 @@ using Test, MLToolkit
     @test ccdf(lnpd1, 1) == 0.5
     @test ccdf(lnpd1, 2) == 0.25
     @test mode(lnpd1) == 1
+
+    k_init = 100
+    lnpd1 = LogitNPD(k_init; l_init=1.0)
+    @test lnpd1.logitρ == ones(k_init)
+    @test getlogitρ(lnpd1, 1, k_init) == ones(k_init)
 end

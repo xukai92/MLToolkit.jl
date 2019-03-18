@@ -12,17 +12,17 @@ P(K = k) = (1 - \\rho_k) \\prod_{i = 1}^{k - 1} \\rho_i.
 """
 struct LogitNPD{T<:Real,A<:AbstractVector{T}} <: Distributions.DiscreteUnivariateDistribution
     logitρ  ::  A
+    l_init  ::  T   # initial value for each logitρᵢ
 end
-# TODO: find a way to declare initial value
 
-LogitNPD() = LogitNPD(0)
-LogitNPD(alpha::AbstractFloat) = LogitNPD(ceil(Int, alpha))
-LogitNPD(k_init::Int) = LogitNPD(ones(FT, k_init) * 0.0)
+LogitNPD(; l_init=zero(FT)) = LogitNPD(0; l_init=l_init)
+LogitNPD(alpha::AbstractFloat; l_init=zero(FT)) = LogitNPD(ceil(Int, alpha); l_init=l_init)
+LogitNPD(k_init::Int; l_init=zero(FT)) = LogitNPD(ones(FT, k_init) * l_init, l_init)
 
 function getlogitρ(lnpd::LogitNPD{T,A}, k::Int) where {T<:Real,A<:AbstractVector{T}}
     l = length(lnpd.logitρ)
     if k > l
-        append!(lnpd.logitρ, ones(T, k - l) * 0.0...)
+        append!(lnpd.logitρ, ones(T, k - l) * lnpd.l_init...)
     end
     return lnpd.logitρ[k]
 end
@@ -30,7 +30,7 @@ end
 function getlogitρ(lnpd::LogitNPD{T,A}, k1::Int, k2::Int) where {T<:Real,A<:AbstractVector{T}}
     l = length(lnpd.logitρ)
     if k2 > l
-        append!(lnpd.logitρ, ones(T, k2 - l) * 0.0...)
+        append!(lnpd.logitρ, ones(T, k2 - l) * lnpd.l_init...)
     end
     return lnpd.logitρ[k1:k2]
 end
