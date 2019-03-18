@@ -20,6 +20,7 @@ using Distributions: Poisson
     S_rr = mean([roll(X, dist) for _ = 1:n_mc])
 
     @test S_rr ≈ S_true atol=0.1
+    @test roll(X, dist, n_mc) ≈ S_true atol=0.1
 
     dist = Poisson(5.0)
     T(i) = pdf(dist, i) * X(i)
