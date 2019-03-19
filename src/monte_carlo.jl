@@ -22,6 +22,6 @@ function estimator_stats(estimates::AbstractVector{T};
 end
 
 include("monte_carlo/russian_roulette.jl")
-export roll, roll_exp
+export roll, roll_expectation
 
 export estimator_stats

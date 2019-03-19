@@ -29,8 +29,8 @@ using Distributions: Poisson
 
     n_mc = 100_000
     S_rr_1 = mean([roll(T, dist) for _ = 1:n_mc])
-    S_rr_2 = mean([roll_exp(X, dist, Poisson(5.1)) for _ = 1:n_mc])
-    S_rr_3 = mean([roll_exp(X, dist, LogitNPD()) for _ = 1:n_mc])
+    S_rr_2 = mean([roll_expectation(X, dist, Poisson(5.1)) for _ = 1:n_mc])
+    S_rr_3 = mean([roll_expectation(X, dist, LogitNPD()) for _ = 1:n_mc])
 
     @test S_rr_1 ≈ S_true atol=0.1
     @test S_rr_2 ≈ S_true atol=0.1
@@ -43,9 +43,9 @@ using Distributions: Poisson
 
     n_mc = 100_000
     S_rr_1 = mean([roll(T, dist) for _ = 1:n_mc])
-    S_rr_2 = mean([roll_exp(X, dist, Poisson(5.1)) for _ = 1:n_mc])
-    S_rr_3 = mean([roll_exp(X, dist, LogitNPD()) for _ = 1:n_mc])
-    S_rr_4 = mean([roll_exp(X, dist, dist) for _ = 1:n_mc])
+    S_rr_2 = mean([roll_expectation(X, dist, Poisson(5.1)) for _ = 1:n_mc])
+    S_rr_3 = mean([roll_expectation(X, dist, LogitNPD()) for _ = 1:n_mc])
+    S_rr_4 = mean([roll_expectation(X, dist, dist) for _ = 1:n_mc])
 
     @test S_rr_1 ≈ S_true atol=0.1
     @test S_rr_2 ≈ S_true atol=0.1

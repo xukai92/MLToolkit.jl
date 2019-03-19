@@ -25,9 +25,9 @@ Approximate the summation below using single sample Russian roulette sampling.
 
 S = \\sum_{i=1}^{\\infty} m_i T_i
 """
-function roll_exp(T::Function, m::Distributions.DiscreteUnivariateDistribution, p::Distributions.DiscreteUnivariateDistribution, n_mc::Int=1)
+function roll_expectation(T::Function, m::Distributions.DiscreteUnivariateDistribution, p::Distributions.DiscreteUnivariateDistribution, n_mc::Int=1)
     if m == p
-        return roll_exp(T, m)
+        return roll_expectation(T, m)
     end
     taus = filter(t -> t > 0, rand(p, n_mc))
     if length(taus) == 0
@@ -42,7 +42,7 @@ function roll_exp(T::Function, m::Distributions.DiscreteUnivariateDistribution, 
     return sum(T.(1:tau_max) .* ws)
 end
 
-function roll_exp(T::Function, p::LogitNPD, n_mc::Int=1)
+function roll_expectation(T::Function, p::LogitNPD, n_mc::Int=1)
     taus = rand(p, n_mc)
     tau_min, tau_max = extrema(taus)
     ws = 1 .- getρ.(Ref(p), 1:tau_max)
