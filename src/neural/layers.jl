@@ -14,9 +14,13 @@ end
 """
 Create dense layer by input and output size.
 """
-function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity)
+function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity, b0::Bool=true)
     w = Knet.param(o_dim, i_dim; atype=AT{FT,2})
-    b = Knet.param0(o_dim; atype=AT{FT,1})
+    if b0
+        b = Knet.param0(o_dim; atype=AT{FT,1})
+    else
+        b = Knet.param(o_dim; atype=AT{FT,1})
+    end
     return Dense(w, b, f)
 end
 
