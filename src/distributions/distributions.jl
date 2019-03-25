@@ -1,18 +1,18 @@
 import Distributions: logpdf, pdf, cdf, ccdf, rand, mean, mode, minimum, maximum
 
-include("distributions/displaced_poisson.jl")
+include("displaced_poisson.jl")
 export DisplacedPoisson
-include("distributions/ibp.jl")
+include("ibp.jl")
 export IBP
-include("distributions/normal.jl")
+include("normal.jl")
 export BatchNormal, BatchNormalLogVar
-include("distributions/gumbel.jl")
+include("gumbel.jl")
 export BatchGumbelSoftmax, BatchGumbelSoftmax2D, BatchGumbelBernoulli, BatchGumbelBernoulliLogit
-include("distributions/bernoulli.jl")
+include("bernoulli.jl")
 export BatchBernoulli, BatchBernoulliLogit
-include("distributions/beta.jl")
+include("beta.jl")
 export BatchKumaraswamy, BatchBeta
-include("distributions/npd.jl")
+include("npd.jl")
 export LogitNPD, getlogitρ, getρ, getlogρ
 
 export logpdf, pdf, cdf, ccdf, rand, mean, mode, minimum, maximum

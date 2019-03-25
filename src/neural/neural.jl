@@ -101,9 +101,9 @@ function evaluate(model::NeuralModel, dataloader; kargs...)
     return mean(loss_list)
 end
 
-include("neural/activations.jl")
+include("activations.jl")
 export softplus, leaky_relu
-include("neural/layers.jl")
+include("layers.jl")
 export Dense, DynamicIn, DynamicOut
 export GaussianDense, GaussianDynamicIn, GaussianDynamicOut
 export GaussianLogVarDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut

@@ -22,10 +22,10 @@ export parse_args
 include("plotting.jl")
 export plot_two_y_axes
 
-include("distributions.jl")
+include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
-include("neural.jl")
+include("neural/neural.jl")
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
