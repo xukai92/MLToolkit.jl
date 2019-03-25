@@ -1,6 +1,19 @@
-using MLToolkit, Distributed, Test
+using Distributed, Test
+using MLToolkit.MonteCarlo
 
 @testset "Monte Carlo" begin
+
+    tests = [
+        "russian_roulette",
+    ]
+
+    res = map(tests) do t
+        @eval module $(Symbol("TestMonteCarlo_", t))
+            include($t * ".jl")
+        end
+        return
+    end
+
     @testset "estimator_stats" begin
         n_mc = 10_000
         estimates = zeros(n_mc)
@@ -13,15 +26,5 @@ using MLToolkit, Distributed, Test
         end
         stats = estimator_stats(estimates; times=times, ground=ground)
     end
-
-    tests = [
-        "russian_roulette",
-    ]
-
-    res = map(tests) do t
-        @eval module $(Symbol("TestMonteCarlo_", t))
-            include("monte_carlo/" * $t * ".jl")
-        end
-        return
-    end
+    
 end

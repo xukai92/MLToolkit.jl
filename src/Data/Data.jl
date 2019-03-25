@@ -1,12 +1,13 @@
 module Data
 
 using ..MLToolkit: FT, AT
+export FT, AT
 
 include("mnist.jl")
+export load_mnist
 include("loader.jl")
+export BatchDataLoader
 include("visualisation.jl")
-
-export load_mnist, make_imggrid, BatchDataLoader,
-       FT, AT
+export make_imggrid
 
 end # module

@@ -1,7 +1,7 @@
 module MLToolkit
 
 # Package level imports all go here
-import AutoGrad, Knet, PyPlot, Distributions
+import AutoGrad, Knet, PyPlot, Distributions, Reexport
 const plt = PyPlot
 
 # Constants
@@ -22,14 +22,15 @@ export lbeta, beta, logit
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("Data/Data.jl")
-using .Data
+Reexport.@reexport using .Data
 include("scripting.jl")
 export parse_args
 include("plotting.jl")
 export plot_two_y_axes
 
 include("distributions.jl")
-include("monte_carlo.jl")
+include("MonteCarlo/MonteCarlo.jl")
+Reexport.@reexport using .MonteCarlo
 include("neural.jl")
 
 end # module

@@ -1,11 +1,9 @@
-using StatsBase: counts
-
 """
 Approximate the summation below using single sample Russian roulette sampling.
 
 S = \\sum_{i=1}^{\\infty} X_i
 """
-function roll(X::Function, p::Distributions.DiscreteUnivariateDistribution, n_mc::Int=1)
+function roll(X::Function, p::DiscreteUnivariateDistribution, n_mc::Int=1)
     taus = filter(t -> t > 0, rand(p, n_mc))
     if length(taus) == 0
         return 0
@@ -25,7 +23,7 @@ Approximate the summation below using single sample Russian roulette sampling.
 
 S = \\sum_{i=1}^{\\infty} m_i T_i
 """
-function roll_expectation(T::Function, m::Distributions.DiscreteUnivariateDistribution, p::Distributions.DiscreteUnivariateDistribution, n_mc::Int=1)
+function roll_expectation(T::Function, m::DiscreteUnivariateDistribution, p::DiscreteUnivariateDistribution, n_mc::Int=1)
     if m == p
         return roll_expectation(T, m)
     end

@@ -6,7 +6,7 @@ using Distributed, Test
         "neural",
         "special",
         "scripting",
-        "monte_carlo",
+        "MonteCarlo/MonteCarlo",
         "distributions",
         "transformations",
     ]

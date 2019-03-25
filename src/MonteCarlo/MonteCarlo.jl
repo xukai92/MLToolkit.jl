@@ -1,4 +1,10 @@
-# import
+module MonteCarlo
+
+using StatsBase: counts
+using Distributions: DiscreteUnivariateDistribution, pdf, ccdf
+using ..MLToolkit: LogitNPD, getρ
+include("russian_roulette.jl")
+export roll, roll_expectation
 
 using Statistics: mean, var
 
@@ -21,7 +27,6 @@ function estimator_stats(estimates::AbstractVector{T};
     return s
 end
 
-include("monte_carlo/russian_roulette.jl")
-export roll, roll_expectation
-
 export estimator_stats
+
+end # module
