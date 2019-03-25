@@ -56,7 +56,14 @@ using Statistics: mean
             @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈ ans atol=100ATOL
         end
 
+
+        param_list = []
         for _ = 1:NUM_RANDTESTS
+            (a1, b1) = 1.0 .+ rand(2).^2
+            (a2, b2) = [a1, b1] .+ rand(2).^2
+            push!(param_list, (a1, b1, a2, b2))
+        end
+        @testset "($a1,$b1) v.s. ($a2,$b2)" for (a1, b1, a2, b2) in param_list
             # Generate a1, b1, a2, b2 that are not too far away from each other
             (a1, b1) = 1.0 .+ rand(2).^2
             (a2, b2) = [a1, b1] .+ rand(2).^2

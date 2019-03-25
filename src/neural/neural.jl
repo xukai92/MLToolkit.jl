@@ -101,18 +101,18 @@ function evaluate(model::NeuralModel, dataloader; kargs...)
     return mean(loss_list)
 end
 
+export initoptim!, update!, numparams
+export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
+export NeuralModel, train!, evaluate
+
 include("activations.jl")
 export softplus, leaky_relu
 include("layers.jl")
-export Dense, DynamicIn, DynamicOut
+export Dense, DynamicIn, DynamicOut, Chain
+include("stochastic_layers.jl")
 export GaussianDense, GaussianDynamicIn, GaussianDynamicOut
 export GaussianLogVarDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut
 export KumaraswamyDense, KumaraswamyDynamicIn, KumaraswamyDynamicOut
 export BernoulliDense, BernoulliDynamicIn, BernoulliDynamicOut
 export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 export GumbelBernoulliLogitDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
-export Chain
-
-export initoptim!, update!, numparams
-export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
-export NeuralModel, train!, evaluate

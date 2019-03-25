@@ -6,6 +6,7 @@ using MLToolkit: include_list_as_module
 
     tests = [
         "layers",
+        "stochastic_layers",
         "activations",
     ]
 
