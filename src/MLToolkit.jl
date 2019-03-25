@@ -6,8 +6,9 @@ const plt = PyPlot
 
 # Constants
 const FT = Float64
-# Use GPU whenever possible
-const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array
+const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possible
+
+# For test purposes
 const NUM_RANDTESTS = 5
 const ATOL = FT == Float64 ? 1e-6 : 1e-4
 const ATOL_RAND = FT == Float64 ? 2e-2 : 5e-1
@@ -20,8 +21,8 @@ include("special.jl")
 export lbeta, beta, logit
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
-include("data.jl")
-export load_mnist, make_imggrid, BatchDataLoader
+include("Data/Data.jl")
+using .Data
 include("scripting.jl")
 export parse_args
 include("plotting.jl")
@@ -31,4 +32,4 @@ include("distributions.jl")
 include("monte_carlo.jl")
 include("neural.jl")
 
-end
+end # module

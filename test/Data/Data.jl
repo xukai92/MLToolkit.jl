@@ -1,4 +1,5 @@
-using Test, MLToolkit
+using Test
+using MLToolkit.Data
 using Knet: KnetArray
 
 @testset "Data" begin

@@ -2,7 +2,7 @@ using Distributed, Test
 
 @testset "Tests" begin
     tests = [
-        "data",
+        "Data/Data",
         "neural",
         "special",
         "scripting",
