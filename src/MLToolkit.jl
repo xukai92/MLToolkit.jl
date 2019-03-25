@@ -1,21 +1,15 @@
 module MLToolkit
 
+greet() = print("Welcome to Kai's machine learning toolkit!")
+
 # Package level imports all go here
-import AutoGrad, Knet, PyPlot, Distributions, Reexport
-const plt = PyPlot
+import AutoGrad, Knet, PyPlot, Distributions, Reexport, Distributed
 
 # Constants
 const FT = Float64
 const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possible
-
-# For test purposes
-const NUM_RANDTESTS = 5
-const ATOL = FT == Float64 ? 1e-6 : 1e-4
-const ATOL_RAND = FT == Float64 ? 2e-2 : 5e-1
-
-export NUM_RANDTESTS, ATOL, ATOL_RAND, FT, AT, plt
-
-greet() = print("Welcome to Kai's machine learning toolkit!")
+const plt = PyPlot
+export FT, AT, plt
 
 include("special.jl")
 export lbeta, beta, logit
@@ -32,5 +26,8 @@ include("distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
 include("neural.jl")
+
+include("test_util.jl")
+export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
 
 end # module

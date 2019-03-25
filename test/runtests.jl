@@ -1,20 +1,16 @@
-using Distributed, Test
+using Test
+using MLToolkit: include_list_as_module
 
 @testset "Tests" begin
     tests = [
         "Data/Data",
-        "neural",
+        "neural/neural",
         "special",
         "scripting",
         "MonteCarlo/MonteCarlo",
-        "distributions",
+        "distributions/distributions",
         "transformations",
     ]
 
-    res = map(tests) do t
-        @eval module $(Symbol("Test_", t))
-            include($t * ".jl")
-        end
-        return
-    end
+    include_list_as_module(tests, "Test")
 end
