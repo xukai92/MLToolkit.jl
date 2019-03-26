@@ -12,12 +12,10 @@ julia:
 addons:
   apt:
     packages:
-      - python-matplotlib
       - python3-matplotlib
 
 env:
   matrix:
-    - PYTHON=python
     - PYTHON=python3
 
 matrix:
