@@ -24,6 +24,31 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity, b0::Bool=tr
     return Dense(w, b, f)
 end
 
+"""
+Lazy dense layer
+"""
+struct LazyDense <: StaticLayer
+    w
+    b
+    f::Function
+end
+
+function (d::LazyDense)(x, k)
+    return d.f.(d.w[1:k,1:size(x, 1)] * x .+ d.b[1:k])
+end
+
+function (d::LazyDense)(x)
+    return d.f.(d.w[:,1:size(x, 1)] * x .+ d.b)
+end
+
+function LazyDense(i_dim::Integer, o_dim::Integer; f::Function=identity, b0::Bool=true)
+    d = Dense(i_dim, o_dim; f=f, b0=b0)
+    return LazyDense(d.w, d.b, d.f)
+end
+
+"""
+Dynamic output using RNN
+"""
 struct DynamicOut <: StaticLayer
     rnn::Knet.RNN
     mlp::StaticLayer
@@ -49,6 +74,9 @@ struct DynamicIn <: StaticLayer
     mlp::StaticLayer
 end
 
+"""
+Dynamic input using RNN
+"""
 function DynamicIn(r_dim::Integer, o_dim::Integer;
                    skipInput=false, rnnType=:relu, bidirectional=false, f=identity)
     rnn = Knet.RNN(1, r_dim; skipInput=skipInput, rnnType=rnnType, bidirectional=bidirectional, dataType=FT)

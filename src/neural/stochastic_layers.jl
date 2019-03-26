@@ -1,4 +1,4 @@
-const STATIC_SYM_LIST = [:Dense, :DynamicIn, :DynamicOut]
+const STATIC_SYM_LIST = [:Dense, :LazyDense, :DynamicIn, :DynamicOut]
 
 const UNARY_DIST_DICT = Dict(
     :Bernoulli => (:BatchBernoulli, :p, :(Knet.sigm)),

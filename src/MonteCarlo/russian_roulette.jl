@@ -1,3 +1,5 @@
+# TODO: somehow merge the common codes below
+
 """
 Approximate the summation below using single sample Russian roulette sampling.
 
@@ -18,7 +20,6 @@ function roll(X::Function, p::DiscreteUniDist, τs::AbstractVector{Int})
     end
     return sum(X.(1:τ_max) .* ws)
 end
-
 
 """
 Approximate the summation below using single sample Russian roulette sampling.

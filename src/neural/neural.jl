@@ -108,14 +108,15 @@ export NeuralModel, train!, evaluate
 include("activations.jl")
 export softplus, leaky_relu
 include("layers.jl")
-export Dense, DynamicIn, DynamicOut, Chain
+export Dense, LazyDense, DynamicIn, DynamicOut, Chain
 include("stochastic_layers.jl")
-export GaussianDense, GaussianDynamicIn, GaussianDynamicOut
-export GaussianLogVarDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut
-export KumaraswamyDense, KumaraswamyDynamicIn, KumaraswamyDynamicOut
-export BernoulliDense, BernoulliDynamicIn, BernoulliDynamicOut
-export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
-export GumbelBernoulliLogitDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
+# TODO: somehow make below automatic
+export GaussianDense, GaussianLazyDense, GaussianDynamicIn, GaussianDynamicOut
+export GaussianLogVarDense, GaussianLogVarLazyDense, GaussianLogVarDynamicIn, GaussianLogVarDynamicOut
+export KumaraswamyDense, KumaraswamyLazyDense, KumaraswamyDynamicIn, KumaraswamyDynamicOut
+export BernoulliDense, BernoulliLazyDense, BernoulliDynamicIn, BernoulliDynamicOut
+export BernoulliLogitDense, BernoulliLogitLazyDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
+export GumbelBernoulliLogitDense, GumbelBernoulliLogitLazyDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
 
 include("rho.jl")
 export Rho, updategrad!
