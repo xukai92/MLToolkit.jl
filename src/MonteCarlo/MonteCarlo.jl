@@ -2,6 +2,7 @@ module MonteCarlo
 
 using StatsBase: counts
 using Distributions: DiscreteUnivariateDistribution, pdf, ccdf
+const DiscreteUniDist = DiscreteUnivariateDistribution
 using ..MLToolkit: LogitNPD, getρ
 include("russian_roulette.jl")
 export roll, roll_expectation
