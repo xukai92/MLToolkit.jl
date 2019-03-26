@@ -16,6 +16,14 @@ getρ(r::Rho, args...) = getρ(r.lnpd, args...)
 rand(r::Rho) = rand(r.lnpd)
 pdf(r::Rho, args...) = pdf(r.lnpd, args...)
 
+# TODO: implement a multi-sample version for the vectorized version below.
+function gradRR(R_rr, rho_rr)
+    M = (1 .- rho_rr) ./ rho_rr'
+    M = tril(M)
+    M[CartesianIndex.(Base.axes(M, 1), Base.axes(M, 1))] .= -1
+    return vec(R_rr' * M)
+end
+
 function gradRR(R::Function, r::Rho)
     k_rr = rand(r)
     R_rr = R.(1:k_rr)
@@ -42,13 +50,8 @@ function gradRR(R::Function, r::Rho, k_list)
     return g_acc / length(k_list)
 end
 
-# TODO: implement a multi-sample version for below
-function gradRR(R_rr, rho_rr)
-    M = (1 .- rho_rr) ./ rho_rr'
-    M = tril(M)
-    M[CartesianIndex.(Base.axes(M, 1), Base.axes(M, 1))] .= -1
-    return vec(R_rr' * M)
-end
+# gradRR(R::Function, r::Rho, m::Int) = roll(R, r.lnpd, m)
+# gradRR(R::Function, r::Rho, τs::AbstractVector{Int}) = roll(R, r.lnpd, τs)
 
 function updategrad!(r, dLdrho)
     rho = getρ(r, 1, length(dLdrho))
