@@ -5,6 +5,7 @@ using MLToolkit: include_list_as_module
     @warn "`neural.jl` is not tested."
 
     tests = [
+        "rho",
         "layers",
         "stochastic_layers",
         "activations",

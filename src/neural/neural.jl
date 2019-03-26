@@ -116,3 +116,6 @@ export KumaraswamyDense, KumaraswamyDynamicIn, KumaraswamyDynamicOut
 export BernoulliDense, BernoulliDynamicIn, BernoulliDynamicOut
 export BernoulliLogitDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 export GumbelBernoulliLogitDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
+
+include("rho.jl")
+export Rho, updategrad!
