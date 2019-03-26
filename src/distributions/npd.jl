@@ -104,3 +104,15 @@ function mode(lnpd::LogitNPD)
     end
     return k_max
 end
+
+function invlogcdf(lnpd::LogitNPD, lc::AbstractFloat)
+    p_target = exp(lc)
+    k = 1
+    p = pdf(lnpd, 1)
+    p_acc = p
+    while p_acc < p_target
+        k += 1
+        p_acc += pdf(lnpd, k)
+    end
+    return k
+end

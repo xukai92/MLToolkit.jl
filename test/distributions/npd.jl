@@ -16,6 +16,7 @@ using Test, MLToolkit
     @test cdf(lnpd1, 0) == 0
     @test cdf(lnpd1, 1) == 0.5
     @test cdf(lnpd1, 2) == 0.75
+    @test invlogcdf(lnpd1, log(0.99)) == 7
     @test ccdf(lnpd1, 0) == 1
     @test ccdf(lnpd1, 1) == 0.5
     @test ccdf(lnpd1, 2) == 0.25
