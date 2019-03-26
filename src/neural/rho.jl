@@ -17,6 +17,7 @@ rand(r::Rho) = rand(r.lnpd)
 pdf(r::Rho, args...) = pdf(r.lnpd, args...)
 
 # TODO: implement a multi-sample version for the vectorized version below.
+# TODO: make the function below into russian roulette
 function gradRR(R_rr, rho_rr)
     M = (1 .- rho_rr) ./ rho_rr'
     M = tril(M)
