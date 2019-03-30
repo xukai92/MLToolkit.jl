@@ -13,7 +13,7 @@ Rho(k_init::Integer; l_init=zero(FT)) = Rho(LogitNPD(k_init; l_init=l_init), zer
 Base.size(r::Rho) = 0
 
 getρ(r::Rho, args...) = getρ(r.lnpd, args...)
-rand(r::Rho) = rand(r.lnpd)
+rand(r::Rho, args...) = rand(r.lnpd, args...)
 pdf(r::Rho, args...) = pdf(r.lnpd, args...)
 
 # TODO: implement a multi-sample version for the vectorized version below.
