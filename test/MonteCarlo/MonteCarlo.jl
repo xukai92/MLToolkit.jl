@@ -4,7 +4,7 @@ using MLToolkit: include_list_as_module
 
 @testset "Monte Carlo" begin
     tests = [
-        "russian_roulette",
+        "russian_roulette.jl",
     ]
 
     include_list_as_module(tests, "TestMonteCarlo")

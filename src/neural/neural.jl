@@ -117,6 +117,8 @@ export KumaraswamyDense, KumaraswamyLazyDense, KumaraswamyDynamicIn, Kumaraswamy
 export BernoulliDense, BernoulliLazyDense, BernoulliDynamicIn, BernoulliDynamicOut
 export BernoulliLogitDense, BernoulliLogitLazyDense, BernoulliLogitDynamicIn, BernoulliLogitDynamicOut
 export GumbelBernoulliLogitDense, GumbelBernoulliLogitLazyDense, GumbelBernoulliLogitDynamicIn, GumbelBernoulliLogitDynamicOut
+include("sbc.jl")
+export MeanFieldSBC, StructuredSBC
 
 include("rho.jl")
 export Rho, updategrad!

@@ -5,7 +5,7 @@ const ATOL_RAND = FT == Float64 ? 2e-2 : 5e-1
 function include_list_as_module(list, module_name_prefix)
     return Distributed.map(list) do t
         @eval module $(Symbol("$(module_name_prefix)_", t))
-            include($t * ".jl")
+            include($t)
         end
         return
     end

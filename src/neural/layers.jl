@@ -25,7 +25,9 @@ function Dense(i_dim::Integer, o_dim::Integer; f::Function=identity, b0::Bool=tr
 end
 
 """
-Lazy dense layer
+Lazy dense layer ...zZzZzZ
+
+There is not initialization for me as I'm lazy.
 """
 struct LazyDense <: StaticLayer
     w
@@ -33,6 +35,7 @@ struct LazyDense <: StaticLayer
     f::Function
 end
 
+# TODO: implement online initialisation
 function (d::LazyDense)(x, k)
     return d.f.(d.w[1:k,1:size(x, 1)] * x .+ d.b[1:k])
 end
@@ -41,8 +44,8 @@ function (d::LazyDense)(x)
     return d.f.(d.w[:,1:size(x, 1)] * x .+ d.b)
 end
 
-function LazyDense(i_dim::Integer, o_dim::Integer; f::Function=identity, b0::Bool=true)
-    d = Dense(i_dim, o_dim; f=f, b0=b0)
+function LazyDense(i_dim::Integer, o_init::Integer; f::Function=identity, b0::Bool=true)
+    d = Dense(i_dim, o_init; f=f, b0=b0)
     return LazyDense(d.w, d.b, d.f)
 end
 

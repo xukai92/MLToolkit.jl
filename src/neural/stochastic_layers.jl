@@ -17,11 +17,11 @@ for dist_sym in keys(UNARY_DIST_DICT)
                 $field_sym::StaticLayer
             end
 
-            function $sto_sym(i_dim::Integer, z_dim::Integer; kwargs...)
+            function $sto_sym(i_dim::Int, z_dim::Int; kwargs...)
                 return $sto_sym($static_sym(i_dim, z_dim; f=$f_sym, kwargs...))
             end
 
-            function (sto::$sto_sym)(x, d::Integer...)
+            function (sto::$sto_sym)(x, d::Int...)
                 return $batch_dist_sym(sto.$field_sym(x, d...))
             end
         end
@@ -49,12 +49,12 @@ for dist_sym in keys(BINARY_DIST_DICT)
                 $field_sym_2::StaticLayer
             end
 
-            function $sto_sym(i_dim::Integer, z_dim::Integer; kwargs...)
+            function $sto_sym(i_dim::Int, z_dim::Int; kwargs...)
                 return $sto_sym($static_sym(i_dim, z_dim; f=$f_sym_1, kwargs...),
                                 $static_sym(i_dim, z_dim; f=$f_sym_2, kwargs...))
             end
 
-            function (sto::$sto_sym)(x, d::Integer...)
+            function (sto::$sto_sym)(x, d::Int...)
                 return $batch_dist_sym(sto.$field_sym_1(x, d...),
                                        sto.$field_sym_2(x, d...))
             end
