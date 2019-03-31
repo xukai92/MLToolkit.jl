@@ -65,12 +65,11 @@ function update_by_dLdlogitρ!(pr::Knet.Param{Rho{T}}, dLdlogitρ) where {T}
     Knet.update!(value(pr), dLdlogitρ, pr.opt)
 end
 
-function Knet.update!(r::Rho, opt)
+function Knet.update!(r::Rho, ::Nothing, opt)
     l = length(r.grad)
     # WARNING: optimizer is forced to use SGD because Adam would have different length of moments in different iterations
     opt = Knet.SGD(;lr=opt.lr)
     r.lnpd.logitρ[1:l] .= Knet.update!(r.lnpd.logitρ[1:l], r.grad, opt)
 end
 
-Knet.update!(r::Rho, ::Nothing, opt) = update!(r, opt)
 AutoGrad.grad(_, pr::Knet.Param{Rho{T}}) where {T} = nothing
