@@ -6,7 +6,7 @@ greet() = print("Welcome to Kai's machine learning toolkit!")
 import AutoGrad, Knet, PyPlot, Distributions, Reexport, Distributed
 
 # Constants
-const FT = Float64
+const FT = Float32
 const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possible
 const plt = PyPlot
 export FT, AT, plt
