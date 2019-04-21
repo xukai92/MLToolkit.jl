@@ -34,5 +34,7 @@ using ArgParse: ArgParseSettings, @add_arg_table
             flat_args = flatten_dict(args; exclude=[:d], delimiter=delimiter, equal_sym=equal_sym)
             @test flat_args == "a$(equal_sym)1$(delimiter)b$(equal_sym)two$(delimiter)c$(equal_sym)true"
         end
+        flat_args = flatten_dict(args; include=[:a])
+        @test flat_args == "a=1"
     end
 end
