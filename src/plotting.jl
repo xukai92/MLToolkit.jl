@@ -12,3 +12,14 @@ function plot_two_y_axes(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
     fig."tight_layout"()
     return fig
 end
+
+function plot_grayimg(img, args...)
+    @assert length(args) == 0 || length(args) == 2
+    ax = plt.gca()
+    im = ax."imshow"(make_imggrid(img, args...), cmap="gray")
+    plt.axis("off")
+    divider = axes_grid1.make_axes_locatable(ax)
+    cax = divider."append_axes"("bottom", size="5%", pad=0.05)
+    plt.colorbar(im, cax=cax, orientation="horizontal")
+    return ax
+end

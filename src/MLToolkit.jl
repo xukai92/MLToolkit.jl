@@ -3,9 +3,12 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import AutoGrad, Knet, PyPlot, Distributions, Reexport, Distributed
+import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
 
-# Constants
+# Python bindings
+const axes_grid1 = PyCall.pyimport("mpl_toolkits.axes_grid1")
+
+# Constants that are exported
 const FT = Float32
 const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possible
 const plt = PyPlot
