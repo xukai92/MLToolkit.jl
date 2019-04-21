@@ -27,33 +27,35 @@ NOTE: `k.a` and `k.b` are assumed to be in batch
 
 Ref: https://arxiv.org/abs/1605.06197
 """
-function rand(kuma::BatchKumaraswamy)
-    u = AT(rand(FT, size(kuma.a)...))
-    x = _u2kumaraswamysample(eltype(kuma.a), u, kuma)
+function rand(kuma::BatchKumaraswamy{T}) where T
+    _eltype = eltype(kuma.a)
+    u = T(rand(_eltype, size(kuma.a)...))
+    x = _u2kumaraswamysample(_eltype, u, kuma)
     return x
 end
 
-function rand(kuma::BatchKumaraswamy{FT}, dims::Integer...) where {T<:Real}
+function rand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
     @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
-    u = rand(FT, dims...)
+    u = rand(T, dims...)
     u = dims == () ? u : AT(u)
-    x = _u2kumaraswamysample(FT, u, kuma)
+    x = _u2kumaraswamysample(T, u, kuma)
     return x
 end
 
-function logrand(kuma::BatchKumaraswamy)
-    u = AT(rand(FT, size(kuma.a)...))
-    logx = _u2logkumaraswamysample(eltype(kuma.a), u, kuma)
+function logrand(kuma::BatchKumaraswamy{T}) where T
+    _eltype = eltype(kuma.a)
+    u = T(rand(_eltype, size(kuma.a)...))
+    logx = _u2logkumaraswamysample(_eltype, u, kuma)
     return logx
 end
 
-function logrand(kuma::BatchKumaraswamy{FT}, dims::Integer...) where {T<:Real}
+function logrand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
     @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
-    u = rand(FT, dims...)
+    u = rand(T, dims...)
     u = dims == () ? u : AT(u)
-    logx = _u2logkumaraswamysample(FT, u, kuma)
+    logx = _u2logkumaraswamysample(T, u, kuma)
     return logx
 end
 
@@ -136,7 +138,7 @@ Compute ``KL(Kumaraswamy(a, b)||Beta(α, β))``.
 
 NOTE: only `a` and `b` are assumed to be in batch
 """
-function kldiv(kuma::BatchKumaraswamy, bb::BatchBeta; M::Integer=11)
+function kldiv(kuma::BatchKumaraswamy, bb::BatchBeta; M::Int=11)
     a = kuma.a
     b = kuma.b
     α = bb.α

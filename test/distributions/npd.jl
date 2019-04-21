@@ -1,6 +1,6 @@
 using Test, MLToolkit
 
-@testset "Russian Roulette" begin
+@testset "Nonparametric discrete distribution" begin
     lnpd = LogitNPD()
 
     k_init = 100
@@ -12,11 +12,11 @@ using Test, MLToolkit
     @test pdf(lnpd1, 0) == 0
     @test pdf(lnpd1, 1) == 0.5
     @test pdf(lnpd1, 2) == 0.25
-    @test logpdf(lnpd1, 1) == -log(2)
+    @test logpdf(lnpd1, 1) == -log(FT(2))
     @test cdf(lnpd1, 0) == 0
     @test cdf(lnpd1, 1) == 0.5
     @test cdf(lnpd1, 2) == 0.75
-    @test invlogcdf(lnpd1, log(0.99)) == 7
+    @test invlogcdf(lnpd1, log(FT(0.99))) == 7
     @test ccdf(lnpd1, 0) == 1
     @test ccdf(lnpd1, 1) == 0.5
     @test ccdf(lnpd1, 2) == 0.25
