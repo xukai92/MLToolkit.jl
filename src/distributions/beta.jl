@@ -104,7 +104,7 @@ function logpdf(bb::BatchBeta, x)
     _eps = eps(FT)
     lp = (bb.α .- _one) .* log.(x .+ _eps) .+
          (bb.β .- _one) .* log.(_one + _eps .- x) .-
-         lbeta.(bb.α, bb.β)
+         lbeta(bb.α, bb.β)
     return lp
 end
 
@@ -146,9 +146,9 @@ function kldiv(kuma::BatchKumaraswamy, bb::BatchBeta; M::Int=11)
 
     @assert M > 0
     a_times_b = a .* b
-    acc = _one ./ (_one .+ a_times_b) .* beta.(_one ./ a, b)
+    acc = _one ./ (_one .+ a_times_b) .* beta(_one ./ a, b)
     for m = 2:M
-        acc = acc .+ _one ./ (FT(m) .+ a_times_b) .* beta.(FT(m) ./ a, b)
+        acc = acc .+ _one ./ (FT(m) .+ a_times_b) .* beta(FT(m) ./ a, b)
     end
 
     kl = (a .- α) ./ a .* (-FT(γ) .- digamma.(b) .- _one ./ b) .+ log.(a_times_b) .+
