@@ -89,7 +89,7 @@ function kldiv(d1::Dirichlet, d2::Dirichlet)
     β0 = sum(β)
 
     kl = (lgamma.(α0) .- sum(lgamma.(α))) .-
-         (lgamma(β0) - sum(lgamma.(β))) .+
+         (lgamma.(β0) - sum(lgamma.(β))) .+
          sum((α .- β) .* (digamma.(α) .- digamma(α0)))
     return kl
 end
