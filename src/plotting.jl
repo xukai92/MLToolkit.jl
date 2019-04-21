@@ -1,5 +1,5 @@
 # NOTE: function starting with `make_` will return a figure instance while
-#       function starting with `plot_` will return NOT
+#       function starting with `plot_` will return the axes being plotted on
 
 function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
                               xlabel=nothing, ylabel1=nothing, ylabel2=nothing)
