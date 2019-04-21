@@ -25,3 +25,12 @@ function plot_grayimg(img, args...; ax=plt.gca())
     plt.colorbar(im, cax=cax, orientation="horizontal")
     return ax
 end
+
+function plot_actmat(Z::Matrix{Int}; ax=plt.gca())
+    col_sort_idcs = sortperm(vec([count_leadingzeros(Z[:,k]) for k = 1:size(Z, 2)]))
+    Z = Z[:,col_sort_idcs]
+    ax."imshow"(1 .- Z, cmap="gray", interpolation="nearest")
+    plt.xticks([])
+    plt.yticks([])
+    return ax
+end

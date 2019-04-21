@@ -14,6 +14,8 @@ const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possi
 const plt = PyPlot
 export FT, AT, plt
 
+include("utility.jl")
+export count_leadingzeros
 include("special.jl")
 export lbeta, beta, logit
 include("transformations.jl")
@@ -23,7 +25,7 @@ Reexport.@reexport using .Data
 include("scripting.jl")
 export parse_args, flatten_dict
 include("plotting.jl")
-export make_two_y_axes_plot, plot_grayimg
+export make_two_y_axes_plot, plot_grayimg, plot_actmat
 
 include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
