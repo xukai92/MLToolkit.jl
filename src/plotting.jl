@@ -1,5 +1,5 @@
-function plot_two_y_axes(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
-                         xlabel=nothing, ylabel1=nothing, ylabel2=nothing)
+function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
+                              xlabel=nothing, ylabel1=nothing, ylabel2=nothing)
     fig, ax1 = plt.subplots()
     ax1."plot"(xs, ys1, c=color1)
     xlabel == nothing || ax1."set_xlabel"(xlabel)

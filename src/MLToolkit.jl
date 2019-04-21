@@ -23,7 +23,7 @@ Reexport.@reexport using .Data
 include("scripting.jl")
 export parse_args, flatten_dict
 include("plotting.jl")
-export plot_two_y_axes
+export make_two_y_axes_plot, plot_grayimg
 
 include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
