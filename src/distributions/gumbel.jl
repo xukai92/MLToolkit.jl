@@ -133,3 +133,5 @@ function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=FT(0.2))
 end
 
 mean(gbl::BatchGumbelBernoulliLogit) = Knet.sigm.(gbl.logitp)
+
+# TODO: consider the design problem: should `τ` be a filed of gumbel distributions?
