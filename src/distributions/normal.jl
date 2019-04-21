@@ -18,8 +18,8 @@ NOTE: `dn.μ` and `dn.Σ` are assumed to be in batch.
 
 Ref: https://arxiv.org/pdf/1312.6114.pdf
 """
-function rand(dn::BatchNormal)
-    ϵ = AT(randn(FT, eltype(dn.μ), size(dn.μ)...))
+function rand(dn::BatchNormal{T}) where {T}
+    ϵ = T(randn(eltype(dn.μ), size(dn.μ)...))
     return dn.μ + sqrt.(dn.Σ) .* ϵ
 end
 
@@ -47,8 +47,8 @@ struct BatchNormalLogVar{T}
     logΣ    # log-variance
 end
 
-function rand(dn::BatchNormalLogVar)
-    ϵ = AT(randn(FT, eltype(dn.μ), size(dn.μ)...))
+function rand(dn::BatchNormalLogVar{T}) where {T}
+    ϵ = T(randn(eltype(dn.μ), size(dn.μ)...))
     return dn.μ + exp.(dn.logΣ ./ 2) .* ϵ
 end
 

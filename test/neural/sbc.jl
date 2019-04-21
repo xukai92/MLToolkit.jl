@@ -9,7 +9,7 @@ using Test, MLToolkit
         is_all_true = true
         @test begin
             for k_out = 1:k_init
-                x = rand(i_dim, batch_size)
+                x = AT(rand(FT, i_dim, batch_size))
                 dist_kuma, dist_gumbel = sbc(x, k_out)
                 is_all_true = is_all_true && dist_kuma isa BatchKumaraswamy
                 is_all_true = is_all_true && dist_gumbel isa BatchGumbelBernoulliLogit

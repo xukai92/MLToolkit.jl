@@ -29,12 +29,12 @@ end
 
 Sample from the Gumbel-Softmax distributions.
 """
-function rand(gs::AbstractBatchGumbelSoftmax; τ=FT(0.2))
+function rand(gs::AbstractBatchGumbelSoftmax{T}; τ=FT(0.2)) where {T}
     FT = eltype(gs.p)
     _eps = eps(FT)
 
     u = rand(FT, size(gs.p)...)
-    g = AT(_u2gumbel(FT, u))
+    g = T(_u2gumbel(FT, u))
 
     logit = g .+ log.(gs.p .+ _eps)
     exp_logit = exp.(logit ./ τ)
@@ -59,15 +59,15 @@ end
 
 Sample from Gumbel-Bernoulli distributions.
 """
-function rand(gb::BatchGumbelBernoulli; τ=FT(0.2))
+function rand(gb::BatchGumbelBernoulli{T}; τ=FT(0.2)) where {T}
     # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
     FT = eltype(gb.p)
     sz = size(gb.p)
     _eps = eps(FT)
     _one = one(FT)
 
-    u0 = rand(FT, sz...); g0 = AT(_u2gumbel(FT, u0))
-    u1 = rand(FT, sz...); g1 = AT(_u2gumbel(FT, u1))
+    u0 = rand(FT, sz...); g0 = T(_u2gumbel(FT, u0))
+    u1 = rand(FT, sz...); g1 = T(_u2gumbel(FT, u1))
 
     logit0 = (g0 .+ log.(_one + _eps .- gb.p)) ./ τ
     logit1 = (g1 .+ log.(gb.p .+ _eps)) ./ τ
@@ -101,12 +101,12 @@ NOTE: `lp` is assumed to be in batch
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function logitrand(gbl::BatchGumbelBernoulliLogit; τ=FT(0.2))
+function logitrand(gbl::BatchGumbelBernoulliLogit{T}; τ=FT(0.2)) where {T}
     FT = eltype(gbl.logitp)
     _eps = eps(FT)
     _one = one(FT)
 
-    u = AT(rand(FT, size(gbl.logitp)...))
+    u = T(rand(FT, size(gbl.logitp)...))
 
     logit = log.(u .+ _eps) - log.(_one + _eps .- u)
 

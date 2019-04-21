@@ -1,4 +1,5 @@
 using Test, MLToolkit
+using Knet: cpucopy
 using Distributions: Beta, Bernoulli
 using Statistics: mean
 using StatsFuns: logit
@@ -14,7 +15,7 @@ using StatsFuns: logit
             bb = BatchBernoulli{AT}(p)
 
             x = rand(b, n)
-            @test vec(logpdf(bb, AT{FT,2}(reshape(x, 1, n)))) ≈ logpdf.(b, x) atol=ATOL
+            @test cpucopy(vec(logpdf(bb, AT{FT,2}(reshape(x, 1, n))))) ≈ logpdf.(b, x) atol=5ATOL
 
             q = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
             b2 = Bernoulli(q[1,1])
@@ -36,7 +37,7 @@ using StatsFuns: logit
             bbl = BatchBernoulliLogit{AT}(logit.(p))
 
             x = rand(b, n)
-            @test vec(logpdf(bbl, AT{FT,2}(reshape(x, 1, n)))) ≈ logpdf.(b, x) atol=ATOL
+            @test cpucopy(vec(logpdf(bbl, AT{FT,2}(reshape(x, 1, n))))) ≈ logpdf.(b, x) atol=5ATOL
         end
     end
 end

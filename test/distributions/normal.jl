@@ -1,4 +1,5 @@
 using Test, MLToolkit
+using Knet: cpucopy
 using Distributions: MvNormal, Beta
 using Statistics: mean, var
 using LinearAlgebra: I
@@ -12,14 +13,14 @@ using LinearAlgebra: I
             # rand
             μ = randn(FT, d, 1); Σ = randn(FT, d, 1).^2
 
-            bn = BatchNormal{AT}(μ, Σ)
+            bn = BatchNormal(AT(μ), AT(Σ))
             x = Array(hcat([rand(bn) for _ = 1:n]...))
 
             @test mean(x; dims=2) ≈ μ atol=(d * ATOL_RAND)
             @test mean(x; dims=2) ≈ Array(mean(bn)) atol=(d * ATOL_RAND)
             @test var(x; dims=2) ≈ Σ atol=(d * ATOL_RAND)
 
-            bnlv = BatchNormalLogVar{AT}(μ, log.(Σ))
+            bnlv = BatchNormalLogVar(AT(μ), AT(log.(Σ)))
             x = Array(hcat([rand(bnlv) for _ = 1:n]...))
 
             @test mean(x; dims=2) ≈ μ atol=(d * ATOL_RAND)
@@ -31,8 +32,8 @@ using LinearAlgebra: I
             x = Matrix{FT}(rand(mvn, n))
             lp = logpdf(mvn, x)
 
-            @test vec(sum(logpdf(bn, AT(x)); dims=1)) ≈ lp atol=(d * ATOL)
-            @test vec(sum(logpdf(bnlv, AT(x)); dims=1)) ≈ lp atol=(d * ATOL)
+            @test cpucopy(vec(sum(logpdf(bn, AT(x)); dims=1))) ≈ lp atol=(d * 5ATOL)
+            @test cpucopy(vec(sum(logpdf(bnlv, AT(x)); dims=1))) ≈ lp atol=(d * 5ATOL)
 
             # kl
             μ1 = zeros(FT, d, 1); Σ1 = ones(FT, d, 1)
@@ -43,9 +44,9 @@ using LinearAlgebra: I
             x = rand(mvn1, n)
             kl_mc = mean(logpdf(mvn1, x) - logpdf(mvn2, x))
 
-            bn1 = BatchNormal{AT}(μ1, Σ1)
-            bnlv1 = BatchNormalLogVar{AT}(μ1, log.(Σ1))
-            bn2 = BatchNormal{AT}(μ2, Σ2)
+            bn1 = BatchNormal(AT(μ1), AT(Σ1))
+            bnlv1 = BatchNormalLogVar(AT(μ1), AT(log.(Σ1)))
+            bn2 = BatchNormal(AT(μ2), AT(Σ2))
             @test sum(kldiv(bn1, bn2)) ≈ kl_mc atol=(d * ATOL_RAND)
 
             @test sum(kldiv(bn1, BatchNormal(μ2[1,1], Σ2[1,1]))) ≈ kl_mc atol=(d * ATOL_RAND)
