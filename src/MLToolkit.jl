@@ -18,7 +18,7 @@ export break_stick_ibp, break_logstick_ibp
 include("Data/Data.jl")
 Reexport.@reexport using .Data
 include("scripting.jl")
-export parse_args
+export parse_args, flatten_dict
 include("plotting.jl")
 export plot_two_y_axes
 
