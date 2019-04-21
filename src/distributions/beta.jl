@@ -27,10 +27,9 @@ NOTE: `k.a` and `k.b` are assumed to be in batch
 
 Ref: https://arxiv.org/abs/1605.06197
 """
-function rand(kuma::BatchKumaraswamy{T}) where T
-    _eltype = eltype(kuma.a)
-    u = T(rand(_eltype, size(kuma.a)...))
-    x = _u2kumaraswamysample(_eltype, u, kuma)
+function rand(kuma::BatchKumaraswamy)
+    u = AT(rand(FT, size(kuma.a)...))
+    x = _u2kumaraswamysample(FT, u, kuma)
     return x
 end
 
@@ -43,10 +42,9 @@ function rand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     return x
 end
 
-function logrand(kuma::BatchKumaraswamy{T}) where T
-    _eltype = eltype(kuma.a)
-    u = T(rand(_eltype, size(kuma.a)...))
-    logx = _u2logkumaraswamysample(_eltype, u, kuma)
+function logrand(kuma::BatchKumaraswamy)
+    u = AT(rand(FT, size(kuma.a)...))
+    logx = _u2logkumaraswamysample(FT, u, kuma)
     return logx
 end
 

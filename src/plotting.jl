@@ -1,3 +1,6 @@
+# NOTE: function starting with `make_` will return a figure instance while
+#       function starting with `plot_` will return NOT
+
 function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
                               xlabel=nothing, ylabel1=nothing, ylabel2=nothing)
     fig, ax1 = plt.subplots()
@@ -13,9 +16,8 @@ function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
     return fig
 end
 
-function plot_grayimg(img, args...)
-    @assert length(args) == 0 || length(args) == 2
-    ax = plt.gca()
+function plot_grayimg(img, args...; ax=plt.gca())
+    @assert length(args) == 0 || length(args) == 2 "You can either plot a single image or declare the `n_rows` and `n_cols`"
     im = ax."imshow"(make_imggrid(img, args...), cmap="gray")
     plt.axis("off")
     divider = axes_grid1.make_axes_locatable(ax)
