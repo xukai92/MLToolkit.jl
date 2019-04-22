@@ -79,6 +79,41 @@ function rand(gb::BatchGumbelBernoulli{T}; τ=FT(0.2)) where {T}
     return exp.(logx)
 end
 
+"""
+    logpdf(bgb::BatchGumbelBernoulli, x; τ=FT(0.2))
+
+Compute ``GumbelBernoulli(x; p)``.
+
+NOTE: `p` and `x` are assumed to be in batch.
+
+Ref: https://arxiv.org/abs/1611.01144
+"""
+function logpdf(bgb::BatchGumbelBernoulli, x; τ=FT(0.2))
+    _eps = eps(FT)
+    α = bgb.p ./ (1 .- bgb.p .+ _eps)
+    xstabe = x .+ _eps
+    omxstabe = 1 .- x .+ _eps
+    return log(τ) .+ log(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ _eps))
+end
+
+"""
+    logpdfcov(bgb::BatchGumbelBernoulli, x; τ=FT(0.2))
+
+Compute ``GumbelBernoulli(x; p)`` by using that of `GumbelBernoulli(logitx; logitp)`
+together with change of variable (CoV) rules.
+
+NOTE: `p` and `x` are assumed to be in batch.
+"""
+function logpdfCoV(bgb::BatchGumbelBernoulli, x; τ=FT(0.2))
+    _eps = eps(FT)
+    _1m2eps = 1 - 2 * _eps
+    logitp = logit.(bgb.p .* _1m2eps .+ _eps)
+    logitx = logit.(x .* _1m2eps .+ _eps)
+    lp = logpdflogit(BatchGumbelBernoulliLogit(logitp), logitx; τ=τ)
+    _eps = eps(FT)
+    return lp - log.(x .* (1 .- x) .+ _eps)
+end
+
 mean(gb::BatchGumbelBernoulli) = gb.p
 
 """
@@ -117,7 +152,7 @@ end
 """
     logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=FT(0.2))
 
-Compute ``GumbelBernoulli(logitx; logitp)``.
+Compute `GumbelBernoulli(logitx; logitp)`.
 
 NOTE: `logitp` and `logitx` are assumed to be in batch.
 TODO: double check this function and make sure it obeys the change of variable

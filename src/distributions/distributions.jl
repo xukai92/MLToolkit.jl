@@ -16,4 +16,4 @@ include("npd.jl")
 export LogitNPD, getlogitρ, getρ, getlogρ
 
 export logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
-export logpdflogit, logrand, logitrand, kldiv
+export logpdflogit, logpdfCoV, logrand, logitrand, kldiv

@@ -32,6 +32,9 @@ using StatsFuns: logit, logistic
             x = Array([rand(gb)[1,1] for _ = 1:n])
             @test mean(x; dims=1) ≈ p atol=ATOL_RAND
             @test mean(x; dims=1) ≈ Array(mean(gb)) atol=ATOL_RAND
+
+            x = rand(gb)
+            @test logpdf(gb, x) ≈ logpdfCoV(gb, x) atol=100ATOL
         end
     end
 
