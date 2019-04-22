@@ -120,7 +120,7 @@ end
 Compute ``GumbelBernoulli(logitx; logitp)``.
 
 NOTE: `logitp` and `logitx` are assumed to be in batch.
-NOTE: this function is change-of-variable rule applied; checked on 22/04/2019
+TODO: double check this function and make sure it obeys the change of variable
 
 WARN: this function is not tested.
 
