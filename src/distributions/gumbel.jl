@@ -93,7 +93,7 @@ function logpdf(bgb::BatchGumbelBernoulli, x; τ=FT(0.2))
     α = bgb.p ./ (1 .- bgb.p .+ _eps)
     xstabe = x .+ _eps
     omxstabe = 1 .- x .+ _eps
-    return log(τ) .+ log(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ _eps))
+    return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ _eps))
 end
 
 """
