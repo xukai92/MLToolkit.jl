@@ -50,6 +50,6 @@ using StatsFuns: logit, logistic
             @test mean(x; dims=1) ≈ Array(mean(gbl)) atol=ATOL_RAND
         end
 
-        @warn "`logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=0.1)` is not tested."
+        @warn "`logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx)` is not tested."
     end
 end
