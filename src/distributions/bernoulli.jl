@@ -20,8 +20,8 @@ end
 function rand(bb::BatchBernoulli{T}) where {T}
     FT = eltype(bb.p)
 
-    u = rand(FT, size(bb.p)...)
-    x = T((Array(bb.p) .> u) * one(FT))
+    u = T(rand(FT, size(bb.p)...))
+    x = (bb.p .> u) .* one(FT)
     return x
 end
 
