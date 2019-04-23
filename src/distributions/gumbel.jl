@@ -65,6 +65,8 @@ BatchGumbelBernoulli(p; τ=FT(0.2)) = BatchGumbelBernoulli(p, τ)
 Sample from Gumbel-Bernoulli distributions.
 """
 function rand(gb::BatchGumbelBernoulli{T}) where {T}
+    isa(gb.p, AutoGrad.Result) && T = typeof(value(gb))
+    
     # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
     FT = eltype(gb.p)
     sz = size(gb.p)
