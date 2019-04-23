@@ -17,11 +17,11 @@ function logpdf(bb::BatchBernoulli, x)
     return lp
 end
 
-function rand(bb::BatchBernoulli)
+function rand(bb::BatchBernoulli{T}) where {T}
     FT = eltype(bb.p)
 
     u = rand(FT, size(bb.p)...)
-    x = AT((Array(bb.p) .> u) * one(FT))
+    x = T((Array(bb.p) .> u) * one(FT))
     return x
 end
 
