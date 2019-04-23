@@ -1,3 +1,5 @@
+# TODO: make all local vs global type consistent
+
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
 include("displaced_poisson.jl")
