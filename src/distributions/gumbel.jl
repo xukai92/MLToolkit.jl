@@ -32,11 +32,13 @@ end
 Sample from the Gumbel-Softmax distributions.
 """
 function rand(gs::AbstractBatchGumbelSoftmax{T}) where {T}
+    _T = isa(gs.p, AutoGrad.Result) ? typeof(AutoGrad.value(gs.p)) : T
+
     FT = eltype(gs.p)
     _eps = eps(FT)
 
     u = rand(FT, size(gs.p)...)
-    g = T(_u2gumbel(FT, u))
+    g = _T(_u2gumbel(FT, u))
 
     logit = g .+ log.(gs.p .+ _eps)
     exp_logit = exp.(logit ./ gs.τ)
@@ -65,7 +67,7 @@ BatchGumbelBernoulli(p; τ=FT(0.2)) = BatchGumbelBernoulli(p, τ)
 Sample from Gumbel-Bernoulli distributions.
 """
 function rand(gb::BatchGumbelBernoulli{T}) where {T}
-    _T = isa(gb.p, AutoGrad.Result) ? typeof(AutoGrad.value(gb)) : T
+    _T = isa(gb.p, AutoGrad.Result) ? typeof(AutoGrad.value(gb.p)) : T
 
     # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
     FT = eltype(gb.p)
