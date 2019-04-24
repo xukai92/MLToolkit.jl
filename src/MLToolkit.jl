@@ -7,8 +7,6 @@ import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
 
 # Python bindings
 const axes_grid1 = PyCall.pyimport("mpl_toolkits.axes_grid1")
-const tbX = PyCall.pyimport("tensorboardX")
-export tbX
 
 # Constants that are exported
 const FT = Float32
