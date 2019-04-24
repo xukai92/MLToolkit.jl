@@ -30,7 +30,7 @@ function plot_actmat(Z::Matrix; ax=plt.gca())
     # TODO: implement a sorting version
     # col_sort_idcs = sortperm(vec([count_leadingzeros(Z[:,k]) for k = 1:size(Z, 2)]))
     # Z = Z[:,col_sort_idcs]
-    ax."imshow"(1 .- Z, cmap="gray", interpolation="nearest")
+    ax."imshow"(Z, cmap="Greys", interpolation="nearest", vmin=0.0, vmax=1.0)
     plt.xticks([])
     plt.yticks([])
     return ax
