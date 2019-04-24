@@ -33,7 +33,7 @@ which is not a Julia convension by a math convension.
 """
 function rand(ibp::IBP, n::Int)
     k_init = rand(Poisson(ibp.α))
-    Z = zeros(Integer, n, k_init)
+    Z = zeros(Int, n, k_init)
     Z[1,:] .= 1
     for i = 2:n
         for k = 1:size(Z, 2)
@@ -42,7 +42,7 @@ function rand(ibp::IBP, n::Int)
         end
         k_new = rand(Poisson(ibp.α / i))
         if k_new > 0
-            Z = hcat(Z, zeros(Integer, n, k_new))
+            Z = hcat(Z, zeros(Int, n, k_new))
             Z[i,end-k_new+1:end] .= 1
         end
     end
