@@ -142,7 +142,7 @@ end
 BatchGumbelBernoulliLogit(logitp; τ=FT(0.2)) = BatchGumbelBernoulliLogit(logitp, τ)
 
 """
-    logitrand(gbl::BatchGumbelBernoulliLogit)
+    logitrand(gbl::BatchGumbelBernoulliLogit{T}; τ=gbl.τ) where {T}
 
 Sample logit from Bernoulli distributions by logit.
 
@@ -150,13 +150,13 @@ NOTE: `lp` is assumed to be in batch
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function logitrand(gbl::BatchGumbelBernoulliLogit{T}) where {T}
+function logitrand(gbl::BatchGumbelBernoulliLogit{T}; τ=gbl.τ) where {T}
     FT = eltype(gbl.logitp)
     _eps = eps(FT)
     _one = one(FT)
-    τ = gbl.τ
+    _T = isa(gbl.logitp, AutoGrad.Result) ? typeof(AutoGrad.value(gbl.logitp)) : T
 
-    u = T(rand(FT, size(gbl.logitp)...))
+    u = _T(rand(FT, size(gbl.logitp)...))
 
     logit = log.(u .+ _eps) - log.(_one + _eps .- u)
 
