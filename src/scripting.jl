@@ -13,3 +13,11 @@ function flatten_dict(dict::Dict{T,Any};
     @assert issubset(Set(include), keys(dict)) "Keyword `include` must be a subset of `keys(dict)`; set diff: $(setdiff(Set(include), keys(dict)))"
     return join(["$k$equal_sym$v" for (k,v) in filter(t -> (t[1] in include) && !(t[1] in exclude), dict)], delimiter)
 end
+
+macro jupyter(expr)
+    return :(isdefined(Main, :IJulia) && Main.IJulia.inited && $expr)
+end
+
+macro script(expr)
+    return :(!(isdefined(Main, :IJulia) && Main.IJulia.inited) && $expr)
+end
