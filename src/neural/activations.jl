@@ -1,9 +1,7 @@
+# TODO: see if I can replace this fucntion with StatsFuns.jl
+
 function softplus(x)
     return log(one(x) + exp(x))
-end
-
-function softplus_safe(x)
-    return softplus(x) + 1_000 * eps(FT)
 end
 
 function invsoftplus(x)

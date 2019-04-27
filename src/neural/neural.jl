@@ -106,7 +106,7 @@ export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
 export NeuralModel, train!, evaluate
 
 include("activations.jl")
-export softplus, softplus_safe, leaky_relu
+export softplus, invsoftplus, leaky_relu
 include("layers.jl")
 export Dense, LazyDense, DynamicIn, DynamicOut, Chain
 include("stochastic_layers.jl")
