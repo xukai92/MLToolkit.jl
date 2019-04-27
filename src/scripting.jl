@@ -62,13 +62,15 @@ function checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=no
 end
 
 """
-    @checknumerics vcheck vmonitor1 vmonitor2 ...
+    @checknumerics scheck smonitor1 smonitor2 ...
 
-Helper macro to call `checknumerics` with variable names extracted.
+Helper macro to call `checknumerics` with variable names extracted and passed.
 """
-macro checknumerics(vcheck, vmonitor...)
-    vcheckname = string(vcheck)
-    vmonitornames = map(m -> string(m), vmonitor)
+macro checknumerics(scheck, smonitor...)
+    local vcheck = esc(scheck)
+    local vmonitor = map(esc, smonitor)
+    vcheckname = string(scheck)
+    vmonitornames = map(m -> string(m), smonitor)
     return quote
         checknumerics($vcheck, $(vmonitor...); vcheckname=$vcheckname, vmonitornames=$vmonitornames)
     end
