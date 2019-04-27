@@ -14,10 +14,62 @@ function flatten_dict(dict::Dict{T,Any};
     return join(["$k$equal_sym$v" for (k,v) in filter(t -> (t[1] in include) && !(t[1] in exclude), dict)], delimiter)
 end
 
+"""
+    @jupyter expr
+
+Execute `expr` if IN Jupyter.
+"""
 macro jupyter(expr)
     return :(isdefined(Main, :IJulia) && Main.IJulia.inited && $expr)
 end
 
+"""
+    @script expr
+
+Execute `expr` if NOT IN Jupyter.
+"""
 macro script(expr)
     return :(!(isdefined(Main, :IJulia) && Main.IJulia.inited) && $expr)
+end
+
+"""
+    checknumerical(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
+
+Check if each entry in `vcheck` is `NaN` or `Inf`.
+If so, report the index and the value of that index in all variables.
+"""
+function checknumerical(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
+    for i in eachindex(vmonitor)
+        @assert size(vcheck) == size(vmonitor[i]) "All variables in `vmonitor` should have the same size as `vcheck`; vmonitor[$i] doesn't."
+    end
+    for i in eachindex(vcheck)
+        check = vcheck[i]
+        if isnan(check) || isinf(check)
+            if vcheckname != nothing
+                check = Dict("$vcheckname[$i]" => check)
+            end
+            if length(vmonitor) == 0
+                @info "Numerical error found in index $i" check
+            else
+                monitor = map(v -> v[i], vmonitor)
+                if vmonitornames != nothing
+                    monitor = Dict(zip(map(mn -> "$mn[$i]", vmonitornames), monitor))
+                end
+                @info "Numerical error found in index $i" check monitor
+            end
+        end
+    end
+end
+
+"""
+    @checknumerical vcheck vmonitor1 vmonitor2 ...
+
+Helper macro to call `checknumerical` with variable names extracted.
+"""
+macro checknumerical(vcheck, vmonitor...)
+    vcheckname = String(vcheck)
+    vmonitornames = map(m -> String(m), vmonitor)
+    return quote
+        checknumerical($vcheck, $(vmonitor...); vcheckname=$vcheckname, vmonitornames=$vmonitornames)
+    end
 end
