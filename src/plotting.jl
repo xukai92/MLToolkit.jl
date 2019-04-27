@@ -18,6 +18,7 @@ end
 
 function plot_grayimg(img, args...; ax=plt.gca())
     @assert length(args) == 0 || length(args) == 2 "You can either plot a single image or declare the `n_rows` and `n_cols`"
+    axes_grid1 == PyCall.PyNULL() && copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
     im = ax."imshow"(make_imggrid(img, args...), cmap="gray")
     plt.axis("off")
     divider = axes_grid1.make_axes_locatable(ax)

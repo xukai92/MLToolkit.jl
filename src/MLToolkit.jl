@@ -1,3 +1,5 @@
+__precompile__()
+
 module MLToolkit
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
@@ -5,8 +7,8 @@ greet() = print("Welcome to Kai's machine learning toolkit!")
 # Package level imports all go here
 import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
 
-# Python bindings
-const axes_grid1 = PyCall.pyimport("mpl_toolkits.axes_grid1")
+# Pre-allocating Python bindings
+const axes_grid1 = PyCall.PyNULL()
 
 # Constants that are exported
 const FT = Float32
