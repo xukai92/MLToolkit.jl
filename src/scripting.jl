@@ -45,6 +45,7 @@ function checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=no
     for i in eachindex(vcheck)
         check = vcheck[i]
         if isnan(check) || isinf(check)
+            ci = CartesianIndices(check)[i]
             Istr = replace(string(ci.I), r"(\s)|(\()|(\))" => "")
             if vcheckname != nothing
                 check = ("($vcheckname[$Istr], $check)")
