@@ -3,7 +3,7 @@ function softplus(x)
 end
 
 function softplus_safe(x)
-    return softplus(x) + eps(x)
+    return softplus(x) + eps(FT)
 end
 
 function leaky_relu(x; alpha=0.2)
