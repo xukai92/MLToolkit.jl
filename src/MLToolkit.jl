@@ -1,8 +1,13 @@
 __precompile__()
-
 module MLToolkit
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
+
+# Module init
+function __init__()
+    # Bind Python libraries
+    copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
+end
 
 # Package level imports all go here
 import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
