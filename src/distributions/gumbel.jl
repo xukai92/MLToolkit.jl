@@ -176,8 +176,7 @@ WARN: this function is not tested.
 
 Ref: https://arxiv.org/abs/1611.00712
 """
-function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx)
-    τ = gbl.τ
+function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=gbl.τ)
     exp_term = gbl.logitp .- logitx .* τ
     lp = exp_term .+ log(τ) .- FT(2.0) .* softplus.(exp_term)
     return lp
