@@ -45,17 +45,20 @@ function checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=no
     for i in eachindex(vcheck)
         check = vcheck[i]
         if isnan(check) || isinf(check)
+            Istr = replace(string(ci.I), r"(\s)|(\()|(\))" => "")
             if vcheckname != nothing
-                check = Dict("$vcheckname[$i]" => check)
+                check = ("($vcheckname[$Istr], $check)")
             end
             if length(vmonitor) == 0
-                @info "Numerical error found in index $i" check
+                @info "Numerical error found in index [$Istr]" check
             else
                 monitor = map(v -> v[i], vmonitor)
                 if vmonitornames != nothing
-                    monitor = Dict(zip(map(mn -> "$mn[$i]", vmonitornames), monitor))
+                    monitor = collect(zip(map(mn -> "$mn[$Istr]", vmonitornames), monitor))
+                    monitor = map(t -> "($(t[1]), $(t[2]))", monitor)
+                    monitor = join(monitor, " ")
                 end
-                @info "Numerical error found in index $i" check monitor
+                @info "Numerical error found in index [$Istr]" check monitor
             end
         end
     end
