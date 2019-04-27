@@ -33,12 +33,12 @@ macro script(expr)
 end
 
 """
-    checknumerical(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
+    checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
 
 Check if each entry in `vcheck` is `NaN` or `Inf`.
 If so, report the index and the value of that index in all variables.
 """
-function checknumerical(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
+function checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
     for i in eachindex(vmonitor)
         @assert size(vcheck) == size(vmonitor[i]) "All variables in `vmonitor` should have the same size as `vcheck`; vmonitor[$i] doesn't."
     end
@@ -62,14 +62,14 @@ function checknumerical(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=n
 end
 
 """
-    @checknumerical vcheck vmonitor1 vmonitor2 ...
+    @checknumerics vcheck vmonitor1 vmonitor2 ...
 
-Helper macro to call `checknumerical` with variable names extracted.
+Helper macro to call `checknumerics` with variable names extracted.
 """
-macro checknumerical(vcheck, vmonitor...)
-    vcheckname = String(vcheck)
-    vmonitornames = map(m -> String(m), vmonitor)
+macro checknumerics(vcheck, vmonitor...)
+    vcheckname = string(vcheck)
+    vmonitornames = map(m -> string(m), vmonitor)
     return quote
-        checknumerical($vcheck, $(vmonitor...); vcheckname=$vcheckname, vmonitornames=$vmonitornames)
+        checknumerics($vcheck, $(vmonitor...); vcheckname=$vcheckname, vmonitornames=$vmonitornames)
     end
 end
