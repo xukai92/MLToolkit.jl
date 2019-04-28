@@ -14,16 +14,18 @@ function flatten_dict(dict::Dict{T,Any};
     return join(["$k$equal_sym$v" for (k,v) in filter(t -> (t[1] in include) && !(t[1] in exclude), dict)], delimiter)
 end
 
+isjupyter() = isdefined(Main, :IJulia) && Main.IJulia.inited
+
 """
     @jupyter expr
 
 Execute `expr` if IN Jupyter.
 """
 macro jupyter(expr)
-    return quote 
-        if isdefined(Main, :IJulia) && Main.IJulia.inited
-            $expr
-        end
+    if isjupyter()
+        return esc(expr)
+    else
+        return nothing
     end
 end
 
@@ -33,10 +35,10 @@ end
 Execute `expr` if NOT IN Jupyter.
 """
 macro script(expr)
-    return quote 
-        if !(isdefined(Main, :IJulia) && Main.IJulia.inited)
-            $expr
-        end
+    if !isjupyter()
+        return esc(expr)
+    else
+        return nothing
     end
 end
 
