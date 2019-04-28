@@ -11,10 +11,9 @@ function MeanFieldSBC(i_dim::Int, k_init::Int=0; kwargs...)
     return MeanFieldSBC(kuma, gumbel)
 end
 
-function (enc::MeanFieldSBC)(i, d::Int...)
-    _eps = eps(FT)
+function (enc::MeanFieldSBC)(i, d::Int...; lowerbound=FT(0.1))
     dist_kuma = enc.kuma(i, d...)
-    dist_nu = BatchKumaraswamy(dist_kuma.a .+ _eps, dist_kuma.b .+ _eps)
+    dist_nu = BatchKumaraswamy(dist_kuma.a .+ lowerbound, dist_kuma.b .+ lowerbound)
     dist_gumbel = enc.gumbel(i, d...)
     return dist_nu, dist_gumbel
 end
@@ -39,12 +38,11 @@ function StructuredSBC(i_dim::Int, k_init::Int=0, α::AbstractFloat=one(FT), β:
     return StructuredSBC(a, b, gumbel)
 end
 
-function (enc::StructuredSBC)(i, d::Int...)
-    _eps = eps(FT)
-    # TODO: implement online initialisation
+function (enc::StructuredSBC)(i, d::Int...; lowerbound=FT(0.1))
     # NOTE: for non-RR (i.e. static) version, d[1] is always equal to size(a, 1) and size(b, 1)
-    dist_nu = BatchKumaraswamy(softplus.(enc.a[1:d[1],:]) .+ _eps,
-                               softplus.(enc.b[1:d[1],:]) .+ _eps)
+    # TODO: implement online initialisation
+    dist_nu = BatchKumaraswamy(softplus.(enc.a[1:d[1],:]) .+ lowerbound,
+                               softplus.(enc.b[1:d[1],:]) .+ lowerbound)
     dist_gumbel = enc.gumbel(i, d...)
     return dist_nu, dist_gumbel
 end
