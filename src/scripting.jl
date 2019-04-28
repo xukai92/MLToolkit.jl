@@ -20,7 +20,11 @@ end
 Execute `expr` if IN Jupyter.
 """
 macro jupyter(expr)
-    return :(isdefined(Main, :IJulia) && Main.IJulia.inited && $expr)
+    return quote 
+        if isdefined(Main, :IJulia) && Main.IJulia.inited
+            $expr
+        end
+    end
 end
 
 """
@@ -29,7 +33,11 @@ end
 Execute `expr` if NOT IN Jupyter.
 """
 macro script(expr)
-    return :(!(isdefined(Main, :IJulia) && Main.IJulia.inited) && $expr)
+    return quote 
+        if !(isdefined(Main, :IJulia) && Main.IJulia.inited)
+            $expr
+        end
+    end
 end
 
 """
