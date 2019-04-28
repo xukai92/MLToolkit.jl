@@ -12,6 +12,7 @@ lbeta(α, β) = _lbeta(α, β)
 beta(α, β) = _beta(α, β)
 
 import StatsFuns: logit
+
 function logit(x)
     _eps = eps(FT)
     _one = one(FT)
