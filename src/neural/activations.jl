@@ -25,8 +25,8 @@ function unary_op(f)
         # TODO: see if I can implement gradient as well; ref:
         # https://github.com/denizyuret/Knet.jl/blob/687dba214c3f3326272c7c2191e14e8fdbc35c6a/src/unary.jl#L62-L70
         # Bcasted methods
-        ($M).$J(x::Knet.Bcasted{<:Knet.KnetArray{T}}) where {T<:AbstractFloat} = broadcasted($J, x.value) |> Knet.Bcasted
-        Base.Broadcast.broadcasted(::typeof($J), x::Knet.Bcasted{<:Knet.KnetArray{T}}) where {T<:AbstractFloat} = broadcasted($J, x.value) |> Knet.Bcasted
+        ($M).$J(x::Knet.Bcasted{<:Knet.KnetArray{T}}) where {T<:AbstractFloat} = Base.Broadcast.broadcasted($J, x.value) |> Knet.Bcasted
+        Base.Broadcast.broadcasted(::typeof($J), x::Knet.Bcasted{<:Knet.KnetArray{T}}) where {T<:AbstractFloat} = Base.Broadcast.broadcasted($J, x.value) |> Knet.Bcasted
     end
     @eval begin # so we do not trigger some default Base implementation
         ($M).$J(x::Knet.Bcasted) = throw(MethodError($J,(x,)))
