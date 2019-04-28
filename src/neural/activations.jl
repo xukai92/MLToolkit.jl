@@ -38,8 +38,8 @@ for f in [:log1pexp, :logexpm1]
     unary_op(f)
 end
 
-Knet.AutoGrad.@primitive log1pexp(x::Array),dy,y  (dy.*exp.(x)./exp.(y))
-Knet.AutoGrad.@primitive log1pexp(x::Knet.KnetArray),dy,y  (dy.*exp.(x)./exp.(y))
+Knet.AutoGrad.@primitive log1pexp(x::Array),dy,y  dy.*exp.(x .- y)
+Knet.AutoGrad.@primitive log1pexp(x::Knet.KnetArray),dy,y  dy.*exp.(x .- y)
 
 const softplus = log1pexp
 const invsoftplus = logexpm1
