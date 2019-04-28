@@ -33,8 +33,8 @@ const BINARY_DIST_DICT = Dict(
                                 :Σ, :softplus),
     :GaussianLogVar => (:BatchNormalLogVar, :μ, :identity,
                                             :logΣ, :identity),
-    :Kumaraswamy => (:BatchKumaraswamy, :a, :(Knet.relu),
-                                        :b, :(Knet.relu)),
+    :Kumaraswamy => (:BatchKumaraswamy, :a, :softplus,
+                                        :b, :softplus),
 )
 
 for dist_sym in keys(BINARY_DIST_DICT)
