@@ -1,4 +1,3 @@
-using StatsFuns: log1pexp
 using LinearAlgebra: tril
 
 mutable struct Rho{T}
