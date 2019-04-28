@@ -1,12 +1,10 @@
-# TODO: see if I can replace this fucntion with StatsFuns.jl
+# TODO: implement CUDA kernels for below
 
-function softplus(x)
-    return log(one(x) + exp(x))
-end
+log1pexp(x) = log1p(exp(x))
+logexpm1(x) = log(-expm1(x))
 
-function invsoftplus(x)
-    return log(exp(x) - one(x))
-end
+const softplus = log1pexp
+const invsoftplus = logexpm1
 
 function leaky_relu(x; alpha=0.2)
     neg = min(0, x) * alpha
