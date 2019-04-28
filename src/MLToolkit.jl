@@ -16,7 +16,7 @@ import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
 const axes_grid1 = PyCall.PyNULL()
 
 # Constants that are exported
-const FT = Float32
+const FT = Float64
 const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possible
 const plt = PyPlot
 export FT, AT, plt
