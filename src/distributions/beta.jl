@@ -15,8 +15,7 @@ end
 function _u2logkumaraswamysample(T, u, kuma::BatchKumaraswamy)
     _one = one(T)
     _eps = eps(T)
-    # return log.(_one .- exp.(log.(u .+ _eps) ./ kuma.b)) ./ kuma.a
-    return log1p.(-exp.(log.(u .+ _eps) ./ (kuma.b .+ _eps))) ./ (kuma.a .+ _eps)
+    return log1p.(-exp.(log.(u .+ _eps) ./ kuma.b)) ./ kuma.a
 end
 
 """
