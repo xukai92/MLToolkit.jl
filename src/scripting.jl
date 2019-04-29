@@ -98,10 +98,11 @@ Generate a list of commands given a command template and sweep mappings.
 Example:
 
 ```julia
-sweepcmd("sleep @Ts", [("@T", [1, 2, 3])])
+sweepcmd("sleep @Ts", Dict("@T" => [1, 2, 3]))
 ```
 """
-function sweepcmd(cmd_template, sweeps)
+function sweepcmd(cmd_template, sweeps::Dict)
+    sweeps = [(k, sweeps[k]) for k in keys(sweeps)]
     n_sweeps = length(sweeps)
     names = map(s -> s[1], sweeps)
     vlists = map(s -> s[2], sweeps)
@@ -125,10 +126,10 @@ Run a list of commands given a command template and sweep mappings.
 Example:
 
 ```julia
-sweeprun("sleep @Ts", [("@T", [1, 2, 3])])
+sweeprun("sleep @Ts", Dict("@T" => [1, 2, 3]))
 ```
 """
-function sweeprun(cmd_template, sweeps)
+function sweeprun(cmd_template, sweeps::Dict)
     cmds = sweepcmd(cmd_template, sweeps)
     @sync begin
        for cmd in cmds
