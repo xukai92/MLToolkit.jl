@@ -37,4 +37,20 @@ using ArgParse: ArgParseSettings, @add_arg_table
         flat_args = flatten_dict(args; include=[:a])
         @test flat_args == "a=1"
     end
+
+    @warn "`jupyter()` is not tested."
+    @warn "`@jupyter` is not tested."
+    @warn "`checknumerics()` is not tested."
+    @warn "`@checknumerics` is not tested."
+
+    @testset "sweepcmd" begin
+        @test sweepcmd("sleep @Ts", [("@T", [1, 2, 3])]) == [`sleep 1s`, `sleep 2s`, `sleep 3s`]
+    end
+
+    @testset "sweeprun" begin
+        # Check if runs are in parallel
+        t = @elapsed sweeprun("sleep @Ts", [("@T", [1, 2, 3, 4])]) == [`sleep 1s`, `sleep 2s`, `sleep 3s`]
+        @test t < 5
+    end
+    
 end

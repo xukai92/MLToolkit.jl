@@ -89,3 +89,50 @@ macro checknumerics(scheck, smonitor...)
         checknumerics($vcheck, $(vmonitor...); vcheckname=$vcheckname, vmonitornames=$vmonitornames)
     end
 end
+
+"""
+    sweepcmd(cmd_template, sweeps)
+
+Generate a list of commands given a command template and sweep mappings.
+
+Example:
+
+```julia
+sweepcmd("sleep @Ts", [("@T", [1, 2, 3])])
+```
+"""
+function sweepcmd(cmd_template, sweeps)
+    n_sweeps = length(sweeps)
+    names = map(s -> s[1], sweeps)
+    vlists = map(s -> s[2], sweeps)
+    cmds = Cmd[]
+    for values in Base.Iterators.product(vlists...)
+        cms_str = cmd_template
+        for i = 1:n_sweeps
+            cms_str = replace(cms_str, names[i] => string(values[i]))
+        end
+        cmd = Cmd(map(String, split(cms_str, " ")))
+        push!(cmds, cmd)
+    end
+    return cmds
+end
+
+"""
+    sweepcmd(cmd_template, sweeps)
+
+Run a list of commands given a command template and sweep mappings.
+
+Example:
+
+```julia
+sweeprun("sleep @Ts", [("@T", [1, 2, 3])])
+```
+"""
+function sweeprun(cmd_template, sweeps)
+    cmds = sweepcmd(cmd_template, sweeps)
+    @sync begin
+       for cmd in cmds
+           @async run(cmd)
+       end
+    end
+end
