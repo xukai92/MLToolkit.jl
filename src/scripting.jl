@@ -136,3 +136,33 @@ function sweeprun(cmd_template, sweeps::Pair...)
        end
     end
 end
+
+import Logging
+
+"""
+Combine multiple loggers into a single logger.
+"""
+struct CombinedLogger <: Base.CoreLogging.AbstractLogger
+    loggers
+    min_level::Logging.LogLevel
+    message_limits::Dict{Any,Int}
+end
+
+function CombinedLogger(streams::Vector{<:IO}, level=Logging.Info)
+    loggers = map(s -> Logging.SimpleLogger(s, level), streams)
+    return CombinedLogger(loggers, level, Dict{Any,Int}())
+end
+
+Logging.shouldlog(logger::CombinedLogger, level, _module, group, id) =
+    get(logger.message_limits, id, 1) > 0
+
+Logging.min_enabled_level(logger::CombinedLogger) = logger.min_level
+
+Logging.catch_exceptions(logger::CombinedLogger) = false
+
+function Logging.handle_message(clogger::CombinedLogger, args...; kwargs...)
+    for logger in clogger.loggers
+        Logging.handle_message(logger, args...; kwargs...)
+    end
+    nothing
+end
