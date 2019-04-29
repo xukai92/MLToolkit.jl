@@ -148,9 +148,10 @@ struct CombinedLogger <: Base.CoreLogging.AbstractLogger
     message_limits::Dict{Any,Int}
 end
 
-function CombinedLogger(streams::Vector{<:IO}, level=Logging.Info)
-    loggers = map(s -> Logging.SimpleLogger(s, level), streams)
-    return CombinedLogger(loggers, level, Dict{Any,Int}())
+# TODO: make sure the logging level operations below are correct.
+function CombinedLogger(loggers::Base.CoreLogging.AbstractLogger...)
+    min_level = min(map(l -> l.min_level, loggers)...)
+    return CombinedLogger(loggers, min_level, Dict{Any,Int}())
 end
 
 Logging.shouldlog(logger::CombinedLogger, level, _module, group, id) =
