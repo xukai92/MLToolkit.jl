@@ -9,5 +9,7 @@ include("loader.jl")
 export BatchDataLoader
 include("visualisation.jl")
 export make_imggrid
+include("features.jl")
+export get_features_griffiths2011indian
 
 end # module

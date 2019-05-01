@@ -67,4 +67,8 @@ using Knet: KnetArray
             @test typeof(x1) == at
         end
     end
+
+    @test "get_features" begin
+        @warn `get_features_griffiths2011indian() not tested`
+    end
 end
