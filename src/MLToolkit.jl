@@ -17,8 +17,9 @@ const axes_grid1 = PyCall.PyNULL()
 
 # Constants that are exported
 const FT = Float64
-# use GPU whenever possible
+# Use GPU whenever possible
 const AT = try
+    # Check if the command `nvidia-smi` exists. If yes we use GPU.
     read(`command -v nvidia-smi`, String)
     Knet.KnetArray
 catch
