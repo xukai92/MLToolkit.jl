@@ -19,7 +19,7 @@ const axes_grid1 = PyCall.PyNULL()
 const FT = Float64
 # use GPU whenever possible
 const AT = try
-    run(`command -v nvidia-smi`)
+    read(`command -v nvidia-smi`, String)
     Knet.KnetArray
 catch
     Array
