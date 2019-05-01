@@ -17,7 +17,13 @@ const axes_grid1 = PyCall.PyNULL()
 
 # Constants that are exported
 const FT = Float64
-const AT = Knet.gpu() != -1 ? Knet.KnetArray : Array    # use GPU whenever possible
+# use GPU whenever possible
+const AT = try
+    run(`command -v nvidia-smi`)
+    Knet.KnetArray
+catch
+    Array
+end
 const plt = PyPlot
 export FT, AT, plt
 
