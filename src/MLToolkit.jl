@@ -49,8 +49,4 @@ include("neural/neural.jl")
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
 
-# Deactivate the GPU Knet activated at startup.
-# Activation of GPU should be explicit.
-Knet.gpu(false) 
-
 end # module
