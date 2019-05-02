@@ -11,8 +11,6 @@ end
 
 # Package level imports all go here
 import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
-Knet.gpu(false) # deactivate the GPU Knet activated at startup;
-                # activation of GPU should be explicit
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
@@ -50,5 +48,9 @@ include("neural/neural.jl")
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
+
+# Deactivate the GPU Knet activated at startup.
+# Activation of GPU should be explicit.
+Knet.gpu(false) 
 
 end # module
