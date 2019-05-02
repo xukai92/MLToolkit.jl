@@ -11,6 +11,8 @@ end
 
 # Package level imports all go here
 import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
+Knet.gpu(false) # deactivate the GPU Knet activated at startup;
+                # activation of GPU should be explicit
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
