@@ -26,6 +26,12 @@ function _u2gumbel(T, u)
     return -log.(-log.(u .+ _eps) .+ _eps)
 end
 
+function _g2softmax(T, g, p, τ)
+    logit = g .+ log.(p .+ eps(T))
+    exp_logit = exp.(logit ./ τ)
+    return exp_logit ./ sum(exp_logit; dims=1)
+end
+
 """
     rand(gs::AbstractBatchGumbelSoftmax)
 
@@ -35,14 +41,28 @@ function rand(gs::AbstractBatchGumbelSoftmax{T}) where {T}
     _T = isa(gs.p, AutoGrad.Result) ? typeof(AutoGrad.value(gs.p)) : T
 
     FT = eltype(gs.p)
-    _eps = eps(FT)
 
     u = rand(FT, size(gs.p)...)
     g = _T(_u2gumbel(FT, u))
 
-    logit = g .+ log.(gs.p .+ _eps)
-    exp_logit = exp.(logit ./ gs.τ)
-    return exp_logit ./ sum(exp_logit; dims=1)
+    return _g2softmax(FT, g, gs.p, gs.τ)
+end
+
+"""
+    rand(gs::AbstractBatchGumbelSoftmax, n::Int)
+
+Generate multiple samples from the Gumbel-Softmax distributions.
+"""
+function rand(gs::AbstractBatchGumbelSoftmax{T}, n::Int) where {T}
+    @assert size(gs.p, 2) == 1
+    _T = isa(gs.p, AutoGrad.Result) ? typeof(AutoGrad.value(gs.p)) : T
+
+    FT = eltype(gs.p)
+    
+    u = rand(FT, size(gs.p, 1), n)
+    g = _T(_u2gumbel(FT, u))
+
+    return _g2softmax(FT, g, gs.p, gs.τ)
 end
 
 mean(gs::AbstractBatchGumbelSoftmax) = gs.p

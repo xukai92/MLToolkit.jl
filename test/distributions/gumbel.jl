@@ -12,10 +12,11 @@ using StatsFuns: logit, logistic
             p = Matrix{FT}(rand(Dirichlet([1.0, 1.0]), 1))
 
             gs = BatchGumbelSoftmax(AT(p))
-            x = hcat([rand(gs) for _ = 1:n]...)
 
-            @test mean(x; dims=2) ≈ p atol=(2 * τ_atol_ratio * ATOL_RAND)
-            @test mean(x; dims=2) ≈ mean(gs) atol=(2 * τ_atol_ratio * ATOL_RAND)
+            for x in [hcat([rand(gs) for _ = 1:n]...), rand(gs, n)]
+                @test mean(x; dims=2) ≈ p atol=(2 * τ_atol_ratio * ATOL_RAND)
+                @test mean(x; dims=2) ≈ mean(gs) atol=(2 * τ_atol_ratio * ATOL_RAND)
+            end
         end
     end
 
