@@ -16,7 +16,7 @@ import AutoGrad
         for m in [1, 5]
 
             pr = Param(Rho())
-            pr.opt = SGD()
+            pr.opt = DynamicAdam()
 
             for _ = 1:100_000*div(5, m)
                 ϵ = randn(100) * 0.1

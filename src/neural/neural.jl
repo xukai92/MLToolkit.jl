@@ -26,6 +26,27 @@ function update!(ps::Array, losstape::AutoGrad.Tape)
 end
 
 """
+Dynamic Adam - an Adam that can initialise first and second momentum during optimization.
+This is used to deal dynamic models.
+"""
+mutable struct DynamicAdam
+    adam::Knet.Adam
+end
+
+DynamicAdam(; kwargs...) = DynamicAdam(Knet.Adam(; kwargs...))
+
+for T in (Array{Float32},Array{Float64},Knet.KnetArray{Float32},Knet.KnetArray{Float64}); @eval begin
+    function update!(w::$T, g::$T, p::DynamicAdam)
+        if !(p.adam.fstm === nothing) && length(g) > length(p.adam.fstm)
+            d_pad = length(g) - length(p.adam.fstm)
+            p.adam.fstm = vcat(p.adam.fstm, zeros(eltype(p.adam.fstm), d_pad))
+            p.adam.scndm = vcat(p.adam.scndm, zeros(eltype(p.adam.scndm), d_pad))
+        end
+        update!(w, g, p.adam)
+    end
+end; end
+
+"""
 Update all parameters of `model` by back-propgating `losstape`.
 """
 update!(model::AbstractTrainable, losstape::AutoGrad.Tape) = update!(Knet.params(model), losstape)
@@ -101,7 +122,7 @@ function evaluate(model::NeuralModel, dataloader; kargs...)
     return mean(loss_list)
 end
 
-export initoptim!, update!, numparams
+export initoptim!, update!, DynamicAdam, numparams
 export AbstractTrainable, AbstractLayer, StaticLayer, StochasticLayer
 export NeuralModel, train!, evaluate
 

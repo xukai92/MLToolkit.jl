@@ -67,7 +67,6 @@ function update_by_dLdlogitρ!(pr::Knet.Param{Rho{T}}, dLdlogitρ) where {T}
 end
 
 function Knet.update!(r::Rho, opt)
-    opt = SGD()
     r.lnpd.logitρ .= Knet.update!(r.lnpd.logitρ, r.grad, opt)
 end
 Knet.update!(r::Rho, ::Nothing, opt) = update!(r, opt)
