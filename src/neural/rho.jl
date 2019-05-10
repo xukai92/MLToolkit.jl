@@ -53,11 +53,13 @@ end
 # gradRR(R::Function, r::Rho, m::Int) = roll(R, r.lnpd, m)
 # gradRR(R::Function, r::Rho, τs::AbstractVector{Int}) = roll(R, r.lnpd, τs)
 
-function updategrad!(r, dLdrho)
+function updategrad!(r, dLdrho::Vector{T}) where {T<:AbstractFloat}
     rho = getρ(r, 1, length(dLdrho))
     drhodlogitρ = rho .* (1 .- rho)
     dLdlogitρ = dLdrho .* drhodlogitρ
-    r.grad = dLdlogitρ
+    llnpd = length(r.lnpd.logitρ)
+    lgrad = length(dLdlogitρ)
+    r.grad = llnpd > lgrad ? vcat(dLdlogitρ, zeros(T, llnpd - lgrad)) : dLdlogitρ
 end
 
 function update_by_dLdlogitρ!(pr::Knet.Param{Rho{T}}, dLdlogitρ) where {T}
@@ -65,8 +67,8 @@ function update_by_dLdlogitρ!(pr::Knet.Param{Rho{T}}, dLdlogitρ) where {T}
 end
 
 function Knet.update!(r::Rho, opt)
-    l = length(r.grad)
-    r.lnpd.logitρ[1:l] .= Knet.update!(r.lnpd.logitρ[1:l], r.grad, opt)
+    opt = SGD()
+    r.lnpd.logitρ .= Knet.update!(r.lnpd.logitρ, r.grad, opt)
 end
 Knet.update!(r::Rho, ::Nothing, opt) = update!(r, opt)
 
