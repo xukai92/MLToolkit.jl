@@ -39,8 +39,8 @@ for T in (Array{Float32},Array{Float64},Knet.KnetArray{Float32},Knet.KnetArray{F
     function update!(w::$T, g::$T, p::DynamicAdam)
         if !(p.adam.fstm === nothing) && length(g) > length(p.adam.fstm)
             d_pad = length(g) - length(p.adam.fstm)
-            p.adam.fstm = vcat(p.adam.fstm, zeros(eltype(p.adam.fstm), d_pad))
-            p.adam.scndm = vcat(p.adam.scndm, zeros(eltype(p.adam.scndm), d_pad))
+            p.adam.fstm = vcat([p.adam.fstm, typeof(p.adam.fstm)(zeros(eltype(p.adam.fstm), d_pad))]...)
+            p.adam.scndm = vcat([p.adam.scndm, typeof(p.adam.scndm)(zeros(eltype(p.adam.scndm), d_pad))]...)
         end
         update!(w, g, p.adam)
     end
