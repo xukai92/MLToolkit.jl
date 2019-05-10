@@ -66,8 +66,6 @@ end
 
 function Knet.update!(r::Rho, opt)
     l = length(r.grad)
-    # WARNING: optimizer is forced to use SGD because Adam would have different length of moments in different iterations
-    opt = Knet.SGD(;lr=opt.lr)
     r.lnpd.logitρ[1:l] .= Knet.update!(r.lnpd.logitρ[1:l], r.grad, opt)
 end
 Knet.update!(r::Rho, ::Nothing, opt) = update!(r, opt)
