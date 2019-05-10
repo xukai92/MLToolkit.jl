@@ -38,23 +38,24 @@ DynamicAdam(; kwargs...) = DynamicAdam(Knet.Adam(; kwargs...))
 for T in (Array{Float32},Array{Float64},Knet.KnetArray{Float32},Knet.KnetArray{Float64}); @eval begin
     function update!(w::$T, g::$T, p::DynamicAdam)
         if !(p.adam.fstm === nothing) && length(g) > length(p.adam.fstm)
+            F = eltype(T)
             # Vector
             if length(size(g)) == 1
                 d_pad = length(g) - length(p.adam.fstm)
-                p.adam.fstm = vcat([p.adam.fstm, typeof(p.adam.fstm)(zeros(eltype(p.adam.fstm), d_pad))]...)
-                p.adam.scndm = vcat([p.adam.scndm, typeof(p.adam.scndm)(zeros(eltype(p.adam.scndm), d_pad))]...)
+                p.adam.fstm = vcat([p.adam.fstm, T(zeros(F, d_pad))]...)
+                p.adam.scndm = vcat([p.adam.scndm, T(zeros(F, d_pad))]...)
             # Matrix
             else
                 # Expand rows
                 if size(g, 1) > size(p.adam.fstm, 1)
                     d_pad = size(g, 1) - size(p.adam.fstm, 1)
-                    p.adam.fstm = vcat([p.adam.fstm, typeof(p.adam.fstm)(zeros(eltype(p.adam.fstm), d_pad, size(g, 2)))]...)
-                    p.adam.scndm = vcat([p.adam.scndm, typeof(p.adam.scndm)(zeros(eltype(p.adam.scndm), d_pad), size(g, 2))]...)
+                    p.adam.fstm = vcat([p.adam.fstm, T(zeros(F, d_pad, size(g, 2)))]...)
+                    p.adam.scndm = vcat([p.adam.scndm, T(zeros(F, d_pad), size(g, 2))]...)
                 # Expand cols
                 else
                     d_pad = size(g, 2) - size(p.adam.fstm, 2)
-                    p.adam.fstm = hcat([p.adam.fstm, typeof(p.adam.fstm)(zeros(eltype(p.adam.fstm), size(g, 1), d_pad))]...)
-                    p.adam.scndm = hcat([p.adam.scndm, typeof(p.adam.scndm)(zeros(eltype(p.adam.scndm), size(g, 1), d_pad))]...)
+                    p.adam.fstm = hcat([p.adam.fstm, T(zeros(F, size(g, 1), d_pad))]...)
+                    p.adam.scndm = hcat([p.adam.scndm, T(zeros(F, size(g, 1), d_pad))]...)
                 end
             end
         end
