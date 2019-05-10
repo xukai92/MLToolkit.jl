@@ -50,7 +50,7 @@ for T in (Array{Float32},Array{Float64},Knet.KnetArray{Float32},Knet.KnetArray{F
                 if size(g, 1) > size(p.adam.fstm, 1)
                     d_pad = size(g, 1) - size(p.adam.fstm, 1)
                     p.adam.fstm = vcat([p.adam.fstm, $T(zeros(F, d_pad, size(g, 2)))]...)
-                    p.adam.scndm = vcat([p.adam.scndm, $T(zeros(F, d_pad), size(g, 2))]...)
+                    p.adam.scndm = vcat([p.adam.scndm, $T(zeros(F, d_pad, size(g, 2)))]...)
                 # Expand cols
                 else
                     d_pad = size(g, 2) - size(p.adam.fstm, 2)
