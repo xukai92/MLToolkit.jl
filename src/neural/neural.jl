@@ -38,7 +38,7 @@ DynamicAdam(; kwargs...) = DynamicAdam(Knet.Adam(; kwargs...))
 for T in (Array{Float32},Array{Float64},Knet.KnetArray{Float32},Knet.KnetArray{Float64}); @eval begin
     function update!(w::$T, g::$T, p::DynamicAdam)
         if !(p.adam.fstm === nothing) && length(g) > length(p.adam.fstm)
-            F = eltype(T)
+            F = eltype($T)
             # Vector
             if length(size(g)) == 1
                 d_pad = length(g) - length(p.adam.fstm)
