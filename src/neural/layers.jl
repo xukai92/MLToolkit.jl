@@ -41,8 +41,8 @@ function (d::LazyDense)(x, k::Int=length(d.b); b0::Bool=d.b0)
     end
     if k > size(d.w, 1)
         k_diff = k - size(d.w, 1)
-        d.w = Knet.Param(vcat(d.w, Knet.param(k_diff, size(d.w, 2); atype=AT{FT,2})))
-        d.b = Knet.Param(vcat(d.b, (b0 ? Knet.param0 : Knet.param)(k_diff; atype=AT{FT,1})))
+        d.w = Knet.Param(vcat(Knet.value(d.w), Knet.param(k_diff, size(d.w, 2); atype=AT{FT,2})))
+        d.b = Knet.Param(vcat(Knet.value(d.b), (b0 ? Knet.param0 : Knet.param)(k_diff; atype=AT{FT,1})))
     end
     return d.f.(d.w[1:k,1:sx1] * x .+ d.b[1:k])
 end

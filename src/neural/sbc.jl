@@ -43,8 +43,8 @@ end
 function (enc::StructuredSBC)(i, k::Int=size(enc.a, 1); α::AbstractFloat=enc.α, β::AbstractFloat=enc.β, lowerbound=(FT == Float64 ? FT(0.1) : FT(0.2)))
     if k > size(enc.a, 1)
         k_diff = k - size(enc.a, 1)
-        enc.a = Knet.Param(vcat(enc.a, Knet.Param(AT(zeros(FT, k_diff, 1) .+ invsoftplus(α)))))
-        enc.b = Knet.Param(vcat(enc.b, Knet.Param(AT(zeros(FT, k_diff, 1) .+ invsoftplus(β)))))
+        enc.a = Knet.Param(vcat(Knet.value(enc.a), Knet.Param(AT(zeros(FT, k_diff, 1) .+ invsoftplus(α)))))
+        enc.b = Knet.Param(vcat(Knet.value(enc.b), Knet.Param(AT(zeros(FT, k_diff, 1) .+ invsoftplus(β)))))
     end
     dist_nu = BatchKumaraswamy(softplus.(enc.a[1:k,:]) .+ lowerbound,
                                softplus.(enc.b[1:k,:]) .+ lowerbound)
