@@ -26,27 +26,30 @@ end
 
 """
 Lazy dense layer ...zZzZzZ
-
-There is not initialization for me as I'm lazy.
 """
-struct LazyDense <: StaticLayer
+mutable struct LazyDense <: StaticLayer
     w
     b
     f::Function
+    b0::Bool
 end
 
-# TODO: implement online initialisation
-function (d::LazyDense)(x, k)
-    return d.f.(d.w[1:k,1:size(x, 1)] * x .+ d.b[1:k])
-end
-
-function (d::LazyDense)(x)
-    return d.f.(d.w[:,1:size(x, 1)] * x .+ d.b)
+function (d::LazyDense)(x, k::Int=length(d.b); b0::Bool=d.b0)
+    sx1 = size(x, 1)
+    if sx1 > size(d.w, 2)
+        d.w = hcat(d.w, Knet.param(size(d.w, 1), sx1 - size(d.w, 2); atype=AT{FT,2}))
+    end
+    if k > size(d.w, 1)
+        diff = 
+        d.w = vcat(d.w, Knet.param(k - size(d.w, 1), size(d.w, 2); atype=AT{FT,2}))
+        d.b = vcat(d.b, (b0 ? Knet.param0 : Knet.param)(k - length(d.b); atype=AT{FT,1}))
+    end
+    return d.f.(d.w[1:k,1:sx1] * x .+ d.b[1:k])
 end
 
 function LazyDense(i_dim::Integer, o_init::Integer; f::Function=identity, b0::Bool=true)
     d = Dense(i_dim, o_init; f=f, b0=b0)
-    return LazyDense(d.w, d.b, d.f)
+    return LazyDense(d.w, d.b, d.f, b0)
 end
 
 """
