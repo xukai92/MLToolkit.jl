@@ -16,7 +16,7 @@ function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
     return fig
 end
 
-function plot_grayimg(img, args...; ax=plt.gca())
+function plot_grayimg!(img, args...; ax=plt.gca())
     @assert length(args) == 0 || length(args) == 2 "You can either plot a single image or declare the `n_rows` and `n_cols`"
     im = ax."imshow"(make_imggrid(img, args...), cmap="gray")
     plt.axis("off")
@@ -26,7 +26,7 @@ function plot_grayimg(img, args...; ax=plt.gca())
     return ax
 end
 
-function plot_actmat(Z::Matrix; ax=plt.gca())
+function plot_actmat!(Z::Matrix; ax=plt.gca())
     # TODO: implement a sorting version
     # col_sort_idcs = sortperm(vec([count_leadingzeros(Z[:,k]) for k = 1:size(Z, 2)]))
     # Z = Z[:,col_sort_idcs]
