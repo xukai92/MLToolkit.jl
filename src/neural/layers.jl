@@ -7,9 +7,7 @@ struct Dense <: StaticLayer
     f::Function
 end
 
-function (d::Dense)(x)
-    return d.f.(d.w * x .+ d.b)
-end
+(d::Dense)(x) = d.f.(d.w * Knet.mat(x) .+ d.b)
 
 """
 Create dense layer by input and output size.
@@ -35,6 +33,7 @@ struct LazyDense <: StaticLayer
 end
 
 function (d::LazyDense)(x, k::Int=length(d.b); b0::Bool=d.b0)
+    # TODO: use `Knet.mat` here as well
     sx1 = size(x, 1)
     if sx1 > size(d.w, 2)
         d.w.value = hcat([d.w.value, Knet.param(size(d.w, 1), sx1 - size(d.w, 2); atype=AT{FT,2}).value]...)
