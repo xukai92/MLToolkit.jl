@@ -3,12 +3,6 @@ module MLToolkit
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
-# Module init
-function __init__()
-    # Bind Python libraries
-    copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
-end
-
 # Package level imports all go here
 import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
 
@@ -48,5 +42,13 @@ include("neural/neural.jl")
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
+
+# Module init
+function __init__()
+    # Bind Python libraries
+    copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
+    # Ensure not using Type 3 fonts
+    plt.rc("pdf", fonttype=42)
+end
 
 end # module
