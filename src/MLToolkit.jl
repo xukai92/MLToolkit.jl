@@ -9,7 +9,9 @@ import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
 
-# Constants that are exported
+###############################
+# Constants that are exported #
+###############################
 const FT = Float64
 # Use GPU whenever possible
 const AT = try
@@ -23,7 +25,7 @@ const plt = PyPlot
 export FT, AT, plt
 
 include("utility.jl")
-export count_leadingzeros
+export count_leadingzeros, turnoffgpu
 include("special.jl")
 export lbeta, beta, logit
 include("transformations.jl")
