@@ -14,13 +14,7 @@ const axes_grid1 = PyCall.PyNULL()
 ###############################
 const FT = Float64
 # Use GPU whenever possible
-const AT = try
-    # Check if the command `nvidia-smi` exists. If yes we use GPU.
-    read(`command -v nvidia-smi`, String)
-    Knet.KnetArray
-catch
-    Array
-end
+const AT = Knet.gpu() > -1 ? Knet.KnetArray : Array
 const plt = PyPlot
 export FT, AT, plt
 
