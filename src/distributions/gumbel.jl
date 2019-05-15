@@ -26,6 +26,10 @@ function _u2gumbel(T, u)
     return -log.(-log.(u .+ _eps) .+ _eps)
 end
 
+_u2gumbelback(T, u, g) = one(T) ./ exp.(-g) ./ (u .+ eps(T))
+
+Knet.@primitive  _u2gumbel(T,u),dy,g  dy.*_u2gumbelback(T,u,g)
+
 function _g2softmax(T, g, p, τ)
     logit = g .+ log.(p .+ eps(T))
     exp_logit = exp.(logit ./ τ)
