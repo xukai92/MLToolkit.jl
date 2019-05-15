@@ -1,3 +1,5 @@
+import Random
+
 struct BatchDataLoader
     data::Tuple
     batch_size::Int
