@@ -128,12 +128,14 @@ Example:
 sweeprun("sleep @Ts", "@T" => [1, 2, 3])
 ```
 """
-function sweeprun(cmd_template, sweeps::Pair...)
+function sweeprun(cmd_template, sweeps::Pair...; maxasync=0)
     cmds = sweepcmd(cmd_template, sweeps...)
-    @sync begin
-       for cmd in cmds
-           @async run(cmd)
-       end
+    for cmds_part in Iterators.partition(cmds, maxasync > 0 ? maxasync : length(cmds))
+        @sync begin
+            for cmd in cmds_part
+                @async run(cmd)
+            end
+        end
     end
 end
 

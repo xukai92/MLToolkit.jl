@@ -1,5 +1,3 @@
-import Random: randperm
-
 struct BatchDataLoader
     data::Tuple
     batch_size::Int
@@ -50,7 +48,7 @@ end
 Base.length(bdl::BatchDataLoader) = bdl.num_batches
 
 function shuffle!(bdl::BatchDataLoader)
-    idcs = randperm(bdl.data_length)
+    idcs = Random.randperm(bdl.data_length)
     for i = 1:length(bdl.data)
         bdl.data[i] .= length(size(bdl.data[i])) == 2 ? bdl.data[i][:,idcs] : bdl.data[i][idcs]
     end
