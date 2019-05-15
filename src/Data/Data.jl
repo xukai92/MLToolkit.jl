@@ -6,7 +6,7 @@ export FT, AT
 include("mnist.jl")
 export load_mnist
 include("loader.jl")
-export BatchDataLoader
+export BatchDataLoader, shuffle!
 include("visualisation.jl")
 export make_imggrid
 include("features.jl")

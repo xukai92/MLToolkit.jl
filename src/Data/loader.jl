@@ -1,20 +1,22 @@
+import Random: randperm
+
 struct BatchDataLoader
     data::Tuple
-    batch_size::Integer
-    num_data::Integer
-    data_length::Integer
+    batch_size::Int
+    num_data::Int
+    data_length::Int
     drop_last::Bool
-    num_batchs::Integer
+    num_batchs::Int
 end
 
-function BatchDataLoader(batch_size::Integer, data...; drop_last=false, atype=nothing)
+function BatchDataLoader(batch_size::Int, data...; drop_last=false, atype=nothing)
     num_data = length(data)
     data_length = last(size(first(data)))
     for i = 2:num_data
         @assert data_length == last(size(data[i])) "Data lengthes are inconsistent!"
     end
     # Drop the last batch if not as large as batch_size
-    num_batchs = (drop_last ? floor : ceil)(Integer, data_length / batch_size)
+    num_batchs = (drop_last ? floor : ceil)(Int, data_length / batch_size)
     # Map to atype if provided
     data = atype == nothing ? data : map(d -> atype(d), data)
     return BatchDataLoader(data, batch_size, num_data, data_length, drop_last, num_batchs)
@@ -46,3 +48,10 @@ function Base.rand(bld::BatchDataLoader)
 end
 
 Base.length(bdl::BatchDataLoader) = bdl.num_batchs
+
+function shuffle!(bld::BatchDataLoader)
+    idcs = randperm(bdl.data_length)
+    for i = 1:length(bld.data)
+        bld.data[i] .= length(size(bld.data[i])) == 2 ? bld.data[:,idcs] : bld.data[idcs]
+    end
+end

@@ -66,10 +66,12 @@ using Knet: KnetArray
             x1 = first(mnist_loader)
             @test typeof(x1) == at
         end
+
+        @warn "`shuffle!()` not tested"
     end
 
     @test "get_features" begin
-        @warn `get_features_griffiths2011indian() not tested`
-        @warn `get_features_large() not tested`
+        @warn "`get_features_griffiths2011indian()` not tested"
+        @warn "`get_features_large()` not tested"
     end
 end
