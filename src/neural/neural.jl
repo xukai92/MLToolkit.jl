@@ -2,6 +2,7 @@ import Knet: update!, train!
 
 abstract type AbstractTrainable end
 abstract type AbstractLayer <: AbstractTrainable end
+# TODO: rename StaticLayer -> AbstractStaticLayer and StochasticLayer -> AbstractStochasticLayer
 abstract type StaticLayer <: AbstractLayer end
 abstract type StochasticLayer <: AbstractLayer end
 
