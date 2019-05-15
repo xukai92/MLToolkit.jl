@@ -32,8 +32,7 @@ Knet.@primitive  _u2gumbel(T,u),dy,g  dy.*_u2gumbelback(T,u,g)
 
 function _g2softmax(T, g, p, τ)
     logit = g .+ log.(p .+ eps(T))
-    exp_logit = exp.(logit ./ τ)
-    return exp_logit ./ sum(exp_logit; dims=1)
+    return Knet.softmax(logit ./ τ; dims=1)
 end
 
 """
