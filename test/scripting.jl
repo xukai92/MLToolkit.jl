@@ -45,12 +45,16 @@ using ArgParse: ArgParseSettings, @add_arg_table
 
     @testset "sweepcmd" begin
         @test sweepcmd("sleep @Ts @D", "@T" => [1, 2], "@D" => [3, 4]) == [`sleep 1s 3`, `sleep 2s 3`, `sleep 1s 4`, `sleep 2s 4`]
+        @test sweepcmd("sleep @Ts @D", :T => [1, 2], :D => [3, 4]) == [`sleep 1s 3`, `sleep 2s 3`, `sleep 1s 4`, `sleep 2s 4`]
     end
 
     @testset "sweeprun" begin
         # Check if runs are in parallel
         t = @elapsed sweeprun("sleep @Ts", "@T" => [1, 2, 3, 4])
         @test t < 5
+        # Check if runs are not in parallel
+        t = @elapsed sweeprun("sleep @Ts", "@T" => ones(4); maxasync=1)
+        @test t > 1
     end
     
 end

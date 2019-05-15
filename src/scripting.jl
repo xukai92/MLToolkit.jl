@@ -99,11 +99,12 @@ Example:
 
 ```julia
 sweepcmd("sleep @Ts", "@T" => [1, 2, 3])
+sweepcmd("sleep @Ts", :T => [1, 2, 3])
 ```
 """
 function sweepcmd(cmd_template, sweeps::Pair...)
     n_sweeps = length(sweeps)
-    names = map(s -> s.first, sweeps)
+    names = map(s -> s.first isa Symbol ? "@$(s.first)" : s.first, sweeps)
     vlists = map(s -> s.second, sweeps)
     cmds = Cmd[]
     for values in Base.Iterators.product(vlists...)
@@ -126,6 +127,7 @@ Example:
 
 ```julia
 sweeprun("sleep @Ts", "@T" => [1, 2, 3])
+sweeprun("sleep @Ts", :T => [1, 2, 3])
 ```
 """
 function sweeprun(cmd_template, sweeps::Pair...; maxasync=0)
