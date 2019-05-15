@@ -52,6 +52,6 @@ Base.length(bdl::BatchDataLoader) = bdl.num_batches
 function shuffle!(bdl::BatchDataLoader)
     idcs = randperm(bdl.data_length)
     for i = 1:length(bdl.data)
-        bdl.data[i] .= length(size(bdl.data[i])) == 2 ? bdl.data[:,idcs] : bdl.data[idcs]
+        bdl.data[i] .= length(size(bdl.data[i])) == 2 ? bdl.data[i][:,idcs] : bdl.data[i][idcs]
     end
 end
