@@ -19,7 +19,7 @@ NOTE: `dn.μ` and `dn.Σ` are assumed to be in batch.
 Ref: https://arxiv.org/pdf/1312.6114.pdf
 """
 function rand(dn::BatchNormal{T}) where {T}
-    ϵ = randsimilar(dn.μ)
+    ϵ = randnsimilar(dn.μ)
     return dn.μ + sqrt.(dn.Σ) .* ϵ
 end
 
@@ -48,7 +48,7 @@ struct BatchNormalLogVar{T}
 end
 
 function rand(dn::BatchNormalLogVar{T}) where {T}
-    ϵ = randsimilar(dn.μ)
+    ϵ = randnsimilar(dn.μ)
     return dn.μ + exp.(dn.logΣ ./ 2) .* ϵ
 end
 
