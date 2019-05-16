@@ -2,16 +2,16 @@
 
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
-function randsimilar(s, T1, T2=eltype(s))
-    sz = size(s)
-    return Knet.rand!(T1{T2,length(sz)}(undef, sz...))
+randarr(sz, T1=AT, T2=FT) = Knet.rand!(T1{T2,length(sz)}(undef, sz...))
+function randsimilar(arr)
+    T = isa(arr, AutoGrad.Result) ? typeof(AutoGrad.value(arr)) : typeof(arr)
+    return Knet.rand!(T(undef, size(arr)...))
 end
-
-function randnsimilar(s, T1, T2=eltype(s))
-    sz = size(s)
-    return Knet.randn!(T1{T2,length(sz)}(undef, sz...))
+randnarr(sz, T1, T2) = Knet.randn!(T1{T2,length(sz)}(undef, sz...))
+function randnsimilar(arr)
+    T = isa(arr, AutoGrad.Result) ? typeof(AutoGrad.value(arr)) : typeof(arr)
+    return Knet.randn!(T(undef, size(arr)...))
 end
-
 
 include("displaced_poisson.jl")
 export DisplacedPoisson

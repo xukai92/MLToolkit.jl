@@ -56,20 +56,26 @@ using Statistics: mean
             @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈ ans atol=100ATOL
         end
 
-
         param_list = []
         for _ = 1:NUM_RANDTESTS
             (a1, b1) = 1.0 .+ rand(2).^2
             (a2, b2) = [a1, b1] .+ rand(2).^2
             push!(param_list, (a1, b1, a2, b2))
         end
-        @testset "($a1,$b1) v.s. ($a2,$b2)" for (a1, b1, a2, b2) in param_list
+
+        @testset "KL[Dirichlet/Beta($a1,$b1) || Dirichlet/Beta($a2,$b2)]" for (a1, b1, a2, b2) in param_list
             # Generate a1, b1, a2, b2 that are not too far away from each other
             (a1, b1) = 1.0 .+ rand(2).^2
             (a2, b2) = [a1, b1] .+ rand(2).^2
 
             @test kldiv(Dirichlet([a1, b1]), Dirichlet([a2, b2])) ≈
                   kldiv(BatchBeta(a1, b1), BatchBeta(a2, b2)) atol=ATOL_RAND
+        end
+        
+        @testset "KL[Kuma($a1,$b1) || Beta($a2,$b2)]" for (a1, b1, a2, b2) in param_list
+            # Generate a1, b1, a2, b2 that are not too far away from each other
+            (a1, b1) = 1.0 .+ rand(2).^2
+            (a2, b2) = [a1, b1] .+ rand(2).^2
 
             kuma = BatchKumaraswamy(a1, b1)
             bb = BatchBeta(a2, b2)

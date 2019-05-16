@@ -21,17 +21,17 @@ end
 
 BatchGumbelSoftmax2D(p::T; τ=FT(0.2)) where {T} = BatchGumbelSoftmax2D(T(hcat(p, one(eltype(p)) .- p)'), τ)
 
-function _u2gumbel(T, u)
-    _eps = eps(T)
+function _u2gumbel(u)
+    _eps = eps(eltype(u))
     return -log.(-log.(u .+ _eps) .+ _eps)
 end
 
-_u2gumbelback(T, u, g) = one(T) ./ exp.(-g) ./ (u .+ eps(T))
+_u2gumbelback(u, g) = one(eltype(u)) ./ exp.(-g) ./ (u .+ eps(eltype(u)))
 
-Knet.@primitive  _u2gumbel(T,u),dy,g  dy.*_u2gumbelback(T,u,g)
+Knet.@primitive _u2gumbel(u),dy,g  dy.*_u2gumbelback(u,g)
 
-function _g2softmax(T, g, p, τ)
-    logit = g .+ log.(p .+ eps(T))
+function _g2softmax(g, p, τ)
+    logit = g .+ log.(p .+ eps(eltype(g)))
     return Knet.softmax(logit ./ τ; dims=1)
 end
 
@@ -46,9 +46,9 @@ function rand(gs::AbstractBatchGumbelSoftmax{T}) where {T}
     FT = eltype(gs.p)
 
     u = rand(FT, size(gs.p)...)
-    g = _T(_u2gumbel(FT, u))
+    g = _T(_u2gumbel(u))
 
-    return _g2softmax(FT, g, gs.p, gs.τ)
+    return _g2softmax(g, gs.p, gs.τ)
 end
 
 """
@@ -63,9 +63,9 @@ function rand(gs::AbstractBatchGumbelSoftmax{T}, n::Int) where {T}
     FT = eltype(gs.p)
     
     u = rand(FT, size(gs.p, 1), n)
-    g = _T(_u2gumbel(FT, u))
+    g = _T(_u2gumbel(u))
 
-    return _g2softmax(FT, g, gs.p, gs.τ)
+    return _g2softmax(g, gs.p, gs.τ)
 end
 
 mean(gs::AbstractBatchGumbelSoftmax) = gs.p
@@ -99,8 +99,8 @@ function rand(gb::BatchGumbelBernoulli{T}) where {T}
     _one = one(FT)
     τ = gb.τ
 
-    u0 = rand(FT, sz...); g0 = _T(_u2gumbel(FT, u0))
-    u1 = rand(FT, sz...); g1 = _T(_u2gumbel(FT, u1))
+    u0 = rand(FT, sz...); g0 = _T(_u2gumbel(u0))
+    u1 = rand(FT, sz...); g1 = _T(_u2gumbel(u1))
 
     logit0 = (g0 .+ log.(_one + _eps .- gb.p)) ./ τ
     logit1 = (g1 .+ log.(gb.p .+ _eps)) ./ τ

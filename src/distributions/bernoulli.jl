@@ -17,13 +17,9 @@ function logpdf(bb::BatchBernoulli, x)
     return lp
 end
 
-function rand(bb::BatchBernoulli{T}) where {T}
-    FT = eltype(bb.p)
-
-    u = randsimilar(bb.p, T)
-
-    x = (bb.p .> u) .* one(FT)
-
+function rand(bb::BatchBernoulli)
+    u = randsimilar(bb.p)
+    x = (bb.p .> u) .* one(eltype(bb.p))
     return x
 end
 
@@ -59,8 +55,7 @@ Compute ``Ber(x; p)``.
 NOTE: `x` is assumed to be in batch.
 """
 function logpdf(bbl::BatchBernoulliLogit, x)
-    FT = eltype(bbl.logitp)
-    _one = one(FT)
+    _one = one(eltype(bbl.logitp))
     lp = x .* bbl.logitp .- log.(_one .+ exp.(bbl.logitp))
     return lp
 end

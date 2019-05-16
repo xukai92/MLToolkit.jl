@@ -7,14 +7,14 @@ struct BatchKumaraswamy{T}
     b::T
 end
 
-function _u2kumaraswamysample(T, u, kuma::BatchKumaraswamy)
-    _one = one(T)
+function _u2kumaraswamysample(u, kuma::BatchKumaraswamy)
+    _one = one(eltype(u))
     return (_one .- u.^(_one ./ kuma.b)).^(_one ./ kuma.a)
 end
 
-function _u2logkumaraswamysample(T, u, kuma::BatchKumaraswamy)
-    _one = one(T)
-    _eps = eps(T)
+function _u2logkumaraswamysample(u, kuma::BatchKumaraswamy)
+    _one = one(eltype(u))
+    _eps = eps(eltype(u))
     return log1p.(-exp.(log.(u .+ _eps) ./ kuma.b)) ./ kuma.a
 end
 
@@ -28,32 +28,30 @@ NOTE: `k.a` and `k.b` are assumed to be in batch
 Ref: https://arxiv.org/abs/1605.06197
 """
 function rand(kuma::BatchKumaraswamy)
-    u = randsimilar(kuma.a, AT)
-    x = _u2kumaraswamysample(FT, u, kuma)
+    u = randsimilar(kuma.a)
+    x = _u2kumaraswamysample(u, kuma)
     return x
 end
 
 function rand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
     @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
-    l = length(dims)
-    u = l == 0 ? rand(T) : Knet.rand!(AT{FT,l}(undef, dims...))
-    x = _u2kumaraswamysample(T, u, kuma)
+    u = length(dims) == 0 ? rand(T) : randarr(dims) 
+    x = _u2kumaraswamysample(u, kuma)
     return x
 end
 
 function logrand(kuma::BatchKumaraswamy)
-    u = randsimilar(kuma.a, AT)
-    logx = _u2logkumaraswamysample(FT, u, kuma)
+    u = randsimilar(kuma.a)
+    logx = _u2logkumaraswamysample(u, kuma)
     return logx
 end
 
 function logrand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
     @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
-    l = length(dims)
-    u = l == 0 ? rand(T) : Knet.rand!(AT{FT,l}(undef, dims...))
-    logx = _u2logkumaraswamysample(T, u, kuma)
+    u = length(dims) == 0 ? rand(T) : randarr(dims) 
+    logx = _u2logkumaraswamysample(u, kuma)
     return logx
 end
 
