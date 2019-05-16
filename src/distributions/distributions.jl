@@ -2,13 +2,13 @@
 
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
-randarr(sz, T1=AT, T2=FT) = Knet.rand!(T1{T2,length(sz)}(undef, sz...))
+randarr(sz) = Knet.rand!(AT{FT,length(sz)}(undef, sz...))
 function randsimilar(arr, n::Int=1)
     T = typeof(AutoGrad.value(arr))
     sz = n == 1 ? size(arr) : (size(arr, 1), n)
     return Knet.rand!(T(undef, sz...))
 end
-randnarr(sz, T1, T2) = Knet.randn!(T1{T2,length(sz)}(undef, sz...))
+randnarr(sz) = Knet.randn!(AT{FT,length(sz)}(undef, sz...))
 function randnsimilar(arr, n::Int=1)
     T = typeof(AutoGrad.value(arr))
     sz = n == 1 ? size(arr) : (size(arr, 1), n)
