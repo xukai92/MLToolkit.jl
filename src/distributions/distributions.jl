@@ -2,6 +2,17 @@
 
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
+function randsimilar(s, T1, T2=eltype(s))
+    sz = size(s)
+    return Knet.rand!(T1{T2,length(sz)}(undef, sz...))
+end
+
+function randnsimilar(s, T1, T2=eltype(s))
+    sz = size(s)
+    return Knet.randn!(T1{T2,length(sz)}(undef, sz...))
+end
+
+
 include("displaced_poisson.jl")
 export DisplacedPoisson
 include("ibp.jl")

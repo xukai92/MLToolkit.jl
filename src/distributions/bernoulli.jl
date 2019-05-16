@@ -20,8 +20,7 @@ end
 function rand(bb::BatchBernoulli{T}) where {T}
     FT = eltype(bb.p)
 
-    sz = size(bb.p)
-    u = Knet.rand!(T{FT,length(sz)}(undef, sz...))
+    u = randsimilar(bb.p, T)
 
     x = (bb.p .> u) .* one(FT)
 

@@ -28,7 +28,7 @@ NOTE: `k.a` and `k.b` are assumed to be in batch
 Ref: https://arxiv.org/abs/1605.06197
 """
 function rand(kuma::BatchKumaraswamy)
-    u = AT(rand(FT, size(kuma.a)...))
+    u = randsimilar(kuma.a, AT)
     x = _u2kumaraswamysample(FT, u, kuma)
     return x
 end
@@ -36,14 +36,14 @@ end
 function rand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
     @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
-    u = rand(T, dims...)
-    u = dims == () ? u : AT(u)
+    l = length(dims)
+    u = l == 0 ? rand(T) : Knet.rand!(AT{FT,l}(undef, dims...))
     x = _u2kumaraswamysample(T, u, kuma)
     return x
 end
 
 function logrand(kuma::BatchKumaraswamy)
-    u = AT(rand(FT, size(kuma.a)...))
+    u = randsimilar(kuma.a, AT)
     logx = _u2logkumaraswamysample(FT, u, kuma)
     return logx
 end
@@ -51,8 +51,8 @@ end
 function logrand(kuma::BatchKumaraswamy{T}, dims::Int...) where {T<:Real}
     @assert length(kuma.a) == 1 "`rand` for multiple samples only supports for univariate case"
     @assert length(kuma.b) == 1 "`rand` for multiple samples only supports for univariate case"
-    u = rand(T, dims...)
-    u = dims == () ? u : AT(u)
+    l = length(dims)
+    u = l == 0 ? rand(T) : Knet.rand!(AT{FT,l}(undef, dims...))
     logx = _u2logkumaraswamysample(T, u, kuma)
     return logx
 end
