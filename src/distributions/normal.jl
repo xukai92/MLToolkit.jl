@@ -19,8 +19,7 @@ NOTE: `dn.μ` and `dn.Σ` are assumed to be in batch.
 Ref: https://arxiv.org/pdf/1312.6114.pdf
 """
 function rand(dn::BatchNormal{T}) where {T}
-    _T = isa(dn.μ, AutoGrad.Result) ? typeof(AutoGrad.value(dn.μ)) : T
-    ϵ = _T(randn(eltype(dn.μ), size(dn.μ)...))
+    ϵ = randsimilar(dn.μ)
     return dn.μ + sqrt.(dn.Σ) .* ϵ
 end
 
@@ -49,8 +48,7 @@ struct BatchNormalLogVar{T}
 end
 
 function rand(dn::BatchNormalLogVar{T}) where {T}
-    _T = isa(dn.μ, AutoGrad.Result) ? typeof(AutoGrad.value(dn.μ)) : T
-    ϵ = _T(randn(eltype(dn.μ), size(dn.μ)...))
+    ϵ = randsimilar(dn.μ)
     return dn.μ + exp.(dn.logΣ ./ 2) .* ϵ
 end
 
