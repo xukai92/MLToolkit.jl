@@ -41,13 +41,8 @@ end
 Sample from the Gumbel-Softmax distributions.
 """
 function rand(gs::AbstractBatchGumbelSoftmax{T}) where {T}
-    _T = isa(gs.p, AutoGrad.Result) ? typeof(AutoGrad.value(gs.p)) : T
-
-    FT = eltype(gs.p)
-
-    u = rand(FT, size(gs.p)...)
-    g = _T(_u2gumbel(u))
-
+    u = randsimilar(gs.p)
+    g = _u2gumbel(u)
     return _g2softmax(g, gs.p, gs.τ)
 end
 
@@ -58,13 +53,8 @@ Generate multiple samples from the Gumbel-Softmax distributions.
 """
 function rand(gs::AbstractBatchGumbelSoftmax{T}, n::Int) where {T}
     @assert size(gs.p, 2) == 1
-    _T = isa(gs.p, AutoGrad.Result) ? typeof(AutoGrad.value(gs.p)) : T
-
-    FT = eltype(gs.p)
-    
-    u = rand(FT, size(gs.p, 1), n)
-    g = _T(_u2gumbel(u))
-
+    u = randsimilar(gs.p, n)
+    g = _u2gumbel(u)
     return _g2softmax(g, gs.p, gs.τ)
 end
 
@@ -90,17 +80,13 @@ BatchGumbelBernoulli(p; τ=FT(0.2)) = BatchGumbelBernoulli(p, τ)
 Sample from Gumbel-Bernoulli distributions.
 """
 function rand(gb::BatchGumbelBernoulli{T}) where {T}
-    _T = isa(gb.p, AutoGrad.Result) ? typeof(AutoGrad.value(gb.p)) : T
-
     # TODO: re-implement this `rand` using the same procedure for `BatchGumbelBernoulliLogit`
-    FT = eltype(gb.p)
-    sz = size(gb.p)
-    _eps = eps(FT)
-    _one = one(FT)
+    _eps = eps(eltype(gb.p))
+    _one = one(eltype(gb.p))
     τ = gb.τ
 
-    u0 = rand(FT, sz...); g0 = _T(_u2gumbel(u0))
-    u1 = rand(FT, sz...); g1 = _T(_u2gumbel(u1))
+    u0 = randsimilar(gb.p); g0 = _u2gumbel(u0)
+    u1 = randsimilar(gb.p); g1 = _u2gumbel(u1)
 
     logit0 = (g0 .+ log.(_one + _eps .- gb.p)) ./ τ
     logit1 = (g1 .+ log.(gb.p .+ _eps)) ./ τ
@@ -177,9 +163,8 @@ function logitrand(gbl::BatchGumbelBernoulliLogit{T}; τ=gbl.τ) where {T}
     FT = eltype(gbl.logitp)
     _eps = eps(FT)
     _one = one(FT)
-    _T = isa(gbl.logitp, AutoGrad.Result) ? typeof(AutoGrad.value(gbl.logitp)) : T
 
-    u = _T(rand(FT, size(gbl.logitp)...))
+    u = randsimilar(gbl.logitp)
 
     logit = log.(u .+ _eps) - log.(_one + _eps .- u)
 
@@ -193,7 +178,6 @@ end
 Compute `GumbelBernoulli(logitx; logitp)`.
 
 NOTE: `logitp` and `logitx` are assumed to be in batch.
-TODO: double check this function and make sure it obeys the change of variable
 
 WARN: this function is not tested.
 
@@ -206,5 +190,3 @@ function logpdflogit(gbl::BatchGumbelBernoulliLogit, logitx; τ=gbl.τ)
 end
 
 mean(gbl::BatchGumbelBernoulliLogit) = Knet.sigm.(gbl.logitp)
-
-# TODO: consider the design problem: should `τ` be a filed of gumbel distributions?
