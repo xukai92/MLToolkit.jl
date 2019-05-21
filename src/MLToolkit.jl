@@ -15,8 +15,10 @@ const axes_grid1 = PyCall.PyNULL()
 const FT = Float64
 # Use GPU whenever possible
 const AT = Knet.gpu() > -1 ? Knet.KnetArray : Array
-const plt = PyPlot
-export FT, AT, plt
+# Matplotlib and PyPlot
+const mpl = PyPlot.matplotlib
+const plt = mpl.pyplot
+export FT, AT, mpl, plt
 
 include("utility.jl")
 export count_leadingzeros, turnoffgpu
