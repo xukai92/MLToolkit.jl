@@ -4,10 +4,13 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
+import AutoGrad, Knet, PyCall, Distributions, Reexport, Distributed
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
+# Matplotlib and pyplot
+const mpl = PyCall.PyNULL()
+const plt = PyCall.PyNULL()
 
 ###############################
 # Constants that are exported #
@@ -15,9 +18,6 @@ const axes_grid1 = PyCall.PyNULL()
 const FT = Float64
 # Use GPU whenever possible
 const AT = Knet.gpu() > -1 ? Knet.KnetArray : Array
-# Matplotlib and PyPlot
-const mpl = PyPlot.matplotlib
-const plt = mpl.pyplot
 export FT, AT, mpl, plt
 
 include("utility.jl")
@@ -45,6 +45,8 @@ export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
 function __init__()
     # Bind Python libraries
     copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
+    copy!(mpl, PyCall.pyimport("matplotlib"))
+    copy!(plt, PyCall.pyimport("matplotlib.pyplot"))
     # Ensure not using Type 3 fonts
     plt.rc("pdf", fonttype=42)
 end
