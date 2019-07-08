@@ -70,7 +70,7 @@ using Knet: KnetArray
         @warn "`shuffle!()` not tested"
     end
 
-    @test "get_features" begin
+    @testset "get_features" begin
         @warn "`get_features_griffiths2011indian()` not tested"
         @warn "`get_features_large()` not tested"
     end

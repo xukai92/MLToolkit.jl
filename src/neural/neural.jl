@@ -35,7 +35,7 @@ mutable struct DynamicAdam
     isreset::Bool
 end
 
-DynamicAdam(isreset; kwargs...) = DynamicAdam(Knet.Adam(; kwargs...), isreset)
+DynamicAdam(isreset=true; kwargs...) = DynamicAdam(Knet.Adam(; kwargs...), isreset)
 
 for T in (Array{Float32},Array{Float64},Knet.KnetArray{Float32},Knet.KnetArray{Float64}); @eval begin
     function update!(w::$T, g::$T, p::DynamicAdam)
