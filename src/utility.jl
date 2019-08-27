@@ -7,5 +7,3 @@ function count_leadingzeros(z::Vector{Int})
     end
     return n - 1
 end
-
-turnoffgpu() = Knet.gpu(false)

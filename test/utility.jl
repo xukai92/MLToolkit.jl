@@ -6,6 +6,4 @@ using Test, MLToolkit
         @test count_leadingzeros([0,0,0,0]) == 4
         @test count_leadingzeros([1,0,0,0]) == 0
     end
-
-    @warn `turnoffgpu() not tested`
 end

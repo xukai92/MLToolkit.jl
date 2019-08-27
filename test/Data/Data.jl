@@ -1,25 +1,24 @@
 using Test
 using MLToolkit.Data
-using Knet: KnetArray
 
 @testset "Data" begin
-    @testset "MNIST" begin
-        tr_sz = 100
-        te_sz = 200
-        for mnist_sym = [:mnist, :fmnist]
-            x_tr_sub, y_tr_sub, x_te_sub, y_te_sub = load_mnist(mnist_sym, tr_sz, te_sz; flatten=true)
-            @test size(x_tr_sub) == (784, tr_sz)
-            @test size(y_tr_sub) == (tr_sz,)
-            @test size(x_te_sub) == (784, te_sz)
-            @test size(y_te_sub) == (te_sz,)
+    # @testset "MNIST" begin
+    #     tr_sz = 100
+    #     te_sz = 200
+    #     for mnist_sym = [:mnist, :fmnist]
+    #         x_tr_sub, y_tr_sub, x_te_sub, y_te_sub = load_mnist(mnist_sym, tr_sz, te_sz; flatten=true)
+    #         @test size(x_tr_sub) == (784, tr_sz)
+    #         @test size(y_tr_sub) == (tr_sz,)
+    #         @test size(x_te_sub) == (784, te_sz)
+    #         @test size(y_te_sub) == (te_sz,)
 
-            x_tr_sub, y_tr_sub, x_te_sub, y_te_sub = load_mnist(mnist_sym, tr_sz, te_sz; flatten=false)
-            @test size(x_tr_sub) == (28, 28, 1, tr_sz)
-            @test size(y_tr_sub) == (tr_sz,)
-            @test size(x_te_sub) == (28, 28, 1, te_sz)
-            @test size(y_te_sub) == (te_sz,)
-        end
-    end
+    #         x_tr_sub, y_tr_sub, x_te_sub, y_te_sub = load_mnist(mnist_sym, tr_sz, te_sz; flatten=false)
+    #         @test size(x_tr_sub) == (28, 28, 1, tr_sz)
+    #         @test size(y_tr_sub) == (tr_sz,)
+    #         @test size(x_te_sub) == (28, 28, 1, te_sz)
+    #         @test size(y_te_sub) == (te_sz,)
+    #     end
+    # end
 
     @testset "make_imggrid" begin
         d = 5
@@ -37,7 +36,8 @@ using Knet: KnetArray
 
     @testset "BatchDataLoader" begin
         sz = 100
-        x, y, _, _ = load_mnist(:mnist, sz, sz; flatten=true)
+        x = randn(784, sz)
+        y = rand(sz)
 
         batch_size = 20
         mnist_loader = BatchDataLoader(batch_size, x, y; drop_last=true)
@@ -58,9 +58,9 @@ using Knet: KnetArray
         @test length(mnist_loader) == 3
 
         at_list = [Array{Float16,2}, Array{Float32,2}, Array{Float64,2}]
-        if AT == KnetArray
-            push!(at_list, AT{FT,2})
-        end
+        # if AT == KnetArray
+            # push!(at_list, AT{FT,2})
+        # end
         for at in at_list
             mnist_loader = BatchDataLoader(batch_size, x; drop_last=true, atype=at)
             x1 = first(mnist_loader)

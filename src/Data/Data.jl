@@ -1,10 +1,10 @@
 module Data
 
-using ..MLToolkit: FT, AT
-export FT, AT
+using ..MLToolkit: FT
+export FT
 
-include("mnist.jl")
-export load_mnist
+# include("mnist.jl")
+# export load_mnist
 include("loader.jl")
 export BatchDataLoader, shuffle!
 include("visualisation.jl")

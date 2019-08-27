@@ -4,7 +4,7 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import AutoGrad, Knet, PyCall, PyPlot, Distributions, Reexport, Distributed
+import AutoGrad, PyCall, PyPlot, Distributions, Reexport, Distributed
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
@@ -16,9 +16,7 @@ const plt = PyCall.PyNULL()
 # Constants that are exported #
 ###############################
 const FT = Float64
-# Use GPU whenever possible
-const AT = Knet.gpu() > -1 ? Knet.KnetArray : Array
-export FT, AT, mpl, plt
+export FT, mpl, plt
 
 include("utility.jl")
 export count_leadingzeros, turnoffgpu
@@ -36,7 +34,7 @@ export make_two_y_axes_plot, plot_grayimg!, plot_actmat!
 include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
-include("neural/neural.jl")
+# include("neural/neural.jl")
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
