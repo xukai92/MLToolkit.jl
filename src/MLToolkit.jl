@@ -35,6 +35,7 @@ include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
 # include("neural/neural.jl")
+include("ratio/ratio.jl")
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
