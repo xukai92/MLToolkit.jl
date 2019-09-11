@@ -40,17 +40,17 @@ end
 
 function get_r_hat_numerically(Kdede, Kdenu; positive=true, normalisation=true)
     n_de, n_nu = size(Kdenu)
-    model = Model(with_optimizer(Ipopt.Optimizer; print_level=0))
-    @variable(model, r[1:n_de])
-    @objective(model, Min, 1 / n_de ^ 2 * sum(r[i] * Kdede[i,j] * r[j] for i = 1:n_de, j=1:n_de) - 2 / (n_de * n_nu) * sum(r[i] * Kdenu[i,j] for i = 1:n_de, j=1:n_nu))
+    model = JuMP.Model(JuMP.with_optimizer(Ipopt.Optimizer; print_level=0))
+    JuMP.@variable(model, r[1:n_de])
+    JuMP.@objective(model, Min, 1 / n_de ^ 2 * sum(r[i] * Kdede[i,j] * r[j] for i = 1:n_de, j=1:n_de) - 2 / (n_de * n_nu) * sum(r[i] * Kdenu[i,j] for i = 1:n_de, j=1:n_nu))
     if positive
-        @constraint(model, r .>= 0)
+        JuMP.@constraint(model, r .>= 0)
     end
     if normalisation
-        @constraint(model, 1 / n_de * sum(r) == 1)
+        JuMP.@constraint(model, 1 / n_de * sum(r) == 1)
     end
     JuMP.optimize!(model)
-    return value.(r)
+    return JuMP.value.(r)
 end
 
 function get_r_hat_analytical(Kdede, Kdenu; ϵ=1 / 1_000)
