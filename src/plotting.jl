@@ -35,3 +35,26 @@ function plot_actmat!(Z::Matrix; ax=plt.gca())
     ax.set_yticks([])
     return ax
 end
+
+function autoset_lim!(x; ax=plt.gca())
+    xlims = [extrema(x[1,:])...]
+    dx = xlims[2] - xlims[1]
+    xlims += [-0.1dx, +0.1dx]
+    ylims = [extrema(x[2,:])...]
+    dy = ylims[2] - ylims[1]
+    ylims += [-0.1dy, +0.1dy]
+    dim = size(x, 1)
+    ax.set_xlim(xlims)
+    ax.set_ylim(ylims)
+end
+
+function plot_contour!(f; contourevals=100, alpha=0.3, ax=plt.gca())
+    rangex = range(ax.get_xlim()..., length=contourevals)
+    rangey = range(ax.get_ylim()..., length=contourevals)
+    gridxy = [[xy...] for xy in Iterators.product(rangex, rangey)]
+    gridx = map(xy -> xy[1], gridxy)
+    gridy = map(xy -> xy[2], gridxy)
+    gridz = f(hcat(gridxy[:]...))
+    gridz = reshape(gridz, size(gridx)...)
+    ax.contour(gridx, gridy, gridz, alpha=alpha)
+end
