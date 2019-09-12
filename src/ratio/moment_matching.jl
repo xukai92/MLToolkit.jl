@@ -4,7 +4,7 @@ function pairwise_dot_kai(x)
     n = size(x, 2)
     xixj = x' * x
     xsq = sum(x .^ 2; dims=1)
-    return repeat(xsq', 1, n) + repeat(xsq, n, 1) - 2xixj
+    return repeat(xsq'; outer=(1, n)) + repeat(xsq; outer=(n, 1)) - 2xixj
 end
 
 # pairwise_dot(x::CuArray) = pairwise_dot_kai(x)
@@ -17,7 +17,7 @@ function pairwise_dot_kai(x, y)
     xiyj = x' * y
     xsq = sum(x .^ 2; dims=1)
     ysq = sum(y .^ 2; dims=1)
-    return repeat(xsq', 1, ny) .+ repeat(ysq, nx, 1) - 2xiyj
+    return repeat(xsq'; outer=(1, ny)) .+ repeat(ysq; outer=(nx, 1)) - 2xiyj
 end
 
 # pairwise_dot(x::CuArray, y::CuArray) = pairwise_dot_kai(x, y)
@@ -65,8 +65,7 @@ function get_r_hat_numerically(Kdede, Kdenu; positive=true, normalisation=true)
     return JuMP.value.(r)
 end
 
-function get_r_hat_analytical(Kdede, Kdenu; ϵ=1 / 1_000)
+function get_r_hat_analytical(Kdede, Kdenu; ϵ=convert(eltype(Kdede), 1 / 1_000))
     n_de, n_nu = size(Kdenu)
-    return n_de / n_nu * inv(Kdede + ϵ * I) * Kdenu * ones(n_nu) 
+    return n_de / n_nu * inv(Kdede + ϵ * I) * Kdenu * ones(eltype(Kdede), n_nu) 
 end
-;
