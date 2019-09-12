@@ -65,7 +65,7 @@ function get_r_hat_numerically(Kdede, Kdenu; positive=true, normalisation=true)
     return JuMP.value.(r)
 end
 
-function get_r_hat_analytical(Kdede, Kdenu; ϵ=convert(eltype(Kdede), 1 / 1_000))
+function get_r_hat_analytical(Kdede, Kdenu; T=eltype(Kdede), ϵ=convert(T, 1 / 1_000))
     n_de, n_nu = size(Kdenu)
-    return n_de / n_nu * inv(Kdede + ϵ * I) * Kdenu * ones(eltype(Kdede), n_nu) 
+    return T(n_de / n_nu) * inv(Kdede + diagm(0 => ϵ * ones(Float32, n_de))) * Kdenu * ones(T, n_nu) 
 end

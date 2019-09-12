@@ -1,5 +1,5 @@
 using Distances: pairwise, SqEuclidean
-using LinearAlgebra: I
+using LinearAlgebra: diagm
 using Statistics: median
 import JuMP, Ipopt
 include("moment_matching.jl")
