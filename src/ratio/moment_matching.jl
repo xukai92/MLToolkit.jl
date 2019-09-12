@@ -47,7 +47,7 @@ function estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_analytical, σs=nothing, 
         r_de += _estimate_r_de(pdot_dede, pdot_denu, get_r_hat, σ; kwargs...)
     end
     
-    return r_de ./ length(σs)
+    return r_de / convert(Float32, length(σs))
 end
 
 function get_r_hat_numerically(Kdede, Kdenu; positive=true, normalisation=true)
@@ -65,7 +65,7 @@ function get_r_hat_numerically(Kdede, Kdenu; positive=true, normalisation=true)
     return JuMP.value.(r)
 end
 
-function get_r_hat_analytical(Kdede, Kdenu; T=eltype(Kdede), ϵ=convert(T, 1 / 1_000))
+function get_r_hat_analytical(Kdede, Kdenu; ϵ=convert(Float32, 1 / 1_000))
     n_de, n_nu = size(Kdenu)
-    return T(n_de / n_nu) * inv(Kdede + diagm(0 => ϵ * ones(Float32, n_de))) * Kdenu * ones(T, n_nu) 
+    return convert(Float32, n_de / n_nu) * inv(Kdede + diagm(0 => ϵ * ones(Float32, n_de))) * Kdenu * ones(Float32, n_nu) 
 end
