@@ -26,13 +26,18 @@ gaussian_gram_by_pairwise_dot(pdot; σ=1) = exp.(-pdot ./ 2(σ ^ 2))
 gaussian_gram(x; σ=1) = gaussian_gram_by_pairwise_dot(pairwise_dot(x); σ=σ)
 gaussian_gram(x, y; σ=1) = gaussian_gram_by_pairwise_dot(pairwise_dot(x, y); σ=σ)
 
-function _estimate_r_de(pdot_dede, pdot_denu, get_r_hat, σ; kwargs...)
+function _estimate_r_mmd(pdot_dede, pdot_denu, get_r_hat, σ; kwargs...)
     Kdede = gaussian_gram_by_pairwise_dot(pdot_dede; σ=σ)
     Kdenu = gaussian_gram_by_pairwise_dot(pdot_denu; σ=σ)
     return get_r_hat(Kdede, Kdenu; kwargs...)
 end
 
-function estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_analytical, σs=nothing, kwargs...)
+"""
+    estimate_r_mmd(x_de, x_nu)
+
+Estimate `p_nu(x_de) / p_de(x_de)`.
+"""
+function estimate_r_mmd(x_de, x_nu; get_r_hat=get_r_hat_analytical, σs=nothing, kwargs...)
     pdot_dede = pairwise_dot_kai(x_de)
     pdot_denu = pairwise_dot_kai(x_de, x_nu)
 
@@ -42,9 +47,9 @@ function estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_analytical, σs=nothing, 
         σs = [σ]
     end
 
-    r_de = _estimate_r_de(pdot_dede, pdot_denu, get_r_hat, σs[1]; kwargs...)
+    r_de = _estimate_r_mmd(pdot_dede, pdot_denu, get_r_hat, σs[1]; kwargs...)
     for σ in σs[2:end]
-        r_de += _estimate_r_de(pdot_dede, pdot_denu, get_r_hat, σ; kwargs...)
+        r_de += _estimate_r_mmd(pdot_dede, pdot_denu, get_r_hat, σ; kwargs...)
     end
     
     return r_de / convert(Float32, length(σs))
