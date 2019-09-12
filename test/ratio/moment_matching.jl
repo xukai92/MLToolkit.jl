@@ -1,5 +1,5 @@
 using Test, Distributions
-using MLToolkit: pairwise_dot, pairwise_dot_kai, plt, estimate_r_de, get_r_hat_numerically
+using MLToolkit: pairwise_dot, pairwise_dot_kai, plt, estimate_r_mmd, get_r_hat_numerically
 
 @testset "pairwise_dot()" begin
     xtest = [
@@ -39,7 +39,7 @@ using MLToolkit: pairwise_dot, pairwise_dot_kai, plt, estimate_r_de, get_r_hat_n
     # @benchmark pairwise_dot(xbench)
 end
 
-@testset "demo" begin
+@testset "estimate_r_mmd_demo" begin
     dist_nu = Normal(1, 1)
     dist_de = Normal(0, 2)
 
@@ -67,22 +67,22 @@ end
     plotdist!()
     plotdata!()
 
-    r_hat_numerical_00 = estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=false, normalisation=false)
+    r_hat_numerical_00 = estimate_r_mmd(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=false, normalisation=false)
     plt.scatter(vec(x_de), r_hat_numerical_00, s=5.0, alpha=0.5, label="r_hat_numerical_00")
 
-    r_hat_numerical_01 = estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=false, normalisation=true)
+    r_hat_numerical_01 = estimate_r_mmd(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=false, normalisation=true)
     plt.scatter(vec(x_de), r_hat_numerical_01, s=5.0, alpha=0.5, label="r_hat_numerical_01")
 
-    r_hat_numerical_10 = estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=true, normalisation=false)
+    r_hat_numerical_10 = estimate_r_mmd(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=true, normalisation=false)
     plt.scatter(vec(x_de), r_hat_numerical_10, s=5.0, alpha=0.5, label="r_hat_numerical_10")
 
-    r_hat_numerical_11 = estimate_r_de(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=true, normalisation=true)
+    r_hat_numerical_11 = estimate_r_mmd(x_de, x_nu; get_r_hat=get_r_hat_numerically, positive=true, normalisation=true)
     plt.scatter(vec(x_de), r_hat_numerical_11, s=5.0, alpha=0.5, label="r_hat_numerical_11")
 
-    # r_hat_analytical = estimate_r_de(x_de, x_nu; ϵ=0)
+    # r_hat_analytical = estimate_r_mmd(x_de, x_nu; ϵ=0)
     # plt.scatter(vec(x_de), r_hat_analytical, s=5.0, alpha=0.5, label="r_hat_analytical")
 
-    r_hat_analytical_stable = estimate_r_de(x_de, x_nu)
+    r_hat_analytical_stable = estimate_r_mmd(x_de, x_nu)
     plt.scatter(vec(x_de), r_hat_analytical_stable, s=5.0, alpha=0.5, label="r_hat_analytical_stable")
 
     plt.legend()
