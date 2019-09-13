@@ -21,7 +21,7 @@ export FT, mpl, plt
 include("utility.jl")
 export count_leadingzeros, turnoffgpu
 include("special.jl")
-export lbeta, beta, logit
+export lbeta, beta, logit, logsumexp
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("Data/Data.jl")
