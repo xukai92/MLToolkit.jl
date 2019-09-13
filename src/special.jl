@@ -18,3 +18,18 @@ function logit(x)
     _one = one(FT)
     return log(x + _eps) - log(_one - x + _eps)
 end
+
+import StatsFuns: logsumexp
+
+function logsumexp(x; dims=:)
+    u = maximum(x; dims=dims)
+    lsediff = log.(sum(exp.(x .- u); dims=dims))
+    return u .+ lsediff
+end
+
+logsumexp(x::Tracker.TrackedArray; dims=:) = Tracker.track(logsumexp, x; dims=dims)
+
+Tracker.@grad function logsumexp(x::Tracker.TrackedArray; dims=:)
+    lse = logsumexp(Tracker.data(x); dims=dims)
+    return lse, Δ -> (Δ .* exp.(x .- lse),)
+end

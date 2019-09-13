@@ -4,7 +4,6 @@ using MLToolkit: include_list_as_module
 @testset "Tests" begin
     tests = [
         "Data/Data.jl",
-        "ratio/ratio.jl",
         # "neural/neural.jl",
         "utility.jl",
         # "special.jl",

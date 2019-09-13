@@ -4,7 +4,7 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import AutoGrad, PyCall, PyPlot, Distributions, Reexport, Distributed
+import AutoGrad, PyCall, PyPlot, Distributions, Reexport, Distributed, Tracker
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
@@ -35,7 +35,6 @@ include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
 # include("neural/neural.jl")
-include("ratio/ratio.jl")
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module

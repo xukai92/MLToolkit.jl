@@ -21,4 +21,5 @@ using MLToolkit: _lbeta, _beta
     end
 
     @warn "`logit` is not tested."
+    @warn "`logsumexp` is not tested."
 end
