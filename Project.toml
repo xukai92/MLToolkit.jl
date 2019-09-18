@@ -6,6 +6,7 @@ version = "0.3.0"
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
 CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
+CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"

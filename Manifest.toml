@@ -1,5 +1,11 @@
 # This file is machine-generated - editing it directly is not advised
 
+[[AbstractFFTs]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "380e36c66edfa099cd90116b24c1ce8cafccac40"
+uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
+version = "0.4.1"
+
 [[Adapt]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "82dab828020b872fa9efd3abec1152b075bc7cbf"
@@ -39,11 +45,34 @@ git-tree-sha1 = "c7361ce8a2129f20b0e05a89f7070820cfed6648"
 uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 version = "0.5.6"
 
+[[CEnum]]
+git-tree-sha1 = "62847acab40e6855a9b5905ccb99c2b5cf6b3ebb"
+uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
+version = "0.2.0"
+
 [[CSTParser]]
 deps = ["Tokenize"]
 git-tree-sha1 = "c69698c3d4a7255bc1b4bc2afc09f59db910243b"
 uuid = "00ebfdb7-1f24-5e51-bd34-a7502290713f"
 version = "0.6.2"
+
+[[CUDAapi]]
+deps = ["Libdl", "Logging"]
+git-tree-sha1 = "9b2b4b71d6b7f946c9689bb4dea03ff92e3c7091"
+uuid = "3895d2a7-ec45-59b8-82bb-cfc6a382f9b3"
+version = "1.1.0"
+
+[[CUDAdrv]]
+deps = ["CUDAapi", "Libdl", "Printf"]
+git-tree-sha1 = "9ce99b5732c70e06ed97c042187baed876fb1698"
+uuid = "c5f51814-7f29-56b8-a69c-e4d8f6be1fde"
+version = "3.1.0"
+
+[[CUDAnative]]
+deps = ["Adapt", "CUDAapi", "CUDAdrv", "DataStructures", "InteractiveUtils", "LLVM", "Libdl", "Logging", "Printf", "TimerOutputs"]
+git-tree-sha1 = "52ae1ce10ebfa686e227655c47b19add89308623"
+uuid = "be33ccc6-a3ff-5ff2-a52e-74243cff1e17"
+version = "2.3.1"
 
 [[Calculus]]
 deps = ["Compat"]
@@ -93,6 +122,12 @@ git-tree-sha1 = "f621b8ef51fd2004c7cf157ea47f027fdeac5523"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
 version = "4.0.0"
 
+[[CuArrays]]
+deps = ["AbstractFFTs", "Adapt", "CUDAapi", "CUDAdrv", "CUDAnative", "GPUArrays", "LinearAlgebra", "MacroTools", "NNlib", "Printf", "Random", "Requires", "SparseArrays", "TimerOutputs"]
+git-tree-sha1 = "46b48742a84bb839e74215b7e468a4a1c6ba30f9"
+uuid = "3a865a2d-5b23-5a0f-bc46-62713ec82fae"
+version = "1.2.1"
+
 [[DataStructures]]
 deps = ["InteractiveUtils", "OrderedCollections"]
 git-tree-sha1 = "0809951a1774dc724da22d26e4289bbaab77809a"
@@ -135,6 +170,18 @@ git-tree-sha1 = "0d048298541db10d16110508d5146f1fd13da971"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
 version = "0.19.1"
 
+[[FFTW]]
+deps = ["AbstractFFTs", "BinaryProvider", "Conda", "Libdl", "LinearAlgebra", "Reexport", "Test"]
+git-tree-sha1 = "03f8776fbdae28c20c0d1d2ae4e090cd1dfcd247"
+uuid = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+version = "1.0.0"
+
+[[FillArrays]]
+deps = ["LinearAlgebra", "Random", "SparseArrays"]
+git-tree-sha1 = "8fba6ddaf66b45dec830233cea0aae43eb1261ad"
+uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
+version = "0.6.4"
+
 [[FixedPointNumbers]]
 git-tree-sha1 = "d14a6fa5890ea3a7e5dcab6811114f132fec2b4b"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
@@ -145,6 +192,12 @@ deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "InteractiveUtils", 
 git-tree-sha1 = "4c4d727f1b7e0092134fabfab6396b8945c1ea5b"
 uuid = "f6369f11-7733-5829-9624-2563aa707210"
 version = "0.10.3"
+
+[[GPUArrays]]
+deps = ["Adapt", "FFTW", "FillArrays", "LinearAlgebra", "Printf", "Random", "Serialization", "StaticArrays", "Test"]
+git-tree-sha1 = "b5009ac44b141ded5e6f04c4db83807970f56e91"
+uuid = "0c68f7d7-f131-5f86-a1c3-88cf8149b2d7"
+version = "1.0.2"
 
 [[GSL]]
 deps = ["BinaryProvider", "Compat", "Libdl", "LinearAlgebra", "Markdown", "Printf", "Random", "Test"]
@@ -173,6 +226,12 @@ deps = ["Calculus", "DataStructures", "ForwardDiff", "LinearAlgebra", "MathOptIn
 git-tree-sha1 = "a970a86abc924f2c126cdb4978a5e8923d0e7b22"
 uuid = "4076af6c-e467-56ae-b986-b466b2749572"
 version = "0.20.0"
+
+[[LLVM]]
+deps = ["CEnum", "Libdl", "Printf", "Unicode"]
+git-tree-sha1 = "4a05f742837779a00bd8c9a18da6817367c4245d"
+uuid = "929cbde3-209d-540e-8aea-75f648917ca0"
+version = "1.3.0"
 
 [[LaTeXStrings]]
 deps = ["Compat"]
