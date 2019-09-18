@@ -9,7 +9,7 @@ import PyCall, PyPlot, Distributions, Reexport, Distributed, Tracker, Requires
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
 # Matplotlib and PyPlot
-const mlp = PyCall.PyNULL()
+const mpl = PyCall.PyNULL()
 const plt = PyCall.PyNULL()
 
 ###############################
@@ -43,8 +43,8 @@ export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
 function __init__()
     # Bind Python libraries
     copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
-    copy!(mlp, PyPlot.matplotlib)
-    copy!(plt, mlp.pyplot)
+    copy!(mpl, PyPlot.matplotlib)
+    copy!(plt, mpl.pyplot)
     # Ensure not using Type 3 fonts
     plt.rc("pdf", fonttype=42)
     # GPU support
