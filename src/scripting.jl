@@ -4,7 +4,7 @@ function parse_args(args_str::AbstractString, settings; as_symbols::Bool=false)
     parse_args(split(replace(args_str, r"\s+" => " "), " "), settings; as_symbols=as_symbols)
 end
 
-function flatten_dict(dict::Dict{T,Any};
+function flatten_dict(dict::Dict{T,<:Any};
                       equal_sym="=",
                       delimiter="-",
                       exclude::Vector{T}=T[],
