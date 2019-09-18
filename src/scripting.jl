@@ -1,5 +1,19 @@
 import ArgParse: parse_args
 
+const DATETIME_FMT = "ddmmyyyy-H-M-S"
+
+function find_latest_dir(targetdir)
+    date_list = []
+    for dirstr in readdir(targetdir)
+        try
+            push!(date_list, Dates.DateTime(dirstr, DATETIME_FMT))
+        catch
+            nothing
+        end
+    end
+    return Dates.format(maximum(date_list), DATETIME_FMT)
+end
+
 function parse_args(args_str::AbstractString, settings; as_symbols::Bool=false)
     parse_args(split(replace(args_str, r"\s+" => " "), " "), settings; as_symbols=as_symbols)
 end

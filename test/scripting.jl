@@ -2,6 +2,8 @@ using Test, MLToolkit
 using ArgParse: ArgParseSettings, @add_arg_table
 
 @testset "Scripting" begin
+    @warn "`find_latest_dir()` is not tested."
+
     @testset "parse_args" begin
         s = ArgParseSettings()
 
@@ -66,7 +68,7 @@ using ArgParse: ArgParseSettings, @add_arg_table
         args_dict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
         @test args_dict2str(args_dict) == "--a 1 --b two --d NaN --c true"
     end
-
+    
     @warn "`jupyter()` is not tested."
     @warn "`@jupyter` is not tested."
     @warn "`checknumerics()` is not tested."

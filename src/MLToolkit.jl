@@ -27,7 +27,7 @@ export break_stick_ibp, break_logstick_ibp
 include("Data/Data.jl")
 Reexport.@reexport using .Data
 include("scripting.jl")
-export parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, map_namedtuple, args_dict2str, isjupyter, @jupyter, @script, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
+export DATETIME_FMT, find_latest, parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, map_namedtuple, args_dict2str, isjupyter, @jupyter, @script, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
 include("plotting.jl")
 export make_two_y_axes_plot, plot_grayimg!, plot_actmat!, autoset_lim!, plot_contour!
 
