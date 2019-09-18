@@ -14,6 +14,20 @@ function flatten_dict(dict::Dict{T,<:Any};
     return join(["$k$equal_sym$v" for (k,v) in filter(t -> (t[1] in include) && !(t[1] in exclude), dict)], delimiter)
 end
 
+function dict2namedtuple(d)
+    return NamedTuple{tuple(keys(d)...),typeof(tuple(values(d)...))}(tuple(values(d)...))
+end
+
+function merge_namedtuples(op, t1, t2)
+    return NamedTuple{tuple(keys(t1)...),typeof(tuple(values(t1)...))}(tuple(map(op, zip(values(t1), values(t2)))...))
+end
+
+function map_namedtuple(op, t)
+    return NamedTuple{tuple(keys(t)...),typeof(tuple(values(t)...))}(tuple(map(op, values(t))...))
+end
+
+args_dict2str(args_dict) = join([v == "" ? "--$k" : "--$k $v" for (k, v) in args_dict], " ")
+
 isjupyter() = isdefined(Main, :IJulia) && Main.IJulia.inited
 
 """

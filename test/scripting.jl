@@ -38,6 +38,35 @@ using ArgParse: ArgParseSettings, @add_arg_table
         @test flat_args == "a=1"
     end
 
+    @testset "dict2namedtuple" begin
+        args_dict = Dict(:a => 1, :b => "two", :c => true, :d => NaN)
+        args = dict2namedtuple(args_dict)
+        @test keys(args) |> Set == (:a, :b, :c, :d) |> Set
+        @test values(args) |> Set == (1, "two", true, NaN) |> Set
+        @test args.a == 1
+        @test args.b == "two"
+        @test args.c == true
+        @test isnan(args.d)
+    end
+
+    @testset "merge_namedtuples" begin
+        t1 = (x=1, y=2)
+        t2 = (x=3, y=4)
+        t = merge_namedtuples(sum, t1, t2)
+        @test t == (x=4, y=6)
+    end
+
+    @testset "map_namedtuple" begin
+        t = (x=1, y=2)
+        t = map_namedtuple(v -> 2v, t)
+        @test t == (x=2, y=4)
+    end
+
+    @testset "args_dict2str" begin
+        args_dict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
+        @test args_dict2str(args_dict) == "--a 1 --b two --d NaN --c true"
+    end
+
     @warn "`jupyter()` is not tested."
     @warn "`@jupyter` is not tested."
     @warn "`checknumerics()` is not tested."
