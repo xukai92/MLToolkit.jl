@@ -70,17 +70,21 @@ macro script(expr)
     end
 end
 
+istb() = Logging.current_logger() isa TensorBoardLogger.TBLogger
+
 """
     @tb expr
 
 Execute `expr` if the current logger is TBLogger.
 """
 macro tb(expr)
-    if Logging.current_logger() isa TensorBoardLogger.TBLogger
-        return esc(expr)
-    else
-        return nothing
-    end
+    return esc(
+        quote
+            if istb()
+                $expr
+            end
+        end
+    )
 end
 
 """
