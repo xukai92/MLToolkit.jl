@@ -21,7 +21,9 @@ end
 
 import StatsFuns: logsumexp
 
-function logsumexp(x; dims=:)
+const AbstractHigherOrderArray = Union{AbstractArray{<:Real, 2}, AbstractArray{<:Real, 3}, AbstractArray{<:Real, 4}}
+
+function logsumexp(x::AbstractHigherOrderArray; dims=:)
     u = maximum(x; dims=dims)
     lsediff = log.(sum(exp.(x .- u); dims=dims))
     return u .+ lsediff
