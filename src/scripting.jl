@@ -76,7 +76,7 @@ end
 Execute `expr` if the current logger is TBLogger.
 """
 macro tb(expr)
-    if current_logger() isa TBLogger
+    if Logging.current_logger() isa TBLogger
         return esc(expr)
     else
         return nothing
