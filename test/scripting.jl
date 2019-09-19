@@ -88,4 +88,5 @@ using ArgParse: ArgParseSettings, @add_arg_table
         @test t > 1
     end
     
+    @warn "`figure_to_image` is not tested."
 end

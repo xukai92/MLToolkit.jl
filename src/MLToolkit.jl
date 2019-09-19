@@ -4,10 +4,11 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import PyCall, PyPlot, Distributions, Reexport, Distributed, Tracker, Requires
+import PyCall, PyPlot, Distributions, Reexport, Distributed, Tracker, Requires, TensorBoardLogger, Images
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
+const plt_agg = PyCall.PyNULL()
 # Matplotlib and PyPlot
 const mpl = PyCall.PyNULL()
 const plt = PyCall.PyNULL()
@@ -45,6 +46,7 @@ function __init__()
     copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
     copy!(mpl, PyPlot.matplotlib)
     copy!(plt, mpl.pyplot)
+    copy!(plt_agg, mpl.backends.backend_agg)
     # Ensure not using Type 3 fonts
     plt.rc("pdf", fonttype=42)
     # GPU support

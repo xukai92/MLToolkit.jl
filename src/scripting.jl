@@ -71,6 +71,19 @@ macro script(expr)
 end
 
 """
+    @tb expr
+
+Execute `expr` if the current logger is TBLogger.
+"""
+macro tb(expr)
+    if current_logger() isa TBLogger
+        return esc(expr)
+    else
+        return nothing
+    end
+end
+
+"""
     checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
 
 Check if each entry in `vcheck` is `NaN` or `Inf`.
@@ -168,6 +181,20 @@ function sweeprun(cmd_template, sweeps::Pair...; maxasync=0)
         end
     end
 end
+
+### Logging
+
+function figure_to_image(fig::PyPlot.Figure; close=true)
+    canvas = plt_agg.FigureCanvasAgg(fig)
+    canvas.draw()
+    data = canvas.buffer_rgba() ./ 255
+    w, h = fig.canvas.get_width_height()
+    img = [Images.RGBA(data[r,c,:]...) for r in 1:h, c in 1:w]
+    if close plt.close(fig) end
+    return img
+end
+
+TensorBoardLogger.preprocess(name, fig::PyPlot.Figure, data) = push!(data, name => figure_to_image(fig))
 
 import Logging
 
