@@ -58,3 +58,5 @@ function plot_contour!(f; contourevals=100, alpha=0.3, ax=plt.gca())
     gridz = reshape(gridz, size(gridx)...)
     ax.contour(gridx, gridy, gridz, alpha=alpha)
 end
+
+plot_pdf!(dist::Distributions.ContinuousMultivariateDistribution) = plot_contour!(x -> exp.(logpdf(dist, x)))

@@ -19,6 +19,12 @@ const plt = PyCall.PyNULL()
 const FT = Float64
 export FT, mpl, plt
 
+######################
+# Homeless functions #
+######################
+nparams(m) = sum(prod.(size.(Flux.params(m))))
+export nparams
+
 include("utility.jl")
 export count_leadingzeros, turnoffgpu
 include("special.jl")
@@ -30,7 +36,7 @@ Reexport.@reexport using .Data
 include("scripting.jl")
 export DATETIME_FMT, find_latest_dir, parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, map_namedtuple, args_dict2str, isjupyter, @jupyter, @script, @tb, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
 include("plotting.jl")
-export make_two_y_axes_plot, plot_grayimg!, plot_actmat!, autoset_lim!, plot_contour!
+export make_two_y_axes_plot, plot_grayimg!, plot_actmat!, autoset_lim!, plot_contour!, plot_pdf!
 
 include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
