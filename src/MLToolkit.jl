@@ -4,7 +4,7 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import PyCall, PyPlot, Distributions, Reexport, Distributed, Tracker, Requires, Logging, TensorBoardLogger, Images
+import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, Requires, Logging, TensorBoardLogger, Images
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()

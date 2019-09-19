@@ -6,6 +6,12 @@ git-tree-sha1 = "380e36c66edfa099cd90116b24c1ce8cafccac40"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "0.4.1"
 
+[[AbstractTrees]]
+deps = ["Markdown", "Test"]
+git-tree-sha1 = "6621d9645702c1c4e6970cc6a3eae440c768000b"
+uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+version = "0.2.1"
+
 [[Adapt]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "82dab828020b872fa9efd3abec1152b075bc7cbf"
@@ -244,6 +250,12 @@ git-tree-sha1 = "d14a6fa5890ea3a7e5dcab6811114f132fec2b4b"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.6.1"
 
+[[Flux]]
+deps = ["AbstractTrees", "Adapt", "CUDAapi", "CodecZlib", "Colors", "CuArrays", "DelimitedFiles", "Juno", "LinearAlgebra", "MacroTools", "NNlib", "Pkg", "Printf", "Random", "Reexport", "SHA", "Statistics", "StatsBase", "Tracker", "ZipFile"]
+git-tree-sha1 = "b5ebbd896dcd8ff19c6cb7297c4d323155b26bcf"
+uuid = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+version = "0.9.0"
+
 [[ForwardDiff]]
 deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "InteractiveUtils", "LinearAlgebra", "NaNMath", "Random", "SparseArrays", "SpecialFunctions", "StaticArrays", "Test"]
 git-tree-sha1 = "4c4d727f1b7e0092134fabfab6396b8945c1ea5b"
@@ -373,6 +385,12 @@ git-tree-sha1 = "a970a86abc924f2c126cdb4978a5e8923d0e7b22"
 uuid = "4076af6c-e467-56ae-b986-b466b2749572"
 version = "0.20.0"
 
+[[Juno]]
+deps = ["Base64", "Logging", "Media", "Profile", "Test"]
+git-tree-sha1 = "30d94657a422d09cb97b6f86f04f750fa9c50df8"
+uuid = "e5e0dc1b-0480-54bc-9374-aad01c23163d"
+version = "0.7.2"
+
 [[LLVM]]
 deps = ["CEnum", "Libdl", "Printf", "Unicode"]
 git-tree-sha1 = "4a05f742837779a00bd8c9a18da6817367c4245d"
@@ -424,6 +442,12 @@ deps = ["Compat"]
 git-tree-sha1 = "3bf2e534e635df810e5f4b4f1a8b6de9004a0d53"
 uuid = "fdba3010-5040-5b88-9595-932c9decdf73"
 version = "0.7.7"
+
+[[Media]]
+deps = ["MacroTools", "Test"]
+git-tree-sha1 = "75a54abd10709c01f1b86b84ec225d26e840ed58"
+uuid = "e89f7d12-3494-54d1-8411-f7d8b9ae1f27"
+version = "0.5.0"
 
 [[Missings]]
 git-tree-sha1 = "29858ce6c8ae629cf2d733bffa329619a1c843d0"
@@ -481,6 +505,10 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[[Profile]]
+deps = ["Printf"]
+uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
 
 [[ProtoBuf]]
 deps = ["Random", "Serialization", "Sockets", "Test"]
@@ -680,3 +708,9 @@ deps = ["LinearAlgebra", "Random", "SparseArrays", "Test"]
 git-tree-sha1 = "21772c33b447757ec7d3e61fcdfb9ea5c47eedcf"
 uuid = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
 version = "0.4.1"
+
+[[ZipFile]]
+deps = ["BinaryProvider", "Libdl", "Printf"]
+git-tree-sha1 = "580ce62b6c14244916cc28ad54f8a2e2886f843d"
+uuid = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
+version = "0.8.3"
