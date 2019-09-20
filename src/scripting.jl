@@ -196,6 +196,8 @@ end
 
 TensorBoardLogger.preprocess(name, fig::PyPlot.Figure, data) = push!(data, name => figure_to_image(fig))
 
+TensorBoardLogger.preprocess(name, x::Tracker.TrackedReal, data) = push!(data, name => Flux.data(x))
+
 import Logging
 
 """
