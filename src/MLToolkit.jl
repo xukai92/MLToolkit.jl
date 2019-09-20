@@ -1,4 +1,3 @@
-__precompile__()
 module MLToolkit
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
