@@ -58,12 +58,6 @@ using ArgParse: ArgParseSettings, @add_arg_table
         @test t == (x=4, y=6)
     end
 
-    @testset "map_namedtuple" begin
-        t = (x=1, y=2)
-        t = map_namedtuple(v -> 2v, t)
-        @test t == (x=2, y=4)
-    end
-
     @testset "args_dict2str" begin
         args_dict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
         @test args_dict2str(args_dict) == "--a 1 --b two --d NaN --c true"

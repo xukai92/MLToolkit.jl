@@ -36,11 +36,6 @@ function merge_namedtuples(op, t1, t2)
     return NamedTuple{tuple(keys(t1)...),typeof(tuple(values(t1)...))}(tuple(map(op, zip(values(t1), values(t2)))...))
 end
 
-function map_namedtuple(op, t)
-    t_mapped = tuple(map(op, values(t))...)
-    return NamedTuple{tuple(keys(t)...),typeof(t_mapped)}(t_mapped)
-end
-
 args_dict2str(args_dict) = join([v == "" ? "--$k" : "--$k $v" for (k, v) in args_dict], " ")
 
 isjupyter() = isdefined(Main, :IJulia) && Main.IJulia.inited
