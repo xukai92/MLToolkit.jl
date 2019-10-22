@@ -7,6 +7,7 @@ using MLToolkit: include_list_as_module
         # "neural/neural.jl",
         "utility.jl",
         # "special.jl",
+        "plotting.jl",
         "scripting.jl",
         "MonteCarlo/MonteCarlo.jl",
         # "distributions/distributions.jl",

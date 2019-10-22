@@ -7,8 +7,6 @@ export FT
 # export load_mnist
 include("loader.jl")
 export BatchDataLoader, shuffle!
-include("visualisation.jl")
-export make_imggrid
 include("features.jl")
 export get_features_griffiths2011indian, get_features_large
 

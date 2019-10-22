@@ -3,7 +3,7 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, Requires, Logging, TensorBoardLogger, Images
+import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, Requires, Logging, TensorBoardLogger, Images, PGFPlots, Parameters
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
@@ -35,7 +35,7 @@ Reexport.@reexport using .Data
 include("scripting.jl")
 export DATETIME_FMT, find_latest_dir, parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, args_dict2str, isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
 include("plotting.jl")
-export make_two_y_axes_plot, plot_grayimg!, plot_actmat!, autoset_lim!, plot_contour!, plot_pdf!
+export TwoYAxesLines, GrayImages, make_imggrid, plot, save, plot_actmat!, autoset_lim!
 
 include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")

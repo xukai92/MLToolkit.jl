@@ -1,2 +1,6 @@
 .vscode
+.ipynb_checkpoints
 *.png
+*.tex
+*.pdf
+test/jl_*

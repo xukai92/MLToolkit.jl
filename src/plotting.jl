@@ -1,30 +1,148 @@
+import PGFPlots: plot, save
+using PGFPlots: Axis, Plots, ColorMaps
+
 # NOTE: function starting with `make_xxx_plot` will return a figure instance while
 #       function starting with `plot_xxx` will return the axes being plotted on
 
-function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
-                              xlabel=nothing, ylabel1=nothing, ylabel2=nothing)
-    fig, ax1 = plt.subplots()
-    ax1."plot"(xs, ys1, c=color1)
-    xlabel == nothing || ax1."set_xlabel"(xlabel)
-    ylabel1 == nothing || ax1."set_ylabel"(ylabel1, color=color1)
-    ax1."tick_params"(axis="y", labelcolor=color1)
-    ax2 = ax1."twinx"()
-    ax2."plot"(xs, ys2, c=color2)
-    ylabel2 == nothing || ax2."set_ylabel"(ylabel2, color=color2)
-    ax2."tick_params"(axis="y", labelcolor=color2)
-    fig."tight_layout"()
-    return fig
+### Two lines with shared y-axis
+
+Parameters.@with_kw struct TwoYAxesLines{T<:AbstractVector{<:AbstractFloat}}
+    x::T
+    y1::T
+    y2::T
+    mark="none"
+    colour1="red"
+    colour2="blue"
+    xlabel=nothing
+    ylabel1=nothing
+    ylabel2=nothing
 end
 
-function plot_grayimg!(img, args...; ax=plt.gca())
-    @assert length(args) == 0 || length(args) == 2 "You can either plot a single image or declare the `n_rows` and `n_cols`"
-    im = ax."imshow"(make_imggrid(img, args...), cmap="gray")
-    plt.axis("off")
-    divider = axes_grid1.make_axes_locatable(ax)
-    cax = divider."append_axes"("bottom", size="5%", pad=0.05)
-    plt.colorbar(im, cax=cax, orientation="horizontal")
-    return ax
+"""
+Reference: https://latex.org/forum/viewtopic.php?t=21317
+"""
+function plot(p::TwoYAxesLines)
+    a1 = Axis(Plots.Linear(p.x, p.y1; mark=p.mark, style="color=$(p.colour1)"); xlabel=p.xlabel, ylabel=p.ylabel1)
+    a2 = Axis(Plots.Linear(p.x, p.y2; mark=p.mark, style="color=$(p.colour2)"); axisLines="right", ylabel=p.ylabel2, ylabelStyle="rotate=180")
+    return [a1, a2]
 end
+
+### Images
+
+struct GrayImages{T<:AbstractArray{<:AbstractFloat,3}}
+    imgs::T
+end
+
+"""
+    make_imggrid(gimgs::GrayImages, n_rows::Int, n_cols::Int; gap::Int=1)
+
+Create a `n_rows` by `n_cols` image grid using `gimgs`.
+
+NOTE: only gray images are supported at the moment.
+"""
+function make_imggrid(gimgs::GrayImages, n_rows, n_cols; gap::Int=1)
+    n, d_row, d_col = size(gimgs.imgs)
+    imggrid = 0.5 * ones(n_rows * (d_row + gap) + gap, n_cols * (d_col + gap) + gap)
+    i = 1
+    for row = 1:n_rows, col = 1:n_cols
+        if i <= n
+            i_row = (row - 1) * (d_row + gap) + 1
+            i_col = (col - 1) * (d_col + gap) + 1
+            imggrid[i_row+1:i_row+d_row,i_col+1:i_col+d_col] .= gimgs.imgs[i,:,:]
+        else
+            break
+        end
+        i += 1
+    end
+    return imggrid
+end
+
+make_imggrid(imgs, n_rows, n_cols; gap::Int=1) = make_imggrid(GrayImages(imgs), n_rows, n_cols; gap=gap)
+
+function GrayImages(imgs::AbstractMatrix{<:AbstractFloat})
+    dsq = size(imgs, 2)
+    try
+        d = convert(Int, sqrt(dsq))
+        imgs = reshape(imgs, size(imgs, 1), d, d)
+    catch
+        @error "Cannot automatically convert an image which is not sqaured."
+    end
+    return GrayImages(imgs)
+end
+
+function GrayImages(imgs::AbstractMatrix{<:AbstractFloat}, shape::Tuple{Int,Int})
+    imgs = reshape(imgs, size(imgs, 1), shape...)
+    return GrayImages(imgs)
+end
+
+function plot(gimgs::GrayImages, n_rows::Int, n_cols::Int)
+    imggrid = make_imggrid(gimgs, n_rows, n_cols)
+    return Axis(Plots.Image(imggrid, (1, size(imggrid, 2)), (1, size(imggrid, 1)); colormap=ColorMaps.GrayMap(invert=false)); axisEqualImage=true)
+end
+
+function plot(gimgs::GrayImages)
+    n = size(gimgs.imgs, 1)
+    n_rows = ceil(Int, sqrt(n))
+    n_cols = n_rows * (n_rows - 1) > n ? n_rows - 1 : n_rows
+    return plot(gimgs, n_rows, n_cols)
+end
+
+### Contour
+
+struct ContourData
+    data
+    xbins
+    ybins
+end
+
+struct ContourFunction
+    f
+end
+
+function Contour_by_batchf(f, xrange, yrange, contourevals)
+    xbins = range(xrange..., length=contourevals)
+    ybins = range(yrange..., length=contourevals)
+    xygrid = [[xy...] for xy in Iterators.product(xbins, ybins)]
+    xgrid = map(xy -> xy[1], xygrid)
+    ygrid = map(xy -> xy[2], xygrid)
+    zgrid = f(hcat(xygrid[:]...))
+    zgrid = reshape(zgrid, size(xgrid)...)
+    return Plots.Contour(zgrid, xbins, ybins)
+end
+
+function plot(c::ContourFunction, xrange, yrange; contourevals=100)
+    p = Contour_by_batchf(c.f, xrange, yrange, contourevals)
+    return Axis(p; axisEqualImage=true)
+end
+
+function plot(dist::Distributions.ContinuousMultivariateDistribution, xrange, yrange; contourevals=100)
+    return plot(ContourFunction(x -> exp.(logpdf(dist, x))), xrange, yrange; contourevals=100)
+end
+
+# function make_two_y_axes_plot(xs, ys1, ys2; color1="tab:red", color2="tab:blue",
+#                               xlabel=nothing, ylabel1=nothing, ylabel2=nothing)
+#     fig, ax1 = plt.subplots()
+#     ax1."plot"(xs, ys1, c=color1)
+#     xlabel == nothing || ax1."set_xlabel"(xlabel)
+#     ylabel1 == nothing || ax1."set_ylabel"(ylabel1, color=color1)
+#     ax1."tick_params"(axis="y", labelcolor=color1)
+#     ax2 = ax1."twinx"()
+#     ax2."plot"(xs, ys2, c=color2)
+#     ylabel2 == nothing || ax2."set_ylabel"(ylabel2, color=color2)
+#     ax2."tick_params"(axis="y", labelcolor=color2)
+#     fig."tight_layout"()
+#     return fig
+# end
+#
+# function plot_grayimg!(img, args...; ax=plt.gca())
+#     @assert length(args) == 0 || length(args) == 2 "You can either plot a single image or declare the `n_rows` and `n_cols`"
+#     im = ax."imshow"(make_imggrid(img, args...), cmap="gray")
+#     plt.axis("off")
+#     divider = axes_grid1.make_axes_locatable(ax)
+#     cax = divider."append_axes"("bottom", size="5%", pad=0.05)
+#     plt.colorbar(im, cax=cax, orientation="horizontal")
+#     return ax
+# end
 
 function plot_actmat!(Z::Matrix; ax=plt.gca())
     # TODO: implement a sorting version
@@ -48,15 +166,15 @@ function autoset_lim!(x; ax=plt.gca())
     ax.set_ylim(ylims)
 end
 
-function plot_contour!(f; contourevals=100, alpha=0.3, ax=plt.gca())
-    rangex = range(ax.get_xlim()..., length=contourevals)
-    rangey = range(ax.get_ylim()..., length=contourevals)
-    gridxy = [[xy...] for xy in Iterators.product(rangex, rangey)]
-    gridx = map(xy -> xy[1], gridxy)
-    gridy = map(xy -> xy[2], gridxy)
-    gridz = f(hcat(gridxy[:]...))
-    gridz = reshape(gridz, size(gridx)...)
-    ax.contour(gridx, gridy, gridz, alpha=alpha)
-end
-
-plot_pdf!(dist::Distributions.ContinuousMultivariateDistribution) = plot_contour!(x -> exp.(logpdf(dist, x)))
+# function plot_contour!(f; contourevals=100, alpha=0.3, ax=plt.gca())
+#     rangex = range(ax.get_xlim()..., length=contourevals)
+#     rangey = range(ax.get_ylim()..., length=contourevals)
+#     gridxy = [[xy...] for xy in Iterators.product(rangex, rangey)]
+#     gridx = map(xy -> xy[1], gridxy)
+#     gridy = map(xy -> xy[2], gridxy)
+#     gridz = f(hcat(gridxy[:]...))
+#     gridz = reshape(gridz, size(gridx)...)
+#     ax.contour(gridx, gridy, gridz, alpha=alpha)
+# end
+#
+# plot_pdf!(dist::Distributions.ContinuousMultivariateDistribution) = plot_contour!(x -> exp.(logpdf(dist, x)))
