@@ -41,14 +41,14 @@ Create a `n_rows` by `n_cols` image grid using `gimgs`.
 NOTE: only gray images are supported at the moment.
 """
 function make_imggrid(gimgs::GrayImages, n_rows, n_cols; gap::Int=1)
-    n, d_row, d_col = size(gimgs.imgs)
+    d_row, d_col, n = size(gimgs.imgs)
     imggrid = 0.5 * ones(n_rows * (d_row + gap) + gap, n_cols * (d_col + gap) + gap)
     i = 1
     for row = 1:n_rows, col = 1:n_cols
         if i <= n
             i_row = (row - 1) * (d_row + gap) + 1
             i_col = (col - 1) * (d_col + gap) + 1
-            imggrid[i_row+1:i_row+d_row,i_col+1:i_col+d_col] .= gimgs.imgs[i,:,:]
+            imggrid[i_row+1:i_row+d_row,i_col+1:i_col+d_col] .= gimgs.imgs[:,:,i]
         else
             break
         end
@@ -60,10 +60,10 @@ end
 make_imggrid(imgs, n_rows, n_cols; gap::Int=1) = make_imggrid(GrayImages(imgs), n_rows, n_cols; gap=gap)
 
 function GrayImages(imgs::AbstractMatrix{<:AbstractFloat})
-    dsq = size(imgs, 2)
+    dsq = size(imgs, 1)
     try
         d = convert(Int, sqrt(dsq))
-        imgs = reshape(imgs, size(imgs, 1), d, d)
+        imgs = reshape(imgs, d, d, last(size(imgs)))
     catch
         @error "Cannot automatically convert an image which is not sqaured."
     end
@@ -71,7 +71,7 @@ function GrayImages(imgs::AbstractMatrix{<:AbstractFloat})
 end
 
 function GrayImages(imgs::AbstractMatrix{<:AbstractFloat}, shape::Tuple{Int,Int})
-    imgs = reshape(imgs, size(imgs, 1), shape...)
+    imgs = reshape(imgs, last(size(imgs)), shape...)
     return GrayImages(imgs)
 end
 
@@ -81,7 +81,7 @@ function plot(gimgs::GrayImages, n_rows::Int, n_cols::Int)
 end
 
 function plot(gimgs::GrayImages)
-    n = size(gimgs.imgs, 1)
+    n = last(size(gimgs.imgs))
     n_rows = ceil(Int, sqrt(n))
     n_cols = n_rows * (n_rows - 1) > n ? n_rows - 1 : n_rows
     return plot(gimgs, n_rows, n_cols)

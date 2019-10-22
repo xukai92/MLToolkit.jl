@@ -4,7 +4,7 @@ using LaTeXStrings, Distributions
 @testset "Plotting" begin
     @testset "make_imggrid" begin
         d = 5
-        rand_img = rand(100, d^2)
+        rand_img = rand(d^2, 100)
         n_rows = n_cols = 3
         gap = 1
         imggrid = make_imggrid(rand_img, n_rows, n_cols)
@@ -26,7 +26,7 @@ using LaTeXStrings, Distributions
         save("test_two_y_axes_lines.tex", p, include_preamble=false)
         save("test_two_y_axes_lines.pdf", p)
 
-        imgs = rand(10, 16, 16)
+        imgs = rand(16, 16, 10)
 
         p = plot(GrayImages(imgs))
 
