@@ -36,7 +36,7 @@ struct Dataset{T}
     train::T
     test
     validation
-    function Dataset(train, test=nothing, validation=nothing; name::String="")
+    function Dataset(train::T, test=nothing, validation=nothing; name::String="") where {T}
         for set in (train, test, validation)
             if !isnothing(set)
                 if set isa Tuple
@@ -54,7 +54,7 @@ struct Dataset{T}
                 end
             end
         end
-        return new(name, train, test, validation)
+        return new{T}(name, train, test, validation)
     end
 end
 
