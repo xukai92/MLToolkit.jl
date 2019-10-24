@@ -1,6 +1,7 @@
 module Data
 
 import Random, Distributions, MLDataUtils
+using Distributions: rand, logpdf
 
 include("features.jl")
 export get_features_griffiths2011indian, get_features_large
@@ -20,9 +21,9 @@ function makemixturemodel(ring::Ring)
     return Distributions.MixtureModel([Distributions.MvNormal(μ[:,i], ring.σ) for i in 1:size(μ, 2)])
 end
 
-Distributions.rand(rng::Random.AbstractRNG, ring::Ring{T}, n::Int) where {T} = convert.(T, Distributions.rand(rng, makemixturemodel(ring), n))
+Distributions.rand(rng::Random.AbstractRNG, ring::Ring{T}, n::Int) where {T} = convert.(T, rand(rng, makemixturemodel(ring), n))
 
-Distributions.logpdf(ring::Ring, x::AbstractArray{<:AbstractFloat,2}) = Distributions.logpdf(makemixturemodel(ring), x)
+Distributions.logpdf(ring::Ring, x::AbstractArray{<:AbstractFloat,2}) = logpdf(makemixturemodel(ring), x)
 
 export Ring, rand, logpdf
 
@@ -57,7 +58,7 @@ struct Dataset
     end
 end
 
-dim(d::Dataset) = Base.front(size(d.train))
+Distributions.dim(d::Dataset) = Base.front(size(d.train))
 
 ## Data loader
 
