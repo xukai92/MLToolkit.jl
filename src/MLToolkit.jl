@@ -21,8 +21,6 @@ export FT, mpl, plt
 ######################
 # Homeless functions #
 ######################
-nparams(m) = sum(prod.(size.(Flux.params(m))))
-export nparams
 
 include("utility.jl")
 export count_leadingzeros, turnoffgpu
@@ -35,7 +33,7 @@ Reexport.@reexport using .Data
 include("scripting.jl")
 export DATETIME_FMT, find_latest_dir, parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, args_dict2str, isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
 include("plotting.jl")
-export TwoYAxesLines, GrayImages, make_imggrid, plot, save, plot_actmat!, autoset_lim!
+export TwoYAxesLines, GrayImages, make_imggrid, plot, plot!, save, plot_actmat!, autoset_lim!, ContourFunction
 
 # TODO: merge this with DistributionsAD.jl
 include("distributions/distributions.jl")

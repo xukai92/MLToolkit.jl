@@ -87,13 +87,23 @@ function plot(gimgs::GrayImages)
     return plot(gimgs, n_rows, n_cols)
 end
 
-### Contour
-
-struct ContourData
-    data
-    xbins
-    ybins
+function plot!(gimgs::GrayImages, n_rows::Int, n_cols::Int; ax=plt.gca())
+    im = ax."imshow"(make_imggrid(gimgs, n_rows, n_cols), cmap="gray")
+    plt.axis("off")
+    divider = axes_grid1.make_axes_locatable(ax)
+    cax = divider."append_axes"("bottom", size="5%", pad=0.05)
+    plt.colorbar(im, cax=cax, orientation="horizontal")
+    return ax
 end
+
+function plot!(gimgs::GrayImages; ax=plt.gca())
+    n = last(size(gimgs.imgs))
+    n_rows = ceil(Int, sqrt(n))
+    n_cols = n_rows * (n_rows - 1) > n ? n_rows - 1 : n_rows
+    return plot!(gimgs, n_rows, n_cols; ax=ax)
+end
+
+### Contour
 
 struct ContourFunction
     f
