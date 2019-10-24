@@ -31,9 +31,9 @@ export Ring, rand, logpdf
 
 ## Dataset
 
-struct Dataset
+struct Dataset{T}
     name::String
-    train
+    train::T
     test
     validation
     function Dataset(train, test=nothing, validation=nothing; name::String="")
@@ -58,7 +58,18 @@ struct Dataset
     end
 end
 
-Distributions.dim(d::Dataset) = Base.front(size(d.train))
+_dim(d::Tuple{Int}) = first(d)
+_dim(d::Tuple) = d
+
+function Distributions.dim(d::Dataset)
+    d = Base.front(size(d.train))
+    return _dim(d)
+end
+
+function Distributions.dim(d::Dataset{<:Tuple})
+    d = Base.front(size(first(d.train)))
+    return _dim(d)
+end
 
 ## Data loader
 
