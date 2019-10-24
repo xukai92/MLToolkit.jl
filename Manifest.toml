@@ -460,15 +460,21 @@ version = "0.7.2"
 
 [[LLVM]]
 deps = ["CEnum", "Libdl", "Printf", "Unicode"]
-git-tree-sha1 = "4a05f742837779a00bd8c9a18da6817367c4245d"
+git-tree-sha1 = "3680605a77f20bec59eea00389eb7aafe973abbb"
 uuid = "929cbde3-209d-540e-8aea-75f648917ca0"
-version = "1.3.0"
+version = "1.3.1"
 
 [[LaTeXStrings]]
 deps = ["Compat"]
 git-tree-sha1 = "7ab9b8788cfab2bdde22adf9004bda7ad9954b6c"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 version = "1.0.3"
+
+[[LearnBase]]
+deps = ["LinearAlgebra", "SparseArrays", "StatsBase", "Test"]
+git-tree-sha1 = "c4b5da6d68517f46f70ed5157b28336b56cd2ff3"
+uuid = "7f8f8fb0-2700-5f03-b4bd-41f8cfc144b6"
+version = "0.2.2"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
@@ -482,6 +488,24 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[MLDataPattern]]
+deps = ["LearnBase", "MLLabelUtils", "Random", "SparseArrays", "StatsBase", "Test"]
+git-tree-sha1 = "e62221819c86de1affc5026cc099214ba51e125e"
+uuid = "9920b226-0b2a-5f5f-9153-9aa70a013f8b"
+version = "0.5.0"
+
+[[MLDataUtils]]
+deps = ["DataFrames", "DelimitedFiles", "LearnBase", "MLDataPattern", "MLLabelUtils", "Statistics", "StatsBase", "Test"]
+git-tree-sha1 = "dfb0d4ac254d538948d93dda580764327d16cdb0"
+uuid = "cc2ba9b6-d476-5e6d-8eaf-a92d5412d41d"
+version = "0.5.0"
+
+[[MLLabelUtils]]
+deps = ["LearnBase", "MappedArrays", "StatsBase", "Test"]
+git-tree-sha1 = "396eecfa05bf6e7628fc5fc3820545fce6620623"
+uuid = "66a33bbf-0c2b-5fc8-a008-9da813334f0a"
+version = "0.5.1"
 
 [[MacroTools]]
 deps = ["CSTParser", "Compat", "DataStructures", "Test", "Tokenize"]
