@@ -17,12 +17,12 @@ function makemixturemodel(ring::Ring)
     base_angle = π_typed * 2 / ring.n_clusters
     angle = (base_angle .* cluster_indices) .- π_typed / 2
     μ = [ring.s * cos.(angle) ring.s * sin.(angle)]'
-    return MixtureModel([MvNormal(μ[:,i], ring.σ) for i in 1:size(μ, 2)])
+    return Distributions.MixtureModel([Distributions.MvNormal(μ[:,i], ring.σ) for i in 1:size(μ, 2)])
 end
 
-Distributions.rand(rng::Random.AbstractRNG, ring::Ring{T}, n::Int) where {T} = convert.(T, rand(rng, makemixturemodel(ring), n))
+Distributions.rand(rng::Random.AbstractRNG, ring::Ring{T}, n::Int) where {T} = convert.(T, Distributions.rand(rng, makemixturemodel(ring), n))
 
-Distributions.logpdf(ring::Ring, x::AbstractArray{<:AbstractFloat,2}) = logpdf(makemixturemodel(ring), x)
+Distributions.logpdf(ring::Ring, x::AbstractArray{<:AbstractFloat,2}) = Distributions.logpdf(makemixturemodel(ring), x)
 
 export Ring, rand, logpdf
 
