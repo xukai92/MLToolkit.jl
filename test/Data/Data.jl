@@ -6,6 +6,11 @@ using Test, MLToolkit.Data
         @warn "`get_features_large()` not tested"
     end
 
+    @testset "Ring" begin
+        @warn "`Ring` not tested"
+        @warn "`makemixturemodel()` not tested"
+    end
+
     @testset "Dataset and DataLoader" begin
         n = 100
         x = randn(784, n)

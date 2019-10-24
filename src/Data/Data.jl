@@ -24,6 +24,8 @@ Distributions.rand(rng::Random.AbstractRNG, ring::Ring{T}, n::Int) where {T} = c
 
 Distributions.logpdf(ring::Ring, x::AbstractArray{<:AbstractFloat,2}) = logpdf(makemixturemodel(ring), x)
 
+export Ring, rand, logpdf
+
 ### Dataset and data loader
 
 ## Dataset
