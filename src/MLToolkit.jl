@@ -3,7 +3,7 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, Requires, Logging, TensorBoardLogger, Images, PGFPlots, Parameters
+import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, Requires, PGFPlots, Parameters
 
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
@@ -37,10 +37,13 @@ export DATETIME_FMT, find_latest_dir, parse_args, flatten_dict, dict2namedtuple,
 include("plotting.jl")
 export TwoYAxesLines, GrayImages, make_imggrid, plot, save, plot_actmat!, autoset_lim!
 
+# TODO: merge this with DistributionsAD.jl
 include("distributions/distributions.jl")
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
 # include("neural/neural.jl")
+include("Neural/Neural.jl")
+Reexport.@reexport using .Neural
 
 include("test_util.jl")
 export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module

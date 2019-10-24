@@ -184,6 +184,8 @@ end
 
 ### Logging
 
+import Images, Logging, TensorBoardLogger
+
 function figure_to_image(fig::PyPlot.Figure; close=true)
     canvas = plt_agg.FigureCanvasAgg(fig)
     canvas.draw()
@@ -198,8 +200,7 @@ TensorBoardLogger.preprocess(name, fig::PyPlot.Figure, data) = push!(data, name 
 
 TensorBoardLogger.preprocess(name, x::Tracker.TrackedReal, data) = push!(data, name => Flux.data(x))
 
-import Logging
-
+# TODO: replace this with https://github.com/oxinabox/LoggingExtras.jl
 """
 Combine multiple loggers into a single logger.
 """

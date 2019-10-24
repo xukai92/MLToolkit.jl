@@ -7,3 +7,10 @@ function Base.:\(_A::CuArray{<:Real}, _B::CuArray{<:Real})
     A, ipiv = CuArrays.CUSOLVER.getrf!(A)
     return CuArrays.CUSOLVER.getrs!('N', A, ipiv, B)
 end
+
+# Tracker.@grad function (A \ B)
+#     return Tracker.data(A) \ Tracker.data(B), function (Δ)
+#         ∇A = -(A' \ Δ) * B' / A'
+#         return (∇A,  (A' \ Δ))
+#     end
+# end
