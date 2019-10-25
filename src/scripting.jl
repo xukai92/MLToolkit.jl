@@ -184,19 +184,7 @@ end
 
 ### Logging
 
-import Images, Logging, TensorBoardLogger
-
-function figure_to_image(fig::PyPlot.Figure; close=true)
-    canvas = plt_agg.FigureCanvasAgg(fig)
-    canvas.draw()
-    data = canvas.buffer_rgba() ./ 255
-    w, h = fig.canvas.get_width_height()
-    img = [Images.RGBA(data[r,c,:]...) for r in 1:h, c in 1:w]
-    if close plt.close(fig) end
-    return img
-end
-
-TensorBoardLogger.preprocess(name, fig::PyPlot.Figure, data) = push!(data, name => figure_to_image(fig))
+import Logging
 
 # TODO: replace this with https://github.com/oxinabox/LoggingExtras.jl
 """
