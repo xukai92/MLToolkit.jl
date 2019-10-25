@@ -7,7 +7,7 @@ import Base.\
 A::Tracker.TrackedArray \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
 A::CuMatOrAdj           \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
 A::Tracker.TrackedArray \ B::CuOrAdj              = Tracker.track(\, A, B)
-Tracker.@grad function (A::Union{CuMatOrAdj,Tracker.TrackedArray} \ B::Union{CuMatOrAdj,Tracker.TrackedArray})
+Tracker.@grad function (A::Union{CuMatOrAdj,Tracker.TrackedArray} \ B::Union{CuOrAdj,Tracker.TrackedArray})
     return Tracker.data(A) \ Tracker.data(B), function (Δ)
         AtransposedivΔ = transpose(A) \ Δ
         ∇A = -A \ (AtransposedivΔ * transpose(B))
