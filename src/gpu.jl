@@ -12,6 +12,7 @@ function Base.:\(_A::CuMatOrAdj, _B::CuOrAdj)
     return CuArrays.CUSOLVER.getrs!('N', A, ipiv, B)
 end
 
+import Base.\
 A::Tracker.TrackedArray \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
 A::CuMatOrAdj           \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
 A::Tracker.TrackedArray \ B::CuOrAdj              = Tracker.track(\, A, B)
