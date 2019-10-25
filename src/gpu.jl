@@ -18,7 +18,8 @@ A::CuMatOrAdj           \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
 A::Tracker.TrackedArray \ B::CuOrAdj              = Tracker.track(\, A, B)
 Tracker.@grad function (A::Union{CuMatOrAdj,Tracker.TrackedArray} \ B::Union{CuMatOrAdj,Tracker.TrackedArray})
     return Tracker.data(A) \ Tracker.data(B), function (Δ)
-        ∇A = -(A' \ Δ) * B' / A'
-        return (∇A,  (A' \ Δ))
+        Atranspose = transpose(A)
+        ∇A = -(Atranspose \ Δ) * transpose(B) / Atranspose
+        return (∇A,  (Atranspose \ Δ))
     end
 end
