@@ -27,7 +27,7 @@ function Tracker.gradient(f, xs::Params; once=true)
     return gs
 end
 
-track(m) = fmap(x -> x isa AbstractArray ? Tracker.TrackedArray(x) : x, m)
+track(m) = Flux.fmap(x -> x isa AbstractArray ? Tracker.TrackedArray(x) : x, m)
 
 export track
 
