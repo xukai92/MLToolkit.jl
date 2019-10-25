@@ -12,10 +12,10 @@ function Base.:\(_A::CuMatOrAdj, _B::CuOrAdj)
     return CuArrays.CUSOLVER.getrs!('N', A, ipiv, B)
 end
 
-A::Trakcer.TrackedArray \ B::Trakcer.TrackedArray = Tracker.track(\, A, B)
-A::CuMatOrAdj           \ B::Trakcer.TrackedArray = Tracker.track(\, A, B)
-A::Trakcer.TrackedArray \ B::CuOrAdj              = Tracker.track(\, A, B)
-Tracker.@grad function (A::Union{CuMatOrAdj,Trakcer.TrackedArray} \ B::Union{CuMatOrAdj,Trakcer.TrackedArray})
+A::Tracker.TrackedArray \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
+A::CuMatOrAdj           \ B::Tracker.TrackedArray = Tracker.track(\, A, B)
+A::Tracker.TrackedArray \ B::CuOrAdj              = Tracker.track(\, A, B)
+Tracker.@grad function (A::Union{CuMatOrAdj,Tracker.TrackedArray} \ B::Union{CuMatOrAdj,Tracker.TrackedArray})
     return Tracker.data(A) \ Tracker.data(B), function (Δ)
         ∇A = -(A' \ Δ) * B' / A'
         return (∇A,  (A' \ Δ))
