@@ -31,7 +31,7 @@ end
 track_arr(x) = x -> x isa AbstractArray ? Tracker.TrackedArray(x) : x
 track(m) = Flux.fmap(track_arr, m)
 
-function fmap1(f::typeof(track_arr), m::BatchNorm)
+function Flux.fmap1(f::typeof(track_arr), m::BatchNorm)
     return BatchNorm(m.λ, f(m.β), f(m.γ), m.μ, m.σ², m.ϵ, m.momentum)
 end
 
