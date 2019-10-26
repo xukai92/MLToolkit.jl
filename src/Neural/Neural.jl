@@ -31,8 +31,9 @@ end
 track_arr(x) = x isa AbstractArray ? Tracker.TrackedArray(x) : x
 track(m) = Flux.fmap(track_arr, m)
 
-function Flux.fmap1(f::typeof(track_arr), m::BatchNorm)
-    return BatchNorm(m.λ, f(m.β), f(m.γ), m.μ, m.σ², m.ϵ, m.momentum)
+function Flux.fmap(f::typeof(track_arr), m::BatchNorm; cache = IdDict())
+    haskey(cache, m) && return cache[x]
+    cache[m] = BatchNorm(m.λ, f(m.β), f(m.γ), m.μ, m.σ², m.ϵ, m.momentum)
 end
 
 export track
@@ -42,5 +43,11 @@ export track
 nparams(m) = sum(prod.(size.(Flux.params(m))))
 
 export nparams
+
+###
+
+include("architecture.jl")
+export build_conv_mnist
+
 
 end # module
