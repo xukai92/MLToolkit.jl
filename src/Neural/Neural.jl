@@ -1,7 +1,7 @@
 module Neural
 
 import Flux, Tracker
-using Flux: BatchNorm
+using Flux
 
 ### Tracker support
 
@@ -47,7 +47,7 @@ export nparams
 ###
 
 include("architecture.jl")
-export build_conv_mnist
+export build_convnet, build_mlp
 
 
 end # module
