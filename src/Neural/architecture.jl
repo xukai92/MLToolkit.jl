@@ -48,5 +48,5 @@ function build_mlp(Dlist::IntIte, σ, σ_last; norm::Bool=false)
 end
 
 build_mlp(Din::Int, Dlist::IntIte, arg...; kwargs...) = build_mlp([Din, Dlist...], arg...; kwargs...)
-build_mlp(Dlist::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dlist...], arg...; kwargs...)
-build_mlp(Din::Int, Dlist::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dlist...], arg...; kwargs...)
+build_mlp(Dlist::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Dlist..., Dout], arg...; kwargs...)
+build_mlp(Din::Int, Dlist::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dlist..., Dout], arg...; kwargs...)
