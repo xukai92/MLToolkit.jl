@@ -1,8 +1,11 @@
 module Neural
 
 import Flux, Tracker
+using Flux: BatchNorm
 
 ### Tracker support
+
+Flux.functor(m::BatchNorm) = (m.β, m.γ, m.μ, m.σ²), t -> BatchNorm(m.λ, t[1], t[2], Tracker.data(t[3]), Tracker.data(t[4]), m.ϵ, m.momentum)
 
 params(m) = m |> Flux.params |> Tracker.Params
 
