@@ -14,12 +14,12 @@ function apply!(opt, xs::Tracker.Params, Δs)
     end
 end
 
-using Tracker: Params, losscheck, @interrupts, back!, Grads, tracker, extract_grad!
+using Tracker: Params, losscheck, @interrupts, Grads, tracker, extract_grad!
 
 function Tracker.gradient(f, xs::Params; once=true)
     l = f()
     losscheck(l)
-    @interrupts back!(l; once=once)
+    @interrupts Tracker.back!(l; once=once)
     gs = Grads()
     for x in xs
         gs[tracker(x)] = extract_grad!(x)
