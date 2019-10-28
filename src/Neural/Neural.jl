@@ -1,6 +1,6 @@
 module Neural
 
-import Flux, Tracker
+import Flux, Tracker, Distributions
 using Flux
 
 ### Tracker support

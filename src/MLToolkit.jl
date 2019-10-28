@@ -31,7 +31,7 @@ export break_stick_ibp, break_logstick_ibp
 include("Data/Data.jl")
 Reexport.@reexport using .Data
 include("scripting.jl")
-export DATETIME_FMT, find_latest_dir, parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, args_dict2str, isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
+export DATETIME_FMT, parsetoml, find_latest_dir, parse_args, flatten_dict, dict2namedtuple, merge_namedtuples, args_dict2str, isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics, sweepcmd, sweeprun, CombinedLogger
 include("plotting.jl")
 export TwoYAxesLines, GrayImages, make_imggrid, plot, plot!, save, plot_actmat!, autoset_lim!, ContourFunction
 

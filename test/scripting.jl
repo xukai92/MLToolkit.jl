@@ -4,6 +4,28 @@ using ArgParse: ArgParseSettings, @add_arg_table
 @testset "Scripting" begin
     @warn "`find_latest_dir()` is not tested."
 
+    @testset "parsetoml" begin
+        tomlpath = first(splitdir(@__FILE__)) * "/Test.toml"
+        argdict = parsetoml(tomlpath, ((:level1 => "a1"), (:level2 => "b1"),))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 1
+        @test argdict[:f3] == 1
+        argdict = parsetoml(tomlpath, ((:level1 => "a1"), (:level2 => "b2"),))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 1
+        @test argdict[:f3] == 2
+        @test_throws AssertionError parsetoml(tomlpath, ((:level1 => "a2"), (:level2 => "b1"),))
+        argdict = parsetoml(tomlpath, ((:level1 => "a2"), (:level2 => "b1"), (:level3 => "c1")))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 2
+        @test argdict[:f3] == 3
+        @test argdict[:f4] == 1
+        argdict = parsetoml(tomlpath, ((:level1 => "a2"), (:level2 => "b2"),))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 2
+        @test argdict[:f3] == 4
+    end
+
     @testset "parse_args" begin
         s = ArgParseSettings()
 
@@ -62,7 +84,7 @@ using ArgParse: ArgParseSettings, @add_arg_table
         args_dict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
         @test args_dict2str(args_dict) == "--a 1 --b two --d NaN --c true"
     end
-    
+
     @warn "`jupyter()` is not tested."
     @warn "`@jupyter` is not tested."
     @warn "`checknumerics()` is not tested."
@@ -81,6 +103,6 @@ using ArgParse: ArgParseSettings, @add_arg_table
         t = @elapsed sweeprun("sleep @Ts", "@T" => ones(4); maxasync=1)
         @test t > 1
     end
-    
+
     @warn "`figure_to_image` is not tested."
 end

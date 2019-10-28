@@ -1,6 +1,23 @@
 import ArgParse: parse_args
+using Pkg.TOML
 
 const DATETIME_FMT = "ddmmyyyy-H-M-S"
+
+function parsetoml(tomlpath, tableinfo::Tuple)
+    # Load TOML file into nested dictionary
+    toml = TOML.parsefile(tomlpath)
+    # Get the "common" section
+    argdict = toml["common"]
+    local table = toml
+    for (k, v) in tableinfo
+        table = table[v]
+        argdict = merge(argdict, filter(p -> !(p.second isa Dict), table))
+        argdict[string(k)] = v
+    end
+    @assert length(filter(p -> p.second isa Dict, table)) == 0 "There sub-table left in the current nesting table."
+    # Convert keys to Symbol
+    return Dict(Symbol(p.first) => p.second for p in argdict)
+end
 
 function find_latest_dir(targetdir)
     date_list = []
