@@ -48,7 +48,9 @@ function process_argdict(
         end
         expname = argstring_flat(argdict; exclude=nameexclude)
         # Include the last back
-        expname *= "-$nameinclude_last=$(argdict[nameinclude_last])"
+        if !isnothing(nameinclude_last)
+            expname *= "-$nameinclude_last=$(argdict[nameinclude_last])"
+        end
     else
         if length(nameexclude) > 0
             @warn "Keyword `nameexclude` is not used when `expname != nothing`."
