@@ -6,7 +6,7 @@ optional_BatchNorm(D, σ, isnorm) = isnorm ? BatchNorm(D, σ) : x -> σ.(x)
 
 const IntIte = Union{AbstractVector{Int},Tuple{Vararg{Int}}}
 
-struct MLP
+struct MLP <: AbstractNeuralModel
     f
 end
 
@@ -15,6 +15,8 @@ Flux.@functor MLP
 MLP(args...; kwargs...) = MLP(build_mlp(args...; kwargs...))
 
 (m::MLP)(x::AbstractArray{<:Real,2}) = m.f(x)
+
+(m::MLP)(x::AbstractArray{<:Real,4}) = m.f(reshape(x, prod(Base.front(size(x))), size(x, 4)))
 
 function build_mlp(Dhs::IntIte, σs; isnorm::Bool=false)
     @assert length(σs) == length(Dhs) - 1 "Length of `σs` should be greater than the length of `Dhs` by 1."

@@ -12,6 +12,8 @@ using Test, MLToolkit
         @test_throws DimensionMismatch mlp(randn(Din - 1, B))
         x = randn(Din, B)
         @test size(mlp(x)) == (Dout, B)
+        x = randn(5, 5, 2, B)
+        @test size(mlp(x)) == (Dout, B)
     end
 
     @testset "ConvNet" begin
