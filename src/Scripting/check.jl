@@ -86,11 +86,9 @@ istb() = Logging.current_logger() isa TensorBoardLogger.TBLogger
 Execute `expr` if the current logger is TBLogger.
 """
 macro tb(expr)
-    return esc(
-        quote
-            if istb()
-                $expr
-            end
-        end
-    )
+    if istb()
+        return esc(expr)
+    else
+        return nothing
+    end
 end

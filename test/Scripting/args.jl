@@ -47,25 +47,25 @@ using ArgParse: ArgParseSettings, @add_arg_table
     @testset "parse_toml" begin
         tomlpath = FILEDIR * "/Test.toml"
 
-        argdict = parse_toml(tomlpath, ((:level1 => "a1"), (:level2 => "b1"),))
+        argdict = parse_toml(tomlpath, (:level1 => "a1", :level2 => "b1",))
         @test argdict[:f1] == 1
         @test argdict[:f2] == 1
         @test argdict[:f3] == 1
 
-        argdict = parse_toml(tomlpath, ((:level1 => "a1"), (:level2 => "b2"),))
+        argdict = parse_toml(tomlpath, (:level1 => "a1", :level2 => "b2",))
         @test argdict[:f1] == 1
         @test argdict[:f2] == 1
         @test argdict[:f3] == 2
 
-        @test_throws AssertionError parse_toml(tomlpath, ((:level1 => "a2"), (:level2 => "b1"),))
+        @test_throws AssertionError parse_toml(tomlpath, (:level1 => "a2", :level2 => "b1",))
 
-        argdict = parse_toml(tomlpath, ((:level1 => "a2"), (:level2 => "b1"), (:level3 => "c1")))
+        argdict = parse_toml(tomlpath, (:level1 => "a2", :level2 => "b1", :level3 => "c1"))
         @test argdict[:f1] == 1
         @test argdict[:f2] == 2
         @test argdict[:f3] == 3
         @test argdict[:f4] == 1
 
-        argdict = parse_toml(tomlpath, ((:level1 => "a2"), (:level2 => "b2"),))
+        argdict = parse_toml(tomlpath, (:level1 => "a2", :level2 => "b2",))
         @test argdict[:f1] == 1
         @test argdict[:f2] == 2
         @test argdict[:f3] == 4
