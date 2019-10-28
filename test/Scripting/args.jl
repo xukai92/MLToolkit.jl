@@ -21,6 +21,16 @@ using ArgParse: ArgParseSettings, @add_arg_table
     end
 
     @testset "process_argdict" begin
+        args = process_argdict(argdict; verbose=false)
+        @test args.a == 1
+        @test args.b == "two"
+        @test args.c == true
+        @test isnan(args.d)
+        @test occursin("a=1", args.expname)
+        @test occursin("b=two", args.expname)
+        @test occursin("c=true", args.expname)
+        @test occursin("d=NaN", args.expname)
+
         args = process_argdict(argdict; override=(a=2,), nameexclude=[:b], nameinclude_last=:d, suffix="1", verbose=false)
         @test args.a == 2
         @test args.b == "two"
