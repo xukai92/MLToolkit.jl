@@ -1,19 +1,66 @@
+abstract type AbstractNeuralModel end
+
 optional_BatchNorm(D, σ, norm) = norm ? BatchNorm(D, σ) : x -> σ.(x)
 
-function build_convnet_inmnist(Dout::Int, σ, σ_last; norm::Bool=false)
-    return Chain(
-        x -> reshape(x, 28, 28, 1, last(size(x))),
-        # -> 28 x 28 x  1
-        Conv((3, 3), 1 => 16,  pad=(1, 1)), optional_BatchNorm(16, σ, norm), MaxPool((2, 2)),
-        # -> 14 x 14 x 16
-        Conv((3, 3), 16 => 32, pad=(1, 1)), optional_BatchNorm(32, σ, norm), MaxPool((2, 2)),
-        # ->  7 x  7 x 32
-        Conv((3, 3), 32 => 32, pad=(1, 1)), optional_BatchNorm(32, σ, norm), MaxPool((2, 2)),
-        # ->  3 x  3 x 32
-        x -> reshape(x, :, size(x, 4)),
-        Dense(288, Dout, σ_last)
+### MLP
+
+const IntIte = Union{AbstractVector{Int},Tuple{Vararg{Int}}}
+
+function build_mlp(Dhs::IntIte, σs; norm::Bool=false)
+    @assert length(σs) == length(Dhs) - 1 "Length of `σs` should be greater than the length of `Dhs` by 1."
+    layers = []
+    for i in 1:length(Dhs)-2
+        push!(layers, Dense(Dhs[i], Dhs[i+1]))
+        push!(layers, optional_BatchNorm(Dhs[i+1], σs[i], norm))
+    end
+    push!(layers, Dense(Dhs[end-1], Dhs[end], σs[end]))
+    return Chain(layers...)
+end
+
+build_mlp(Dhs::IntIte, σ::Function, σlast::Function; kwargs...) = build_mlp(Dhs, (fill(σ, length(Dhs) - 2)..., σlast); kwargs...)
+
+build_mlp(Din::Int, Dhs::IntIte, arg...; kwargs...) = build_mlp([Din, Dhs...], arg...; kwargs...)
+build_mlp(Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Dhs..., Dout], arg...; kwargs...)
+build_mlp(Din::Int, Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dhs..., Dout], arg...; kwargs...)
+build_mlp(Din::Int, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dout], arg...; kwargs...)
+
+struct MLP{Din}
+    f
+end
+
+Flux.@functor MLP
+
+MLP(args...; kwargs...) = MLP{first(first(args))}(build_mlp(args...; kwargs...))
+
+function (m::MLP{Din})(x::AbstractArray{<:Real,2}) where {Din}
+    @assert Din == size(x, 1) "Dimension mismatch: Din ($Din) != size(x, 1) ($(size(x, 1)))"
+    return m.f(x)
+end
+
+### Convolution
+
+## Actual impl
+
+function build_convnet_inmnist(Dout::Int, σs; norm::Bool=false)
+    @assert length(σs) == 4 "Length of `σs` must be 4 for `build_convnet_inmnist`"
+    return ConvNet{28,28,1}(
+        Chain(
+            #    28 x 28 x  1 x B
+            Conv((3, 3), 1 => 16,  pad=(1, 1)), optional_BatchNorm(16, σs[1], norm), MaxPool((2, 2)),
+            # -> 14 x 14 x 16 x B
+            Conv((3, 3), 16 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[2], norm), MaxPool((2, 2)),
+            # ->  7 x  7 x 32 x B
+            Conv((3, 3), 32 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[3], norm), MaxPool((2, 2)),
+            # ->  3 x  3 x 32 x B
+            x -> reshape(x, :, size(x, 4)),
+            # ->  288 x B
+            Dense(288, Dout, σs[4])
+        )
     )
 end
+
+build_convnet_inmnist(Dout::Int, σ::Function, σlast::Function; kwargs...) = build_convnet_inmnist(Dout, (σ, σ, σ, σlast); kwargs...)
+build_convnet_inmnist(Dout::Int, σ::Function; kwargs...) = build_convnet_inmnist(Dout, σ, σ; kwargs...)
 
 # function build_conv_chain(D_in, D_h, D_out, σ, σ_last)
 #     return Chain(
@@ -27,26 +74,27 @@ end
 #     )
 # end
 
-function build_convnet(Din::Int, Dout::Int, args...; kwargs...)
-    if Din == 28 * 28
+## ConvNet
+
+struct ConvNet{W,H,C} <: AbstractNeuralModel
+    f
+end
+
+Flux.@functor ConvNet
+
+function ConvNet(WHCin::Tuple{Int,Int,Int}, Dout::Int, args...; kwargs...)
+    if WHCin == (28, 28, 1)
         return build_convnet_inmnist(Dout, args...; kwargs...)
     else
-        @error "Unsupported input and output size for `build_convnet`: Din=$Din, Dout=$Dout."
+        throw(ErrorException("Unsupported input and output size for `build_convnet`: WHCin=$WHCin, Dout=$Dout."))
     end
 end
 
-const IntIte = Union{AbstractVector{Int},Tuple{Vararg{Int}}}
-
-function build_mlp(Dlist::IntIte, σ, σ_last; norm::Bool=false)
-    layers = []
-    for i in 1:length(Dlist)-2
-        push!(layers, Dense(Dlist[i], Dlist[i+1]))
-        push!(layers, optional_BatchNorm(Dlist[i+1], σ, norm))
-    end
-    push!(layers, Dense(Dlist[end-1], Dlist[end], σ_last))
-    return Chain(layers...)
+function (m::ConvNet{W,H,C})(x::AbstractArray{<:Real,4}) where {W,H,C}
+    @assert W == size(x, 1) "Width mismatch: W ($W) != size(x, 1) ($(size(x, 1)))"
+    @assert H == size(x, 2) "Height mismatch: H ($H) != size(x, 2) ($(size(x, 2)))"
+    @assert C == size(x, 3) "Channel mismatch: C ($C) != size(x, 3) ($(size(x, 3)))"
+    return m.f(x)
 end
 
-build_mlp(Din::Int, Dlist::IntIte, arg...; kwargs...) = build_mlp([Din, Dlist...], arg...; kwargs...)
-build_mlp(Dlist::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Dlist..., Dout], arg...; kwargs...)
-build_mlp(Din::Int, Dlist::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dlist..., Dout], arg...; kwargs...)
+(m::ConvNet{W,H,C})(x::AbstractArray{<:Real,2}) where {W,H,C} = m(reshape(x, W, H, C, size(x, 2)))

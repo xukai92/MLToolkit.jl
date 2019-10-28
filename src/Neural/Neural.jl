@@ -47,7 +47,7 @@ export nparams
 ###
 
 include("architecture.jl")
-export build_convnet, build_mlp
+export MLP, ConvNet
 
 
 end # module
