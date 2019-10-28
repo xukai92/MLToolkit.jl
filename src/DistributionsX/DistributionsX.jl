@@ -1,5 +1,6 @@
 module DistributionsX
 
+using ..MLToolkit: usegpu, FloatT
 using Distributions: ContinuousMultivariateDistribution
 using Random: AbstractRNG
 

@@ -1,11 +1,10 @@
 module Neural
 
-const FT = Ref(Float32)
-const usegpu = Ref(true)
-
-import Flux, Tracker, Distributions
+using ..MLToolkit: usegpu, FloatT
 using Random: AbstractRNG, GLOBAL_RNG
 using Flux
+
+import Flux, Tracker, Distributions
 
 ### Tracker extensions
 

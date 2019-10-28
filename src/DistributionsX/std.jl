@@ -9,7 +9,7 @@ end
 function rand(rng::AbstractRNG, d::DiagUniform, n::Int)
     s = (d.U - d.L)
     t = s / 2
-    return s * rand(rng, FT[], d.D, n) .- t
+    return s * rand(rng, FloatT[], d.D, n) .- t
 end
 
 function logpdf(d::DiagUniform, x::AbstractVecOrMat)
@@ -28,7 +28,7 @@ struct DiagStdNormal <: ContinuousMultivariateDistribution
     D::Int
 end
 
-rand(rng::AbstractRNG, d::DiagStdNormal, n::Int) = randn(rng, FT[], d.D, n)
+rand(rng::AbstractRNG, d::DiagStdNormal, n::Int) = randn(rng, FloatT[], d.D, n)
 
 _logpdf(d::DiagStdNormal, x::AbstractVector{T}) where {T<:AbstractFloat} = -(d.D * log(2T(π)) + sum(abs2, x)) / 2
 _logpdf(d::DiagStdNormal, x::AbstractMatrix{T}) where {T<:AbstractFloat} = -(d.D * log(2T(π)) .+ sum(abs2, x; dims=1)') / 2

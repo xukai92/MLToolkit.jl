@@ -18,6 +18,9 @@ const plt = PyCall.PyNULL()
 const FT = Float64
 export FT, mpl, plt
 
+const FloatT = Ref(Float32)
+const usegpu = Ref(true)
+
 ######################
 # Homeless functions #
 ######################
