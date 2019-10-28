@@ -30,8 +30,8 @@ Flux.@functor Discriminator
 ### Projector
 
 struct Projector <: AbstractNeuralModel
-    Df::Int
     f
+    Dout::Int
 end
 
 Flux.@functor Projector
