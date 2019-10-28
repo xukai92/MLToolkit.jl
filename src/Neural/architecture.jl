@@ -1,17 +1,17 @@
 abstract type AbstractNeuralModel end
 
-optional_BatchNorm(D, σ, norm) = norm ? BatchNorm(D, σ) : x -> σ.(x)
+optional_BatchNorm(D, σ, isnorm) = isnorm ? BatchNorm(D, σ) : x -> σ.(x)
 
 ### MLP
 
 const IntIte = Union{AbstractVector{Int},Tuple{Vararg{Int}}}
 
-function build_mlp(Dhs::IntIte, σs; norm::Bool=false)
+function build_mlp(Dhs::IntIte, σs; isnorm::Bool=false)
     @assert length(σs) == length(Dhs) - 1 "Length of `σs` should be greater than the length of `Dhs` by 1."
     layers = []
     for i in 1:length(Dhs)-2
         push!(layers, Dense(Dhs[i], Dhs[i+1]))
-        push!(layers, optional_BatchNorm(Dhs[i+1], σs[i], norm))
+        push!(layers, optional_BatchNorm(Dhs[i+1], σs[i], isnorm))
     end
     push!(layers, Dense(Dhs[end-1], Dhs[end], σs[end]))
     return Chain(layers...)
@@ -41,16 +41,16 @@ end
 
 ## Actual impl
 
-function build_convnet_inmnist(Dout::Int, σs; norm::Bool=false)
+function build_convnet_inmnist(Dout::Int, σs; isnorm::Bool=false)
     @assert length(σs) == 4 "Length of `σs` must be 4 for `build_convnet_inmnist`"
     return ConvNet{28,28,1}(
         Chain(
             #    28 x 28 x  1 x B
-            Conv((3, 3), 1 => 16,  pad=(1, 1)), optional_BatchNorm(16, σs[1], norm), MaxPool((2, 2)),
+            Conv((3, 3), 1 => 16,  pad=(1, 1)), optional_BatchNorm(16, σs[1], isnorm), MaxPool((2, 2)),
             # -> 14 x 14 x 16 x B
-            Conv((3, 3), 16 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[2], norm), MaxPool((2, 2)),
+            Conv((3, 3), 16 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[2], isnorm), MaxPool((2, 2)),
             # ->  7 x  7 x 32 x B
-            Conv((3, 3), 32 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[3], norm), MaxPool((2, 2)),
+            Conv((3, 3), 32 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[3], isnorm), MaxPool((2, 2)),
             # ->  3 x  3 x 32 x B
             x -> reshape(x, :, size(x, 4)),
             # ->  288 x B
