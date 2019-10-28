@@ -24,18 +24,15 @@ build_mlp(Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Dhs..., Dout],
 build_mlp(Din::Int, Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dhs..., Dout], arg...; kwargs...)
 build_mlp(Din::Int, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dout], arg...; kwargs...)
 
-struct MLP{Din}
+struct MLP
     f
 end
 
 Flux.@functor MLP
 
-MLP(args...; kwargs...) = MLP{first(first(args))}(build_mlp(args...; kwargs...))
+MLP(args...; kwargs...) = MLP(build_mlp(args...; kwargs...))
 
-function (m::MLP{Din})(x::AbstractArray{<:Real,2}) where {Din}
-    @assert Din == size(x, 1) "Dimension mismatch: Din ($Din) != size(x, 1) ($(size(x, 1)))"
-    return m.f(x)
-end
+(m::MLP)(x::AbstractArray{<:Real,2}) = m.f(x)
 
 ### Convolution
 
@@ -91,9 +88,9 @@ function ConvNet(WHCin::Tuple{Int,Int,Int}, Dout::Int, args...; kwargs...)
 end
 
 function (m::ConvNet{W,H,C})(x::AbstractArray{<:Real,4}) where {W,H,C}
-    @assert W == size(x, 1) "Width mismatch: W ($W) != size(x, 1) ($(size(x, 1)))"
-    @assert H == size(x, 2) "Height mismatch: H ($H) != size(x, 2) ($(size(x, 2)))"
-    @assert C == size(x, 3) "Channel mismatch: C ($C) != size(x, 3) ($(size(x, 3)))"
+    W != size(x, 1) && throw(DimensionMismatch("W ($W) != size(x, 1) ($(size(x, 1)))"))
+    H != size(x, 2) && throw(DimensionMismatch("H ($H) != size(x, 2) ($(size(x, 2)))"))
+    C != size(x, 3) && throw(DimensionMismatch("C ($C) != size(x, 3) ($(size(x, 3)))"))
     return m.f(x)
 end
 
