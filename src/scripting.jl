@@ -3,7 +3,7 @@ using Pkg.TOML
 
 const DATETIME_FMT = "ddmmyyyy-H-M-S"
 
-function parsetoml(tomlpath, tableinfo::Tuple)
+function parsetoml(tomlpath::String, tableinfo::Tuple{Vararg{Pair}})
     # Load TOML file into nested dictionary
     toml = TOML.parsefile(tomlpath)
     # Get the "common" section
