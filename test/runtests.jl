@@ -8,7 +8,7 @@ using MLToolkit: include_list_as_module
         "utility.jl",
         # "special.jl",
         "plotting.jl",
-        "scripting.jl",
+        "Scripting/Scripting.jl",
         "MonteCarlo/MonteCarlo.jl",
         # "distributions/distributions.jl",
         "transformations.jl",
