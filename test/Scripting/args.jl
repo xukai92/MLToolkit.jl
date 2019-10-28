@@ -4,20 +4,39 @@ using ArgParse: ArgParseSettings, @add_arg_table
 @testset "Scripting.args" begin
     FILEDIR = first(splitdir(@__FILE__))
 
+    argdict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
+
     @testset "argstring" begin
-        argdict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
         @test argstring(argdict) == "--a 1 --b two --d NaN --c true"
     end
 
     @testset "argstring_flat" begin
-        args = Dict(:a => 1, :b => "two", :c => true, :d => NaN)
         for delimiter in ["-", ","],
             eqsym in ["-", "="]
-            argstr_flat = argstring_flat(args; exclude=[:d], delimiter=delimiter, eqsym=eqsym)
+            argstr_flat = argstring_flat(argdict; exclude=[:d], delimiter=delimiter, eqsym=eqsym)
             @test argstr_flat == "a$(eqsym)1$(delimiter)b$(eqsym)two$(delimiter)c$(eqsym)true"
         end
-        argstr_flat = argstring_flat(args; include=[:a])
+        argstr_flat = argstring_flat(argdict; include=[:a])
         @test argstr_flat == "a=1"
+    end
+
+    @testset "process_argdict" begin
+        args = process_argdict(argdict; override=(a=2,), nameexclude=[:b], nameinclude_last=:d, suffix="1", verbose=false)
+        @test args.a == 2
+        @test args.b == "two"
+        @test args.c == true
+        @test isnan(args.d)
+        @test occursin("a=2", args.expname)
+        @test !occursin("b=two", args.expname)
+        @test occursin("c=true", args.expname)
+        @test occursin("d=NaN-1", args.expname)
+
+        args = process_argdict(argdict; expname="test", suffix="1", verbose=false)
+        @test args.a == 1
+        @test args.b == "two"
+        @test args.c == true
+        @test isnan(args.d)
+        @test args.expname == "test-1"
     end
 
     @testset "find_latestdir" begin

@@ -19,6 +19,51 @@ end
 argstring(argdict::Dict; kwargs...) = argstring(argdict, "--", " ", " "; kwargs...)
 argstring_flat(argdict::Dict; eqsym="=", delimiter="-", kwargs...) = argstring(argdict, "", eqsym, delimiter; kwargs...)
 
+function process_argdict(
+    _argdict::Dict{T,<:Any};
+    override::NamedTuple=NamedTuple(),
+    expname=nothing,
+    nameexclude=T[],
+    nameinclude_last=nothing,
+    suffix::String="",
+    verbose=true
+) where {T<:Union{String,Symbol}}
+    # Imutability
+    argdict = copy(_argdict)
+    # Oeverride
+    for k in keys(override)
+        @assert k in keys(argdict) "Cannot overrid unexistent key: $k"
+        v = override[k]
+        if argdict[k] == v
+            @warn "The values for key :$k in `argdict` and `override` are the same ($v)."
+        end
+        argdict[k] = v
+    end
+    # Show arguments
+    verbose && @info "Args" argdict...
+    if isnothing(expname)   # generate experiment name from dict
+        # Ignore the last for now
+        if !isnothing(nameinclude_last)
+            push!(nameexclude, nameinclude_last)
+        end
+        expname = argstring_flat(argdict; exclude=nameexclude)
+        # Include the last back
+        expname *= "-$nameinclude_last=$(argdict[nameinclude_last])"
+    else
+        if length(nameexclude) > 0
+            @warn "Keyword `nameexclude` is not used when `expname != nothing`."
+        end
+    end
+    # Add suffix to `expname`
+    if suffix != ""
+        expname *= "-$suffix"
+    end
+    # Add `expname` to `argdict`
+    argdict[:expname] = expname
+    # Convert dict to named tuple
+    return dict2namedtuple(argdict)
+end
+
 import Dates
 
 const DATETIME_FMT = "ddmmyyyy-H-M-S"

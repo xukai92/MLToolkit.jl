@@ -61,7 +61,7 @@ end
 export namedtuple2dict, dict2namedtuple, sweepcmd, sweeprun
 
 include("args.jl")
-export argstring, argstring_flat, DATETIME_FMT, find_latestdir, parse_toml, parse_argstr
+export argstring, argstring_flat, process_argdict, DATETIME_FMT, find_latestdir, parse_toml, parse_argstr
 
 include("check.jl")
 export isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics
