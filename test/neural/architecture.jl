@@ -4,11 +4,11 @@ using Test, MLToolkit
     σ, σlast = x -> sin.(x), x -> x
     Dout, B = 10, 5
 
-    @testset "MLP" begin
+    @testset "DenseNet" begin
         Din = 50
-        mlp = MLP(Din, Dout, σ, σlast)
+        mlp = DenseNet(Din, Dout, σ, σlast)
         Dhs = (40, 30, 20)
-        mlp = MLP(Din, Dhs, Dout, σ, σlast)
+        mlp = DenseNet(Din, Dhs, Dout, σ, σlast)
         @test_throws DimensionMismatch mlp(randn(Din - 1, B))
         x = randn(Din, B)
         @test size(mlp(x)) == (Dout, B)

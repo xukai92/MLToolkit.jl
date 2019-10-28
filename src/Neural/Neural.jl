@@ -1,9 +1,13 @@
 module Neural
 
+const FT = Ref(Float32)
+const usegpu = Ref(true)
+
 import Flux, Tracker, Distributions
+using Random: AbstractRNG, GLOBAL_RNG
 using Flux
 
-### Tracker support
+### Tracker extensions
 
 params(m) = m |> Flux.params |> Tracker.Params
 
@@ -38,7 +42,7 @@ end
 
 export track
 
-###
+### Flux extensions
 
 nparams(m) = sum(prod.(size.(Flux.params(m))))
 
@@ -46,8 +50,13 @@ export nparams
 
 ###
 
-include("architecture.jl")
-export MLP, ConvNet
+abstract type AbstractNeuralModel end
 
+include("architecture.jl")
+export DenseNet, ConvNet
+include("distributions.jl")
+export DiagUniform, DiagNormal
+include("gen.jl")
+export NeuralSampler, Discriminator, Projector
 
 end # module

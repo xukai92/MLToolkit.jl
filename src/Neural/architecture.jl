@@ -1,24 +1,22 @@
-abstract type AbstractNeuralModel end
-
 optional_BatchNorm(D, σ, isnorm) = isnorm ? BatchNorm(D, σ) : x -> σ.(x)
 
-### MLP
+### DenseNet
 
 const IntIte = Union{AbstractVector{Int},Tuple{Vararg{Int}}}
 
-struct MLP <: AbstractNeuralModel
+struct DenseNet <: AbstractNeuralModel
     f
 end
 
-Flux.@functor MLP
+Flux.@functor DenseNet
 
-MLP(args...; kwargs...) = MLP(build_mlp(args...; kwargs...))
+DenseNet(args...; kwargs...) = DenseNet(build_densenet(args...; kwargs...))
 
-(m::MLP)(x::AbstractArray{<:Real,2}) = m.f(x)
+(m::DenseNet)(x::AbstractArray{<:Real,2}) = m.f(x)
 
-(m::MLP)(x::AbstractArray{<:Real,4}) = m.f(reshape(x, prod(Base.front(size(x))), size(x, 4)))
+(m::DenseNet)(x::AbstractArray{<:Real,4}) = m.f(reshape(x, prod(Base.front(size(x))), size(x, 4)))
 
-function build_mlp(Dhs::IntIte, σs; isnorm::Bool=false)
+function build_densenet(Dhs::IntIte, σs; isnorm::Bool=false)
     @assert length(σs) == length(Dhs) - 1 "Length of `σs` should be greater than the length of `Dhs` by 1."
     layers = []
     for i in 1:length(Dhs)-2
@@ -29,12 +27,12 @@ function build_mlp(Dhs::IntIte, σs; isnorm::Bool=false)
     return Chain(layers...)
 end
 
-build_mlp(Dhs::IntIte, σ::Function, σlast::Function; kwargs...) = build_mlp(Dhs, (fill(σ, length(Dhs) - 2)..., σlast); kwargs...)
+build_densenet(Dhs::IntIte, σ::Function, σlast::Function; kwargs...) = build_densenet(Dhs, (fill(σ, length(Dhs) - 2)..., σlast); kwargs...)
 
-build_mlp(Din::Int, Dhs::IntIte, arg...; kwargs...) = build_mlp([Din, Dhs...], arg...; kwargs...)
-build_mlp(Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Dhs..., Dout], arg...; kwargs...)
-build_mlp(Din::Int, Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dhs..., Dout], arg...; kwargs...)
-build_mlp(Din::Int, Dout::Int, arg...; kwargs...) = build_mlp([Din, Dout], arg...; kwargs...)
+build_densenet(Din::Int, Dhs::IntIte, arg...; kwargs...) = build_densenet([Din, Dhs...], arg...; kwargs...)
+build_densenet(Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_densenet([Dhs..., Dout], arg...; kwargs...)
+build_densenet(Din::Int, Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_densenet([Din, Dhs..., Dout], arg...; kwargs...)
+build_densenet(Din::Int, Dout::Int, arg...; kwargs...) = build_densenet([Din, Dout], arg...; kwargs...)
 
 ### ConvNet
 
