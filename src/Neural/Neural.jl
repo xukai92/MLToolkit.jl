@@ -9,7 +9,7 @@ using Flux
 
 ### Tracker extensions
 
-params(m) = m |> Flux.params |> Tracker.Params
+trackerparams(m) = m |> Flux.params |> Tracker.Params
 
 # https://github.com/FluxML/Flux.jl/blob/bdeb9c6d584668c7cef1ce71caf659d611c86d65/src/optimise/train.jl#L9-L18
 function apply!(opt, xs::Tracker.Params, Δs)
@@ -40,7 +40,7 @@ function Flux.fmap(f::typeof(track_arr), m::BatchNorm; cache = IdDict())
     cache[m] = BatchNorm(m.λ, f(m.β), f(m.γ), m.μ, m.σ², m.ϵ, m.momentum)
 end
 
-export params, apply!, track
+export trackerparams, apply!, track
 
 ### Flux extensions
 
