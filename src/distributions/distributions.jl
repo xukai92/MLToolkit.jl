@@ -21,8 +21,6 @@ include("ibp.jl")
 export IBP
 include("normal.jl")
 export BatchNormal, BatchNormalLogVar
-# include("gumbel.jl")
-# export BatchGumbelSoftmax, BatchGumbelSoftmax2D, BatchGumbelBernoulli, BatchGumbelBernoulliLogit
 # include("bernoulli.jl")
 # export BatchBernoulli, BatchBernoulliLogit
 include("beta.jl")

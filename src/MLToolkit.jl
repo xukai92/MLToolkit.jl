@@ -18,7 +18,7 @@ const FT = Float64  # TODO: remove this
 const FloatT = Ref(Float32)
 const usegpu = Ref(true)
 
-export mpl, plt
+export mpl, plt, FloatT
 
 ### Homeless functions
 

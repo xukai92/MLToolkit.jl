@@ -2,11 +2,12 @@ using Test
 using MLToolkit: include_list_as_module
 
 @testset "DistributionsX" begin
-    # tests = [
-    #     "std.jl",
-    # ]
-    #
-    # include_list_as_module(tests, "TestDistributionsX")
+    tests = [
+        "gumbel.jl",
+    ]
 
-    @warn "`std.jl` is not tested."
+    include_list_as_module(tests, "TestDistributionsX")
+
+    @warn "`DistributionsX.jl` is not tested."
+    @warn "`noise.jl` is not tested."
 end
