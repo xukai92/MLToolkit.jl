@@ -83,23 +83,6 @@ macro script(expr)
     end
 end
 
-istb() = Logging.current_logger() isa TensorBoardLogger.TBLogger
-
-"""
-    @tb expr
-
-Execute `expr` if the current logger is TBLogger.
-"""
-macro tb(expr)
-    return esc(
-        quote
-            if istb()
-                $expr
-            end
-        end
-    )
-end
-
 """
     checknumerics(vcheck, vmonitor...; vcheckname=nothing, vmonitornames=nothing)
 
@@ -203,32 +186,19 @@ end
 
 import Logging
 
-# TODO: replace this with https://github.com/oxinabox/LoggingExtras.jl
+istb() = Logging.current_logger() isa TensorBoardLogger.TBLogger
+
 """
-Combine multiple loggers into a single logger.
+    @tb expr
+
+Execute `expr` if the current logger is TBLogger.
 """
-struct CombinedLogger <: Base.CoreLogging.AbstractLogger
-    loggers
-    min_level::Logging.LogLevel
-    message_limits::Dict{Any,Int}
-end
-
-# TODO: make sure the logging level operations below are correct.
-function CombinedLogger(loggers::Base.CoreLogging.AbstractLogger...)
-    min_level = min(map(l -> l.min_level, loggers)...)
-    return CombinedLogger(loggers, min_level, Dict{Any,Int}())
-end
-
-Logging.shouldlog(logger::CombinedLogger, level, _module, group, id) =
-    get(logger.message_limits, id, 1) > 0
-
-Logging.min_enabled_level(logger::CombinedLogger) = logger.min_level
-
-Logging.catch_exceptions(logger::CombinedLogger) = false
-
-function Logging.handle_message(clogger::CombinedLogger, args...; kwargs...)
-    for logger in clogger.loggers
-        Logging.handle_message(logger, args...; kwargs...)
-    end
-    nothing
+macro tb(expr)
+    return esc(
+        quote
+            if istb()
+                $expr
+            end
+        end
+    )
 end
