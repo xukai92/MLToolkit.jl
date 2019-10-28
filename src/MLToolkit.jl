@@ -35,8 +35,10 @@ Reexport.@reexport using .Scripting
 include("plotting.jl")
 export TwoYAxesLines, GrayImages, make_imggrid, plot, plot!, save, plot_actmat!, autoset_lim!, ContourFunction
 
-# TODO: merge this with DistributionsAD.jl
+# TODO: merge `distributions` and `DistributionsX`
 include("distributions/distributions.jl")
+include("DistributionsX/DistributionsX.jl")
+Reexport.@reexport using .DistributionsX
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
 # include("neural/neural.jl")

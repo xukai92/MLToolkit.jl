@@ -54,8 +54,6 @@ abstract type AbstractNeuralModel end
 
 include("architecture.jl")
 export DenseNet, ConvNet
-include("distributions.jl")
-export DiagUniform, DiagNormal
 include("gen.jl")
 export NeuralSampler, Discriminator, Projector
 
