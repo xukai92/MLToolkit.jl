@@ -5,6 +5,8 @@ greet() = print("Welcome to Kai's machine learning toolkit!")
 # Package level imports all go here
 import PyCall, PyPlot, Distributions, Reexport, Distributed, Tracker, Requires, PGFPlots, Parameters, LinearAlgebra
 
+### Constants
+
 # Pre-allocating Python bindings
 const axes_grid1 = PyCall.PyNULL()
 const plt_agg = PyCall.PyNULL()
@@ -12,18 +14,13 @@ const plt_agg = PyCall.PyNULL()
 const mpl = PyCall.PyNULL()
 const plt = PyCall.PyNULL()
 
-###############################
-# Constants that are exported #
-###############################
-const FT = Float64
-export FT, mpl, plt
-
+const FT = Float64  # TODO: remove this
 const FloatT = Ref(Float32)
 const usegpu = Ref(true)
 
-######################
-# Homeless functions #
-######################
+export mpl, plt
+
+### Homeless functions
 
 include("utility.jl")
 export count_leadingzeros, turnoffgpu
