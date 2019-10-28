@@ -40,7 +40,7 @@ function Flux.fmap(f::typeof(track_arr), m::BatchNorm; cache = IdDict())
     cache[m] = BatchNorm(m.λ, f(m.β), f(m.γ), m.μ, m.σ², m.ϵ, m.momentum)
 end
 
-export track
+export params, apply!, track
 
 ### Flux extensions
 

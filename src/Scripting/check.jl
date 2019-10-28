@@ -76,7 +76,7 @@ end
 
 ### Logging
 
-import Logging
+import Logging, TensorBoardLogger
 
 istb() = Logging.current_logger() isa TensorBoardLogger.TBLogger
 
