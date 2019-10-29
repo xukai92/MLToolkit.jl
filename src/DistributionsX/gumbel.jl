@@ -1,4 +1,4 @@
-abstract type AbstractGumbelSoftmax{T} end
+abstract type AbstractGumbelSoftmax{T} <: ContinuousMultivariateDistribution end
 
 const τdefault = 0.2
 
@@ -15,13 +15,12 @@ end
 GumbelSoftmax(p; τ=eltype(p)(τdefault)) = GumbelSoftmax(p, τ)
 
 function u2gumbel(u)
-    _eps = eps(eltype(u))
-    return -log.(-log.(u .+ _eps) .+ _eps)
+    ϵ = eps(u)
+    return -log.(-log.(u .+ ϵ) .+ ϵ)
 end
 
 function u2gumbelback(u, g)
-    T = eltype(u)
-    return one(T) ./ exp.(-g) ./ (u .+ eps(T))
+    return 1 ./ exp.(-g) ./ (u .+ eps(u))
 end
 
 u2gumbel(u::Tracker.TrackedArray) = Tracker.track(u2gumbel, u)
@@ -32,19 +31,19 @@ Tracker.@grad function u2gumbel(u)
 end
 
 function g2softmax(g, p, τ)
-    logit = g .+ log.(p .+ eps(eltype(g)))
+    logit = g .+ log.(p .+ eps(g))
     return NNlib.softmax(logit ./ τ; dims=1)
 end
 
-function _rand(gs::AbstractGumbelSoftmax, n::Int=1)
+function _rand(rng::AbstractRNG, gs::AbstractGumbelSoftmax, n::Int=1)
     u = randsimilar(gs.p, n)
     g = u2gumbel(u)
     return g2softmax(g, gs.p, gs.τ)
 end
 
-rand(gs::AbstractGumbelSoftmax) = _rand(gs)
+rand(rng::AbstractRNG, gs::AbstractGumbelSoftmax) = _rand(rng, gs)
 
-rand(gs::AbstractGumbelSoftmax{<:AbstractVector}, n::Int) = _rand(gs, n)
+rand(rng::AbstractRNG, gs::AbstractGumbelSoftmax{<:AbstractVector}, n::Int) = _rand(rng, gs, n)
 
 mean(gs::AbstractGumbelSoftmax) = gs.p
 
@@ -74,15 +73,15 @@ end
 # """
 # function rand(gb::GumbelBernoulli{T}) where {T}
 #     # TODO: re-implement this `rand` using the same procedure for `GumbelBernoulliLogit`
-#     _eps = eps(eltype(gb.p))
+#     ϵ = eps(eltype(gb.p))
 #     _one = one(eltype(gb.p))
 #     τ = gb.τ
 #
 #     u0 = randsimilar(gb.p); g0 = u2gumbel(u0)
 #     u1 = randsimilar(gb.p); g1 = u2gumbel(u1)
 #
-#     logit0 = (g0 .+ log.(_one + _eps .- gb.p)) ./ τ
-#     logit1 = (g1 .+ log.(gb.p .+ _eps)) ./ τ
+#     logit0 = (g0 .+ log.(_one + ϵ .- gb.p)) ./ τ
+#     logit1 = (g1 .+ log.(gb.p .+ ϵ)) ./ τ
 #
 #     logit_max = max.(logit0, logit1)
 #     logit1_minus_max = logit1 .- logit_max
@@ -101,12 +100,12 @@ end
 # Ref: https://arxiv.org/abs/1611.01144
 # """
 # function logpdf(bgb::GumbelBernoulli, x)
-#     _eps = eps(FT)
+#     ϵ = eps(FT)
 #     τ = bgb.τ
-#     α = bgb.p ./ (1 .- bgb.p .+ _eps)
-#     xstabe = x .+ _eps
-#     omxstabe = 1 .- x .+ _eps
-#     return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ _eps))
+#     α = bgb.p ./ (1 .- bgb.p .+ ϵ)
+#     xstabe = x .+ ϵ
+#     omxstabe = 1 .- x .+ ϵ
+#     return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ ϵ))
 # end
 #
 # """
@@ -118,13 +117,13 @@ end
 # NOTE: `p` and `x` are assumed to be in batch.
 # """
 # function logpdfCoV(bgb::GumbelBernoulli, x)
-#     _eps = eps(FT)
-#     _1m2eps = 1 - 2 * _eps
-#     logitp = logit.(bgb.p .* _1m2eps .+ _eps)
-#     logitx = logit.(x .* _1m2eps .+ _eps)
+#     ϵ = eps(FT)
+#     _1m2eps = 1 - 2 * ϵ
+#     logitp = logit.(bgb.p .* _1m2eps .+ ϵ)
+#     logitx = logit.(x .* _1m2eps .+ ϵ)
 #     lp = logpdflogit(GumbelBernoulliLogit(logitp; τ=bgb.τ), logitx)
-#     _eps = eps(FT)
-#     return lp - log.(x .* (1 .- x) .+ _eps)
+#     ϵ = eps(FT)
+#     return lp - log.(x .* (1 .- x) .+ ϵ)
 # end
 #
 # mean(gb::GumbelBernoulli) = gb.p
@@ -154,12 +153,12 @@ end
 # """
 # function logitrand(gbl::GumbelBernoulliLogit{T}; τ=gbl.τ) where {T}
 #     FT = eltype(gbl.logitp)
-#     _eps = eps(FT)
+#     ϵ = eps(FT)
 #     _one = one(FT)
 #
 #     u = randsimilar(gbl.logitp)
 #
-#     logit = log.(u .+ _eps) - log.(_one + _eps .- u)
+#     logit = log.(u .+ ϵ) - log.(_one + ϵ .- u)
 #
 #     logitx = (gbl.logitp + logit) ./ τ
 #     return logitx
