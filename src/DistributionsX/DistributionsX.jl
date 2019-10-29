@@ -40,6 +40,6 @@ Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpu.j
 include("noise.jl")
 export UniformNoise, GaussianNoise
 include("gumbel.jl")
-export GumbelSoftmax#, GumbelSoftmax2D, GumbelBernoulli, GumbelBernoulliLogit
+export GumbelSoftmax, GumbelSoftmax2D#, GumbelBernoulli, GumbelBernoulliLogit
 
 end # module

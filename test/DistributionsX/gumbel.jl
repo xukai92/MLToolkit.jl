@@ -9,27 +9,37 @@ using FiniteDifferences: central_fdm
 
 @testset "Gumbel" begin
     n_randtests = 5
-    d, n = 2, 5_000
-    b = 10
-    atol = 0.015 * d
+    n_samples = 5_000
+    d, n = 2, 10
+    atol = 0.015
 
     @testset "GumbelSoftmax" begin
         for _ = 1:n_randtests
             # Vector `p`
             p = rand(Dirichlet(ones(d)))
             gs = GumbelSoftmax(p)
-            for xs in [
-                hcat([rand(gs) for _ = 1:n]...),
-                rand(gs, n)
-            ]
-                @test mean(gs) == p
-                @test vec(mean(xs; dims=2)) ≈ mean(gs) atol=atol
-            end
+            x = rand(gs, n_samples)
+            @test mean(gs) == p
+            @test vec(mean(x; dims=2)) ≈ mean(gs) atol=atol * d
             # Matrix `p`
-            p = rand(Dirichlet(ones(d)), b)
+            p = rand(Dirichlet(ones(d)), n)
             gs = GumbelSoftmax(p)
-            xs = [rand(gs) for _ = 1:n]
-            @test mean(xs) ≈ p atol=atol * b
+            xs = [rand(gs) for _ = 1:n_samples]
+            @test mean(xs) ≈ mean(gs) atol=atol * d * n
+        end
+
+        @testset "GumbelSoftmax2D" begin
+            # Vector `p`
+            p = rand()
+            gs = GumbelSoftmax2D(p)
+            x = rand(gs, n_samples)
+            @test mean(gs) == [p, 1 - p]
+            @test vec(mean(x; dims=2)) ≈ mean(gs) atol=atol * 2
+            # Matrix `p`
+            p = rand(n)
+            gs = GumbelSoftmax2D(p)
+            xs = [rand(gs) for _ = 1:n_samples]
+            @test mean(xs) ≈ mean(gs) atol=atol * 2 * n
         end
 
         @testset "track(u2gumbel, u)" begin

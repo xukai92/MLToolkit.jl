@@ -3,13 +3,18 @@ abstract type AbstractGumbelSoftmax{T} <: ContinuousMultivariateDistribution end
 const τ0 = 0.2  # default value for τ
 
 """
-The Gumbel-Softmax distributions.
+    GumbelSoftmax(p, τ)
+
+The Gumbel-Softmax distributions with mean `p` and temperature `τ`.
 
 Ref: https://arxiv.org/abs/1611.01144
 """
 struct GumbelSoftmax{T<:AbstractVecOrMat{<:AbstractFloat}} <: AbstractGumbelSoftmax{T}
     p::T
     τ
+    function GumbelSoftmax(p::T, τ::F) where {F<:AbstractFloat, T<:AbstractVecOrMat{F}}
+        return new{T}(p, τ)
+    end
 end
 
 GumbelSoftmax(p; τ=eltype(p)(τ0)) = GumbelSoftmax(p, τ)
@@ -47,9 +52,17 @@ rand(rng::AbstractRNG, gs::AbstractGumbelSoftmax{<:AbstractVector}, n::Int) = _r
 
 mean(gs::AbstractGumbelSoftmax) = gs.p
 
-function GumbelSoftmax2D(p; τ=eltype(p)(τ0))
-    p = transpose(hcat(p, one(eltype(p)) .- p))
+"""
+    GumbelSoftmax2D(p1, τ)
+
+2-dimensional GumbelSoftmax where `p1` is the probability of the first dimension is 1.
+"""
+function GumbelSoftmax2D(p1::AbstractVector; τ=eltype(p1)(τ0))
+    p = transpose(hcat(p1, one(eltype(p1)) .- p1))
     return GumbelSoftmax(p, τ)
+end
+function GumbelSoftmax2D(p1::T; τ=T(τ0)) where {T<:AbstractFloat}
+    return GumbelSoftmax([p1, 1 - p1], τ)
 end
 
 # """
