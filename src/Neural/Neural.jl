@@ -9,6 +9,7 @@ import Flux, Tracker, Distributions
 ### Tracker extensions
 
 trackerparams(m) = m |> Flux.params |> Tracker.Params
+trackergradient = Tracker.gradient
 
 # https://github.com/FluxML/Flux.jl/blob/bdeb9c6d584668c7cef1ce71caf659d611c86d65/src/optimise/train.jl#L9-L18
 function apply!(opt, xs::Tracker.Params, Δs)
@@ -39,7 +40,7 @@ function Flux.fmap(f::typeof(track_arr), m::BatchNorm; cache = IdDict())
     cache[m] = BatchNorm(m.λ, f(m.β), f(m.γ), m.μ, m.σ², m.ϵ, m.momentum)
 end
 
-export trackerparams, apply!, track
+export trackerparams, trackergradient, apply!, track
 
 ### Flux extensions
 
