@@ -129,7 +129,7 @@ function _logpdf(gb::GumbelBernoulli, x; τ=gb.τ)
     α = gb.p ./ (1 + ϵ .- gb.p)
     xstabe = x .+ ϵ
     omxstabe = 1 .- x .+ ϵ
-    return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ ϵ))
+    return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) .+ log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) .+ omxstabe.^(-τ) .+ ϵ))
 end
 
 logpdf(gb::GumbelBernoulli, x; τ=gb.τ) = _logpdf(gb, x; τ=τ)
