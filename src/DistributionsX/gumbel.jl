@@ -116,7 +116,7 @@ function logrand(rng::AbstractRNG, gb::GumbelBernoulli; τ=gb.τ)
     logit0_minus_max = logit0 - logit_max
     logit1_minus_max = logit1 - logit_max
 
-    logx = logit1_minus_max - StatsFuns.logaddexp.(logit0_minus_max, logit1_minus_max)
+    logx = logit1_minus_max - log.(exp.(logit0_minus_max) + exp.(logit1_minus_max))
     return logx
 end
 logrand(gb::GumbelBernoulli; τ=gb.τ) = logrand(GLOBAL_RNG, gb; τ=τ)
