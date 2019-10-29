@@ -36,7 +36,7 @@ function g2softmax(g, p, τ)
 end
 
 function _rand(rng::AbstractRNG, gs::AbstractGumbelSoftmax, n::Int=1)
-    u = randsimilar(gs.p, n)
+    u = randsimilar(rng, gs.p, n)
     g = u2gumbel(u)
     return g2softmax(g, gs.p, gs.τ)
 end
