@@ -30,8 +30,8 @@ function rsimilar(rng::AbstractRNG, f!::Function, x::Tracker.TrackedArray, n::In
     return rsimilar(rng, f!, Tracker.data(x), n)
 end
 
-randsimilar(rng::AbstractRNG, x, n::Int=1) = rsimilar(rng, Random.rand!, x, n)
-randnsimilar(rng::AbstractRNG, x, n::Int=1) = rsimilar(rng, Random.randn!, x, n)
+randsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.rand!, x, n)
+randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.randn!, x, n)
 
 Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpu.jl")
 
