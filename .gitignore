@@ -3,4 +3,5 @@
 *.png
 *.tex
 *.pdf
+*.DS_Store
 test/jl_*

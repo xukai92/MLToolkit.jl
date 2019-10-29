@@ -5,6 +5,12 @@ using MLToolkit: include_list_as_module
     tests = [
         "noise.jl",
         "gumbel.jl",
+        # "displaced_poisson.jl",
+        # "ibp.jl",
+        # "normal.jl",
+        # "bernoulli.jl",
+        # "beta.jl",
+        # "npd.jl",
     ]
 
     include_list_as_module(tests, "TestDistributionsX")
