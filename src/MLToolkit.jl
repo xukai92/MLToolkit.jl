@@ -69,7 +69,7 @@ function __init__()
 
     # Ensure not using Type 3 fonts
     plt.rc("pdf", fonttype=42)
-    
+
     # GPU support
     Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpu.jl")
 end

@@ -23,10 +23,9 @@ include("normal.jl")
 export BatchNormal, BatchNormalLogVar
 # include("bernoulli.jl")
 # export BatchBernoulli, BatchBernoulliLogit
-include("beta.jl")
-export BatchKumaraswamy, BatchBeta
+# include("beta.jl")
+# export BatchKumaraswamy, BatchBeta
 include("npd.jl")
 export LogitNPD, getlogitρ, getρ, getlogρ
 
 export logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
-export logpdflogit, logpdfCoV, logrand, logitrand, kldiv

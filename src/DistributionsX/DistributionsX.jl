@@ -2,9 +2,9 @@ module DistributionsX
 
 using ..MLToolkit: usegpu, FloatT
 using Distributions: ContinuousMultivariateDistribution
-using Random: AbstractRNG
+using Random: AbstractRNG, GLOBAL_RNG
 
-import Requires, Random, NNlib, Tracker, Flux
+import Requires, Random, StatsFuns, NNlib, Tracker, Flux
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
 ### MLE
@@ -40,6 +40,9 @@ Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpu.j
 include("noise.jl")
 export UniformNoise, GaussianNoise
 include("gumbel.jl")
-export GumbelSoftmax, GumbelSoftmax2D#, GumbelBernoulli, GumbelBernoulliLogit
+export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli, GumbelBernoulliLogit
+
+export logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
+export logpdflogit, logpdfCoV, logrand, logitrand, kldiv
 
 end # module

@@ -15,19 +15,10 @@ import StatsFuns: logit
 
 function logit(x)
     _eps = eps(FT)
-    _one = one(FT)
-    return log(x + _eps) - log(_one - x + _eps)
+    return log(x + _eps) - log(1 - x + _eps)
 end
 
 import StatsFuns: logsumexp
-
-const AbstractHigherOrderArray = Union{AbstractArray{<:Real, 2}, AbstractArray{<:Real, 3}, AbstractArray{<:Real, 4}}
-
-function logsumexp(x::AbstractHigherOrderArray; dims=:)
-    u = maximum(x; dims=dims)
-    lsediff = log.(sum(exp.(x .- u); dims=dims))
-    return u .+ lsediff
-end
 
 logsumexp(x::Tracker.TrackedArray; dims=:) = Tracker.track(logsumexp, x; dims=dims)
 
