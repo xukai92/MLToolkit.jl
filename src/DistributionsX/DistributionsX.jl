@@ -19,16 +19,15 @@ Generate random numbers in a container similar to `x`.
 The returned variable will have the same shape of `x` if `n == 1` and
 will extend an extra dimension with size `n` if `n != 1`.
 """
-function rsimilar(rng::AbstractRNG, f!::Function, x::AbstractArray, n::Int)
+function _rsimilar(rng::AbstractRNG, f!::Function, x::AbstractArray, n::Int)
     sz = n == 1 ? size(x) : (size(x)..., n)
     u = similar(x, sz...)
     f!(rng, u)
     return u
 end
 
-function rsimilar(rng::AbstractRNG, f!::Function, x::Tracker.TrackedArray, n::Int)
-    return rsimilar(rng, f!, Tracker.data(x), n)
-end
+rsimilar(rng, f!, x, n) = _rsimilar(rng, f!, x, n)
+rsimilar(rng, f!, x::Tracker.TrackedArray, n) = _rsimilar(rng, f!, Tracker.data(x), n)
 
 randsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.rand!, x, n)
 randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.randn!, x, n)
