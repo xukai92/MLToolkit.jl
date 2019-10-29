@@ -45,18 +45,31 @@ Reexport.@reexport using .MonteCarlo
 include("Neural/Neural.jl")
 Reexport.@reexport using .Neural
 
-include("test_util.jl")
-export NUM_RANDTESTS, ATOL, ATOL_RAND, include_list_as_module
+### Test utility
 
-# Module init
+function include_list_as_module(list, module_name_prefix)
+    return Distributed.map(list) do t
+        @eval module $(Symbol("$(module_name_prefix)_", t))
+            include($t)
+        end
+        return
+    end
+end
+
+export include_list_as_module
+
+### Module init
+
 function __init__()
     # Bind Python libraries
     copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
     copy!(mpl, PyPlot.matplotlib)
     copy!(plt, mpl.pyplot)
     copy!(plt_agg, mpl.backends.backend_agg)
+
     # Ensure not using Type 3 fonts
     plt.rc("pdf", fonttype=42)
+    
     # GPU support
     Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpu.jl")
 end

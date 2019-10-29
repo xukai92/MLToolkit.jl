@@ -1,6 +1,6 @@
 abstract type AbstractGumbelSoftmax{T} <: ContinuousMultivariateDistribution end
 
-const τdefault = 0.2
+const τ0 = 0.2  # default value for τ
 
 """
 The Gumbel-Softmax distributions.
@@ -12,7 +12,7 @@ struct GumbelSoftmax{T<:AbstractVecOrMat{<:AbstractFloat}} <: AbstractGumbelSoft
     τ
 end
 
-GumbelSoftmax(p; τ=eltype(p)(τdefault)) = GumbelSoftmax(p, τ)
+GumbelSoftmax(p; τ=eltype(p)(τ0)) = GumbelSoftmax(p, τ)
 
 function u2gumbel(u)
     ϵ = eps(u)
@@ -47,7 +47,7 @@ rand(rng::AbstractRNG, gs::AbstractGumbelSoftmax{<:AbstractVector}, n::Int) = _r
 
 mean(gs::AbstractGumbelSoftmax) = gs.p
 
-function GumbelSoftmax2D(p; τ=eltype(p)(τdefault))
+function GumbelSoftmax2D(p; τ=eltype(p)(τ0))
     p = transpose(hcat(p, one(eltype(p)) .- p))
     return GumbelSoftmax(p, τ)
 end
@@ -64,7 +64,7 @@ end
 #     τ::FT
 # end
 #
-# GumbelBernoulli(p; τ=FT(τdefault)) = GumbelBernoulli(p, τ)
+# GumbelBernoulli(p; τ=FT(τ0)) = GumbelBernoulli(p, τ)
 #
 # """
 #     rand(gb::GumbelBernoulli)
@@ -140,7 +140,7 @@ end
 #     τ::FT
 # end
 #
-# GumbelBernoulliLogit(logitp; τ=FT(τdefault)) = GumbelBernoulliLogit(logitp, τ)
+# GumbelBernoulliLogit(logitp; τ=FT(τ0)) = GumbelBernoulliLogit(logitp, τ)
 #
 # """
 #     logitrand(gbl::GumbelBernoulliLogit{T}; τ=gbl.τ) where {T}
