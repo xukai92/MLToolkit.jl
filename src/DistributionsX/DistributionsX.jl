@@ -27,7 +27,7 @@ function _rsimilar(rng::AbstractRNG, f!::Function, x::AbstractArray, n::Int)
 end
 
 rsimilar(rng, f!, x, n) = _rsimilar(rng, f!, x, n)
-rsimilar(rng, f!, x::Tracker.TrackedArray, n) = _rsimilar(rng, f!, Tracker.data(x), n)
+rsimilar(rng, f!, x::Tracker.TrackedArray, n) = rsimilar(rng, f!, Tracker.data(x), n)
 
 randsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.rand!, x, n)
 randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.randn!, x, n)
