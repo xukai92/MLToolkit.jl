@@ -69,7 +69,8 @@ mean(gs::AbstractGumbelSoftmax) = gs.p
 2-dimensional GumbelSoftmax where `p1` is the probability of the first dimension is 1.
 """
 function GumbelSoftmax2D(p1::AbstractVector; τ=eltype(p1)(τ0))
-    p = transpose(hcat(p1, 1 .- p1))
+    p1transpose = transpose(p1)
+    p = [p1transpose; 1 .- p1transpose]
     return GumbelSoftmax(p, τ)
 end
 function GumbelSoftmax2D(p1::T; τ=T(τ0)) where {T<:AbstractFloat}

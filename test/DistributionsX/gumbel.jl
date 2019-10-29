@@ -5,6 +5,7 @@ using Statistics: mean
 using Tracker: gradient, data
 using FiniteDifferences: central_fdm
 using StatsFuns: logit, logistic
+using Flux: gpu
 
 @testset "Gumbel" begin
     n_randtests = 5
@@ -15,13 +16,13 @@ using StatsFuns: logit, logistic
     @testset "GumbelSoftmax" begin
         for _ = 1:n_randtests
             # Vector `p`
-            p = rand(Dirichlet(ones(d)))
+            p = rand(Dirichlet(ones(d))) |> gpu
             gs = GumbelSoftmax(p)
             @test mean(gs) == p
             x = rand(gs, n_samples)
             @test vec(mean(x; dims=2)) ≈ mean(gs) atol=atol * d
             # Matrix `p`
-            p = rand(Dirichlet(ones(d)), n)
+            p = rand(Dirichlet(ones(d)), n) |> gpu
             gs = GumbelSoftmax(p)
             xs = [rand(gs) for _ = 1:n_samples]
             @test mean(xs) ≈ mean(gs) atol=atol * d * n
@@ -31,14 +32,15 @@ using StatsFuns: logit, logistic
     @testset "GumbelSoftmax2D" begin
         for _ = 1:n_randtests
             # Vector `p`
-            p = rand()
-            gs = GumbelSoftmax2D(p)
-            @test mean(gs) == [p, 1 - p]
+            p1 = rand()
+            gs = GumbelSoftmax2D(p1)
+            @test mean(gs) == [p1, 1 - p1]
             x = rand(gs, n_samples)
             @test vec(mean(x; dims=2)) ≈ mean(gs) atol=atol * 2
             # Matrix `p`
-            p = rand(n)
-            gs = GumbelSoftmax2D(p)
+            p1 = rand(n) |> gpu
+            gs = GumbelSoftmax2D(p1)
+            @test mean(gs) == [p1'; 1 .- p1']
             xs = [rand(gs) for _ = 1:n_samples]
             @test mean(xs) ≈ mean(gs) atol=atol * 2 * n
         end
@@ -56,7 +58,7 @@ using StatsFuns: logit, logistic
 
     @testset "GumbelBernoulli" begin
         for _ = 1:n_randtests
-            p = rand(d, n)
+            p = rand(d, n) |> gpu
             gb = GumbelBernoulli(p)
             @test mean(gb) == p
             xs = [rand(gb) for _ = 1:n_samples]
@@ -69,7 +71,7 @@ using StatsFuns: logit, logistic
 
     @testset "GumbelBernoulliLogit" begin
         for _ = 1:n_randtests
-            p = rand(d, n)
+            p = rand(d, n) |> gpu
             gbl = GumbelBernoulliLogit(logit.(p))
             @test mean(gbl) ≈ p
             xs = [rand(gbl) for _ = 1:n_samples]
