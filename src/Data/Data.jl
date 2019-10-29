@@ -74,11 +74,11 @@ end
 ## Data loader
 
 struct DataLoader
-    data::Dataset
+    dataset::Dataset
     batch_size::Int
     batch_size_eval::Int
-    function DataLoader(data::Dataset, batch_size::Int, batch_size_eval::Int=batch_size)
-        return new(data, batch_size, batch_size_eval)
+    function DataLoader(dataset::Dataset, batch_size::Int, batch_size_eval::Int=batch_size)
+        return new(dataset, batch_size, batch_size_eval)
     end
 end
 
@@ -93,11 +93,11 @@ ndata(data::Tuple) = last(size(first(data)))
 
 function Base.getproperty(dl::DataLoader, k::Symbol)
     if k in (:train, :test, :validation)
-        data = getproperty(dl.data, k)
+        data = getproperty(dl.dataset, k)
         n = ndata(data)
         batch_size = k == :train ? dl.batch_size : dl.batch_size_eval
         idx_iterator = Iterators.partition(MLDataUtils.shuffleobs(1:n), batch_size)
-        return ((batch=selectdata(data, idx), idx=idx) for idx in idx_iterator)
+        return ((data=selectdata(data, idx), idx=idx) for idx in idx_iterator)
     else
         getfield(dl, k)
     end

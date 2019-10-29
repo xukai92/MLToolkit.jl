@@ -21,7 +21,7 @@ using Test, MLToolkit.Data
         batch_size = 20
         loader = DataLoader(dataset, batch_size)
         @test length(loader.train) == 5
-        x1, y1 = first(loader.train).batch
+        x1, y1 = first(loader.train).data
         @test size(x1, 2) == batch_size
         @test size(y1, 1) == batch_size
     end
