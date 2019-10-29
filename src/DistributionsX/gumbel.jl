@@ -123,15 +123,14 @@ end
 logrand(gb::GumbelBernoulli; τ=gb.τ) = logrand(GLOBAL_RNG, gb; τ=τ)
 
 rand(rng::AbstractRNG, gb::GumbelBernoulli; τ=gb.τ) = exp.(logrand(rng, gb; τ=τ))
+rand(gb::GumbelBernoulli; τ=gb.τ) = rand(GLOBAL_RNG, gb; τ=gb.τ)
 
 function _logpdf(gb::GumbelBernoulli, x; τ=gb.τ)
     ϵ = eps(gb.p)
     α = gb.p ./ (1 + ϵ .- gb.p)
     xstabe = x .+ ϵ
     omxstabe = 1 .- x .+ ϵ
-    return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) + log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ ϵ))
-    # TODO: figure out why broadcasting gives `LLVM error: Program used external function '__nv_powf' which could not be resolved!`
-    # return log(τ) .+ log.(α) + (-τ - 1) * (log.(xstabe) .+ log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) .+ omxstabe.^(-τ) .+ ϵ))
+    return log(τ) .+ log.(α) .+ (1 - τ) * (log.(xstabe) + log.(omxstabe)) - 2 * (log.(α .* xstabe.^(-τ) + omxstabe.^(-τ) .+ ϵ))
 end
 
 logpdf(gb::GumbelBernoulli, x; τ=gb.τ) = _logpdf(gb, x; τ=τ)
