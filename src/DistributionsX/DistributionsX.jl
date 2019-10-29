@@ -4,13 +4,14 @@ using ..MLToolkit: usegpu, FloatT
 using Distributions: ContinuousMultivariateDistribution
 using Random: AbstractRNG, GLOBAL_RNG
 
-import Requires, Random, StatsFuns, NNlib, Tracker, Flux
+import Random, StatsFuns, NNlib, Tracker, Flux
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
 ### MLE
 
 Base.eltype(x::Tracker.TrackedArray) = eltype(Tracker.data(x))
 Base.eps(x::AbstractArray) = eps(eltype(x))
+Base.one(x::AbstractArray) = one(eltype(x))
 
 """
     rsimilar(rng, f!, x, n)
@@ -32,7 +33,9 @@ rsimilar(rng, f!, x::Tracker.TrackedArray, n) = rsimilar(rng, f!, Tracker.data(x
 randsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.rand!, x, n)
 randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.randn!, x, n)
 
-Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpu.jl")
+if Flux.use_cuda
+  include("gpu.jl")
+end
 
 ### Distributions
 

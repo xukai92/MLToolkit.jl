@@ -5,7 +5,7 @@ using Statistics: mean
 using Tracker: gradient, data
 using FiniteDifferences: central_fdm
 using StatsFuns: logit, logistic
-using Flux: gpu
+using Flux: gpu, use_cuda
 
 @testset "Gumbel" begin
     n_randtests = 5

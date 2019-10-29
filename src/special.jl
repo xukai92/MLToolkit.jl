@@ -11,13 +11,6 @@ _beta(α, β) = exp.(_lbeta(α, β))
 lbeta(α, β) = _lbeta(α, β)
 beta(α, β) = _beta(α, β)
 
-import StatsFuns: logit
-
-function logit(x)
-    _eps = eps(FT)
-    return log(x + _eps) - log(1 - x + _eps)
-end
-
 import StatsFuns: logsumexp
 
 logsumexp(x::Tracker.TrackedArray; dims=:) = Tracker.track(logsumexp, x; dims=dims)
