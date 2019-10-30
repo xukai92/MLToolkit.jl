@@ -37,12 +37,6 @@ const BatchDistribution{S<:ValueSupport} = Distribution{Batch,S}
 const DiscreteBatchDistribution = Distribution{Batch,Discrete}
 const ContinuousBatchDistribution = Distribution{Batch,Continuous}
 rand(bd::BatchDistribution, d::Int=1, dims::Int...; kwargs...) = rand(GLOBAL_RNG, bd, d, dims...; kwargs...)
-function logpdf(d::BatchDistribution, x; kwargs...)
-    if !(size(x) == size(d) || Base.front(size(x)) == size(d))
-        throw(DimensionMismatch("size of input x $(size(x)) does not match size of distribution $(size(d))"))
-    end
-    return _logpdf(d, x; kwargs...)
-end
 
 include("noise.jl")
 export UniformNoise, GaussianNoise
