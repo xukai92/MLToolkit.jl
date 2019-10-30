@@ -72,4 +72,31 @@ for T in [
     @eval Flux.@functor $T
 end
 
+### Test
+
+using Test: @test
+
+"""
+    test_stat(fstat, dist, n_samples, atol; samples)
+
+Test the emperical statistic using samples against the true one.
+"""
+function test_stat(
+    fstat::Function,
+    dist::BatchDistribution,
+    samples::AbstractArray,
+    atol::AbstractFloat
+)
+    dim = length(size(samples))
+    @test dropdims(fstat(samples; dims=dim); dims=dim) ≈ fstat(dist) atol=atol
+    return samples
+end
+
+test_stat(
+    fstat::Function,
+    dist::BatchDistribution,
+    n_samples::Int,
+    atol::AbstractFloat
+) = test_stat(fstat, dist, rand(dist, n_samples), atol)
+
 end # module

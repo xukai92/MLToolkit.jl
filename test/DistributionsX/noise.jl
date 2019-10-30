@@ -1,25 +1,25 @@
 using Test, MLToolkit
+using DistributionsAD: TuringDiagNormal
+using MLToolkit.DistributionsX: test_stat
 using Statistics: mean, var
 
 @testset "Noise" begin
-    d, n = 10, 5_000
+    d, n_samples = 10, 5_000
     atol = 0.01 * d
 
     @testset "UniformNoise" begin
         noise = UniformNoise(d)
-        x = rand(noise, n)
-        @test vec(mean(x; dims=2)) ≈ mean(noise) atol=atol
-        @test vec(var(x; dims=2)) ≈ var(noise) atol=atol
+        x = test_stat(mean, noise, n_samples, atol)
+        test_stat(var, noise, x, atol)
 
-        @test logpdf(noise, x) ≈ log.((ones(n) / 2) .^ d)
+        @test logpdf(noise, x) ≈ log.((ones(n_samples) / 2) .^ d)
     end
 
     @testset "GaussianNoise" begin
         noise = GaussianNoise(d)
-        x = rand(noise, n)
-        @test vec(mean(x; dims=2)) ≈ mean(noise) atol=atol
-        @test vec(var(x; dims=2)) ≈ var(noise) atol=atol
+        x = test_stat(mean, noise, n_samples, atol)
+        test_stat(var, noise, x, atol)
 
-        # @test logpdf(noise, x)    == ones(n) / 2
+        @test logpdf(noise, x) ≈ logpdf(TuringDiagNormal(zeros(d), ones(d)), x)
     end
 end

@@ -36,6 +36,6 @@ GaussianNoise(size) = GaussianNoise(Float64, size)
 
 rand(rng::AbstractRNG, d::GaussianNoise{T}, n::Int) where {T} = randn(rng, T, d.size..., n)
 
-_constant(d::GaussianNoise{T}) where {T} = prod(d.size) * 2T(π)
+_constant(d::GaussianNoise{T}) where {T} = prod(d.size) * log(2T(π))
 _logpdf(d::GaussianNoise{T}, x::AbstractVector{T})  where {T}   = -(_constant(d)  + sum(abs2, x)) / 2
 _logpdf(d::GaussianNoise{T}, x::AbstractArray{T,N}) where {T,N} = -(_constant(d) .+ vec(sum(abs2, x; dims=1:N-1))) / 2
