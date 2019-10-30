@@ -30,12 +30,19 @@ randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, randn
 ### Distributions
 
 using Distributions: VariateForm, ValueSupport, Discrete, Continuous, Distribution, ContinuousMultivariateDistribution
-import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
+import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, var, mode, minimum, maximum
 
 struct Batch <: VariateForm end
 const BatchDistribution{S<:ValueSupport} = Distribution{Batch,S}
 const DiscreteBatchDistribution = Distribution{Batch,Discrete}
 const ContinuousBatchDistribution = Distribution{Batch,Continuous}
+rand(bd::BatchDistribution, d::Int=1, dims::Int...; kwargs...) = rand(GLOBAL_RNG, bd, d, dims...; kwargs...)
+function logpdf(d::BatchDistribution, x; kwargs...)
+    if !(size(x) == size(d) || Base.front(size(x)) == size(d))
+        throw(DimensionMismatch("size of input x $(size(x)) does not match size of distribution $(size(d))"))
+    end
+    return _logpdf(d, x; kwargs...)
+end
 
 include("noise.jl")
 export UniformNoise, GaussianNoise
@@ -44,7 +51,7 @@ export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli, GumbelBernoulliLogit
 include("bernoulli.jl")
 export Bernoulli, BernoulliLogit
 
-export logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
+export logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, var, mode, minimum, maximum
 export logpdflogit, logpdfCoV, logrand, logitrand, kldiv
 
 ### X

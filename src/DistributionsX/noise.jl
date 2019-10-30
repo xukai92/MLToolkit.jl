@@ -1,29 +1,41 @@
-### Uniform
+### Uniform(-1, 1)
 
-struct UniformNoise <: ContinuousMultivariateDistribution
-    D::Int
+struct UniformNoise{T<:AbstractFloat,S<:Tuple{Vararg{Int}}} <: ContinuousBatchDistribution
+    size::S
+    UniformNoise(T::Type{<:AbstractFloat}, size::S) where {S<:Tuple{Vararg{Int}}} = new{T,S}(size)
 end
 
-function rand(rng::AbstractRNG, d::UniformNoise, n::Int)
-    return 2 * rand(rng, MLToolkit.FloatT[], d.D, n) .- 1
+Base.size(d::UniformNoise) = d.size
+mean(d::UniformNoise{T}) where {T} = zeros(T, d.size)
+var(d::UniformNoise{T}) where {T} = ones(T, d.size) / 3
+
+UniformNoise(T, dim::Int) = UniformNoise(T, (dim,))
+UniformNoise(size) = UniformNoise(Float64, size)
+
+function rand(rng::AbstractRNG, d::UniformNoise{T}, n::Int) where {T}
+    return 2 * rand(rng, T, d.size..., n) .- 1
 end
 
-function logpdf(d::UniformNoise, x::AbstractVecOrMat)
-    size(x, 1) != d.D && throw(DimensionMismatch())
-    return _logpdf(d, x)
+_logpdf_vec(d::UniformNoise{T}) where {T} = -prod(d.size) * log(2one(T))
+_logpdf(d::UniformNoise{T}, ::AbstractVector{T}) where {T} = _logpdf_vec(d)
+_logpdf(d::UniformNoise{T}, x::AbstractArray{T}) where {T} = fill(_logpdf_vec(d), last(size(x)))
+
+### Standard Normal
+
+struct GaussianNoise{T<:AbstractFloat,S<:Tuple{Vararg{Int}}} <: ContinuousBatchDistribution
+    size::S
+    GaussianNoise(T::Type{<:AbstractFloat}, size::S) where {S<:Tuple{Vararg{Int}}} = new{T,S}(size)
 end
 
-_logpdf(d::UniformNoise, x::AbstractVector{T}) where {T<:AbstractFloat} = one(T) / 2d.D
-_logpdf(d::UniformNoise, x::AbstractMatrix{T}) where {T<:AbstractFloat} = one(T) / 2d.D * ones(size(x, 2))
+Base.size(d::GaussianNoise) = d.size
+mean(d::GaussianNoise{T}) where {T} = zeros(T, d.size)
+var(d::GaussianNoise{T}) where {T} = ones(T, d.size)
 
-### Std Normal
+GaussianNoise(T, dim::Int) = GaussianNoise(T, (dim,))
+GaussianNoise(size) = GaussianNoise(Float64, size)
 
-struct GaussianNoise <: ContinuousMultivariateDistribution
-    D::Int
-end
+rand(rng::AbstractRNG, d::GaussianNoise{T}, n::Int) where {T} = randn(rng, T, d.size..., n)
 
-rand(rng::AbstractRNG, d::GaussianNoise, n::Int) = randn(rng, MLToolkit.FloatT[], d.D, n)
-
-_constant(d::GaussianNoise, x) = d.D * 2eltype(x)(π)
-_logpdf(d::GaussianNoise, x::AbstractVector) = -(_constant(d, x) + sum(abs2, x)) / 2
-_logpdf(d::GaussianNoise, x::AbstractMatrix) = -(_constant(d, x) .+ sum(abs2, x; dims=1)') / 2
+_constant(d::GaussianNoise{T}) where {T} = prod(d.size) * 2T(π)
+_logpdf(d::GaussianNoise{T}, x::AbstractVector{T})  where {T}   = -(_constant(d)  + sum(abs2, x)) / 2
+_logpdf(d::GaussianNoise{T}, x::AbstractArray{T,N}) where {T,N} = -(_constant(d) .+ vec(sum(abs2, x; dims=1:N-1))) / 2

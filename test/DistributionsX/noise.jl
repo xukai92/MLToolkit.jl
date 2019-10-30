@@ -8,14 +8,18 @@ using Statistics: mean, var
     @testset "UniformNoise" begin
         noise = UniformNoise(d)
         x = rand(noise, n)
-        @test vec(mean(x; dims=2)) ≈ zeros(d) atol=atol
-        @test vec(var(x; dims=2)) ≈ ones(d) / 3 atol=atol
+        @test vec(mean(x; dims=2)) ≈ mean(noise) atol=atol
+        @test vec(var(x; dims=2)) ≈ var(noise) atol=atol
+
+        @test logpdf(noise, x) ≈ log.((ones(n) / 2) .^ d)
     end
 
     @testset "GaussianNoise" begin
         noise = GaussianNoise(d)
         x = rand(noise, n)
-        @test vec(mean(x; dims=2)) ≈ zeros(d) atol=atol
-        @test vec(var(x; dims=2)) ≈ ones(d) atol=atol
+        @test vec(mean(x; dims=2)) ≈ mean(noise) atol=atol
+        @test vec(var(x; dims=2)) ≈ var(noise) atol=atol
+
+        # @test logpdf(noise, x)    == ones(n) / 2
     end
 end
