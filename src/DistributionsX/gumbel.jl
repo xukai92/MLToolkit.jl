@@ -33,7 +33,7 @@ function g2softmax(g, p, τ)
     return NNlib.softmax(logit ./ τ; dims=1)
 end
 
-function _rand(rng::AbstractRNG, p, τ, n::Int=1)
+function _rand_gs(rng::AbstractRNG, p, τ, n::Int=1)
     u = randsimilar(rng, p, n)
     g = u2gumbel(u)
     return g2softmax(g, p, τ)
@@ -43,7 +43,7 @@ rand(
     rng::AbstractRNG,
     gs::AbstractGumbelSoftmax;
     τ=gs.τ
-) = _rand(rng, gs.p, τ)
+) = _rand_gs(rng, gs.p, τ)
 rand(gs::AbstractGumbelSoftmax; τ=gs.τ) = rand(GLOBAL_RNG, gs; τ=gs.τ)
 
 rand(
@@ -51,7 +51,7 @@ rand(
     gs::AbstractGumbelSoftmax{<:AbstractVector},
     n::Int;
     τ=gs.τ
-) = _rand(rng, gs.p, τ, n)
+) = _rand_gs(rng, gs.p, τ, n)
 rand(gs::AbstractGumbelSoftmax{<:AbstractVector}, n::Int; τ=gs.τ) = rand(GLOBAL_RNG, gs, n; τ=gs.τ)
 
 function _logpdf(gs::AbstractGumbelSoftmax, x; τ=gs.τ)

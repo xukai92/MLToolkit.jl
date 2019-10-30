@@ -56,7 +56,15 @@ include("ad.jl")
 
 Flux.use_cuda && include("gpu.jl")
 
-include("flux.jl")
+for T in [
+    GumbelSoftmax,
+    GumbelBernoulli,
+    GumbelBernoulliLogit,
+    BatchBernoulli,
+    BatchBernoulliLogit,
+]
+    @eval Flux.@functor $T
+end
 
 ### Test
 
