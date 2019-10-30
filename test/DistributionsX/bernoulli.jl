@@ -1,43 +1,43 @@
 using Test, MLToolkit
-using Knet: cpucopy
-using Distributions: Beta, Bernoulli
+using Distributions: Beta
+import Distributions
 using Statistics: mean
-using StatsFuns: logit
+using StatsFuns: logit, logistic
+using Flux: gpu, use_cuda
 
 @testset "Bernoulli" begin
-    n = 100_000
+    n_randtests = 5
+    n_samples = 5_000
+    d, n = 2, 10
+    atol = 0.015
 
-    @testset "BatchBernoulli" begin
-        for _ = 1:NUM_RANDTESTS
-            p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
+    @testset "Bernoulli" begin
+        for _ = 1:n_randtests
+            p = rand(d, n) |> gpu
+            b = Bernoulli(p)
+            @test mean(b) == p
+            xs = [rand(b) for _ = 1:n_samples]
+            @test mean(xs) ≈ mean(b) atol=atol * d * n
 
-            b = Bernoulli(p[1,1])
-            bb = BatchBernoulli{AT}(p)
+            @test logpdf.(Distributions.Bernoulli.(p), xs[1]) ≈ logpdf(b, xs[1])
 
-            x = rand(b, n)
-            @test cpucopy(vec(logpdf(bb, AT{FT,2}(reshape(x, 1, n))))) ≈ logpdf.(b, x) atol=5ATOL
-
-            q = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
-            b2 = Bernoulli(q[1,1])
-            bb2 = BatchBernoulli{AT}(q)
-
-            kl_mc = mean(logpdf.(b, x) - logpdf.(b2, x))
-
-            @test sum(kldiv(bb, bb2)) ≈ kl_mc atol=ATOL_RAND
+            b2 = Bernoulli(rand(d, n) |> gpu)
+            kl_mc = mean(logpdf.(b, xs) - logpdf.(b2, xs))
+            @test kldiv(b, b2) ≈ kl_mc atol=atol * d * n
         end
 
-        @warn "`rand(bb::BatchBernoulli)` is not tested."
+        @warn "`rand(b::Bernoulli)` is not tested."
     end
 
-    @testset "BatchBernoulliLogit" begin
-        for _ = 1:NUM_RANDTESTS
-            p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
-
-            b = Bernoulli(p[1,1])
-            bbl = BatchBernoulliLogit{AT}(logit.(p))
-
-            x = rand(b, n)
-            @test cpucopy(vec(logpdf(bbl, AT{FT,2}(reshape(x, 1, n))))) ≈ logpdf.(b, x) atol=5ATOL
-        end
-    end
+    # @testset "BatchBernoulliLogit" begin
+    #     for _ = 1:n_randtests
+    #         p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
+    #
+    #         b = Distributions.Bernoulli(p[1,1])
+    #         bbl = BatchBernoulliLogit{AT}(logit.(p))
+    #
+    #         x = rand(b, n)
+    #         @test cpucopy(vec(logpdf(bbl, AT{FT,2}(reshape(x, 1, n))))) ≈ logpdf.(b, x) atol=5ATOL
+    #     end
+    # end
 end

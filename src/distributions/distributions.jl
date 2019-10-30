@@ -19,10 +19,8 @@ include("displaced_poisson.jl")
 export DisplacedPoisson
 include("ibp.jl")
 export IBP
-include("normal.jl")
-export BatchNormal, BatchNormalLogVar
-# include("bernoulli.jl")
-# export BatchBernoulli, BatchBernoulliLogit
+# include("normal.jl")
+# export BatchNormal, BatchNormalLogVar
 # include("beta.jl")
 # export BatchKumaraswamy, BatchBeta
 include("npd.jl")

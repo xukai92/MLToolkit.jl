@@ -21,11 +21,15 @@ using Flux: gpu, use_cuda
             @test mean(gs) == p
             x = rand(gs, n_samples)
             @test vec(mean(x; dims=2)) ≈ mean(gs) atol=atol * d
+
             # Matrix `p`
             p = rand(Dirichlet(ones(d)), n) |> gpu
             gs = GumbelSoftmax(p)
             xs = [rand(gs) for _ = 1:n_samples]
             @test mean(xs) ≈ mean(gs) atol=atol * d * n
+
+            logpdf(gs, xs[1])
+            @warn "Correctness of `logpdf(::GumbelSoftmax, x)` is not tested."
         end
     end
 
@@ -37,6 +41,7 @@ using Flux: gpu, use_cuda
             @test mean(gs) == [p1, 1 - p1]
             x = rand(gs, n_samples)
             @test vec(mean(x; dims=2)) ≈ mean(gs) atol=atol * 2
+
             # Matrix `p`
             p1 = rand(n) |> gpu
             gs = GumbelSoftmax2D(p1)
@@ -63,6 +68,7 @@ using Flux: gpu, use_cuda
             @test mean(gb) == p
             xs = [rand(gb) for _ = 1:n_samples]
             @test mean(xs) ≈ mean(gb) atol=atol * d * n
+
             # Consistency between two versions of log density
             x = rand(gb)
             @test logpdf(gb, x) ≈ logpdfCoV(gb, x)

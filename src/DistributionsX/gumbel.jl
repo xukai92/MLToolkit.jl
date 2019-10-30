@@ -21,20 +21,11 @@ end
 
 GumbelSoftmax(p; τ=eltype(p)(τ0)) = GumbelSoftmax(p, τ)
 
+mean(gs::AbstractGumbelSoftmax) = gs.p
+
 function u2gumbel(u)
     ϵ = eps(u)
     return -log.(-log.(u .+ ϵ) .+ ϵ)
-end
-
-function u2gumbelback(u, g)
-    return 1 ./ exp.(-g) ./ (u .+ eps(u))
-end
-
-u2gumbel(u::Tracker.TrackedArray) = Tracker.track(u2gumbel, u)
-
-Tracker.@grad function u2gumbel(u)
-    g = u2gumbel(Tracker.data(u))
-    return g, Δ -> (Δ .* u2gumbelback(u, g),)
 end
 
 function g2softmax(g, p, τ)
@@ -53,6 +44,7 @@ rand(
     gs::AbstractGumbelSoftmax;
     τ=gs.τ
 ) = _rand(rng, gs.p, τ)
+rand(gs::AbstractGumbelSoftmax; τ=gs.τ) = rand(GLOBAL_RNG, gs; τ=gs.τ)
 
 rand(
     rng::AbstractRNG,
@@ -60,8 +52,20 @@ rand(
     n::Int;
     τ=gs.τ
 ) = _rand(rng, gs.p, τ, n)
+rand(gs::AbstractGumbelSoftmax{<:AbstractVector}, n::Int; τ=gs.τ) = rand(GLOBAL_RNG, gs, n; τ=gs.τ)
 
-mean(gs::AbstractGumbelSoftmax) = gs.p
+function _logpdf(gs::AbstractGumbelSoftmax, x; τ=gs.τ)
+    k = size(x, 1)
+    ϵ = eps(gs.p)
+    term1 = StatsFuns.lgamma(k) + (k - 1) * log(τ)
+    xpowτ = x .^ τ
+    term2 = k * log.(sum(gs.p ./ xpowτ; dims=1) .+ ϵ)
+    xpowτp1 = xpowτ .* x
+    term3 = sum(log.(gs.p ./ xpowτp1 .+ ϵ); dims=1)
+    return term1 .- term2 + term3
+end
+
+logpdf(gs::AbstractGumbelSoftmax{<:AbstractArray{T1,2}}, x::AbstractArray{T2,2}; τ=gs.τ) where {T1,T2,N} = _logpdf(gs, x; τ=τ)
 
 """
     GumbelSoftmax2D(p1, τ)

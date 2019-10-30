@@ -1,15 +1,10 @@
 module DistributionsX
 
-using ..MLToolkit: usegpu, FloatT
-using Distributions: ContinuousMultivariateDistribution
-using Random: AbstractRNG, GLOBAL_RNG
+using Random: AbstractRNG, GLOBAL_RNG, rand!, randn!
+import StatsFuns, NNlib
 
-import Random, StatsFuns, NNlib, Tracker, Flux
-import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
+### Utility
 
-### MLE
-
-Base.eltype(x::Tracker.TrackedArray) = eltype(Tracker.data(x))
 Base.eps(x::AbstractArray) = eps(eltype(x))
 Base.one(x::AbstractArray) = one(eltype(x))
 
@@ -27,24 +22,47 @@ function _rsimilar(rng::AbstractRNG, f!::Function, x::AbstractArray, n::Int)
     return u
 end
 
-rsimilar(rng, f!, x, n) = _rsimilar(rng, f!, x, n)
-rsimilar(rng, f!, x::Tracker.TrackedArray, n) = rsimilar(rng, f!, Tracker.data(x), n)
+rsimilar(rng, f!, x::AbstractArray, n) = _rsimilar(rng, f!, x, n)
 
-randsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.rand!, x, n)
-randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, Random.randn!, x, n)
-
-if Flux.use_cuda
-  include("gpu.jl")
-end
+randsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, rand!, x, n)
+randnsimilar(rng::AbstractRNG, x::AbstractArray, n::Int=1) = rsimilar(rng, randn!, x, n)
 
 ### Distributions
+
+using Distributions: VariateForm, ValueSupport, Discrete, Continuous, Distribution, ContinuousMultivariateDistribution
+import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
+
+struct Batch <: VariateForm end
+const BatchDistribution{S<:ValueSupport} = Distribution{Batch,S}
+const DiscreteBatchDistribution = Distribution{Batch,Discrete}
+const ContinuousBatchDistribution = Distribution{Batch,Continuous}
 
 include("noise.jl")
 export UniformNoise, GaussianNoise
 include("gumbel.jl")
 export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli, GumbelBernoulliLogit
+include("bernoulli.jl")
+export Bernoulli, BernoulliLogit
 
 export logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 export logpdflogit, logpdfCoV, logrand, logitrand, kldiv
+
+### X
+
+using Tracker, Flux
+
+include("ad.jl")
+
+Flux.use_cuda && include("gpu.jl")
+
+for T in [
+    GumbelSoftmax,
+    GumbelBernoulli,
+    GumbelBernoulliLogit,
+    Bernoulli,
+    BernoulliLogit,
+]
+    @eval Flux.@functor $T
+end
 
 end # module
