@@ -1,25 +1,36 @@
 using Test, MLToolkit
-using DistributionsAD: TuringDiagNormal
+using Distributions: Normal
 using MLToolkit.DistributionsX: test_stat
 using Statistics: mean, var
+using Flux: gpu
 
 @testset "Noise" begin
-    d, n_samples = 10, 5_000
-    atol = 0.01 * d
+    dim1, dim2 = 10, 5
+    n_samples, atol = 5_000, 0.01
 
     @testset "UniformNoise" begin
-        noise = UniformNoise(d)
-        x = test_stat(mean, noise, n_samples, atol)
-        test_stat(var, noise, x, atol)
+        noise = UniformNoise(dim1) |> gpu
+        @test size(noise) == (dim1,)
+        @test size(rand(noise)) == size(noise)
+        @test size(rand(noise, dim2)) == (size(noise)..., dim2)
+        @test size(rand(UniformNoise(dim1, dim2))) == (dim1, dim2)
 
-        @test logpdf(noise, x) ≈ log.((ones(n_samples) / 2) .^ d)
+        x = test_stat(mean, noise, n_samples, atol * prod(size(noise)))
+        test_stat(var, noise, x, atol * prod(size(noise)))
+
+        @test logpdf(noise, x) ≈ log.(ones(dim1, n_samples) / 2)
     end
 
     @testset "GaussianNoise" begin
-        noise = GaussianNoise(d)
-        x = test_stat(mean, noise, n_samples, atol)
-        test_stat(var, noise, x, atol)
+        noise = GaussianNoise(dim1) |> gpu
+        @test size(noise) == (dim1,)
+        @test size(rand(noise)) == size(noise)
+        @test size(rand(noise, dim2)) == (size(noise)..., dim2)
+        @test size(rand(GaussianNoise(dim1, dim2))) == (dim1, dim2)
 
-        @test logpdf(noise, x) ≈ logpdf(TuringDiagNormal(zeros(d), ones(d)), x)
+        x = test_stat(mean, noise, n_samples, atol * prod(size(noise)))
+        test_stat(var, noise, x, atol * prod(size(noise)))
+
+        @test logpdf(noise, x) ≈ map(xi -> logpdf(Normal(0, 1), xi), x)
     end
 end

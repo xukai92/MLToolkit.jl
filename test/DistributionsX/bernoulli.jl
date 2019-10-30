@@ -1,6 +1,5 @@
 using Test, MLToolkit
 using Distributions: Beta
-import Distributions
 using Statistics: mean
 using StatsFuns: logit, logistic
 using Flux: gpu, use_cuda
@@ -19,7 +18,7 @@ using Flux: gpu, use_cuda
             xs = [rand(b) for _ = 1:n_samples]
             @test mean(xs) ≈ mean(b) atol=atol * d * n
 
-            @test logpdf.(Distributions.Bernoulli.(p), xs[1]) ≈ logpdf(b, xs[1])
+            @test logpdf.(Bernoulli.(p), xs[1]) ≈ logpdf(b, xs[1])
 
             b2 = Bernoulli(rand(d, n) |> gpu)
             kl_mc = mean(logpdf.(b, xs) - logpdf.(b2, xs))
@@ -33,7 +32,7 @@ using Flux: gpu, use_cuda
     #     for _ = 1:n_randtests
     #         p = Matrix{FT}(rand(Beta(1.0, 1.0), 1, 1))
     #
-    #         b = Distributions.Bernoulli(p[1,1])
+    #         b = Bernoulli(p[1,1])
     #         bbl = BatchBernoulliLogit{AT}(logit.(p))
     #
     #         x = rand(b, n)
