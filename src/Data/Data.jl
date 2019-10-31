@@ -39,11 +39,11 @@ struct Dataset{T}
     function Dataset(train::T, test=nothing, validation=nothing; name::String="") where {T}
         for set in (train, test, validation)
             if !isnothing(set)
-                if set isa Tuple
+                if set isa Tuple || set isa NamedTuple
                     # Length consistency
                     @assert reduce(==, map(t -> last(size(t)), set))
                     # Dim consistency
-                    @assert train isa Tuple # if `set` is `Tuple`, `train` must be
+                    @assert typeof(train) == typeof(set) # `set` and `train` must be of the same type
                     @assert length(train) == length(set)
                     for i in 1:length(train)
                         @assert Base.front(size(train[i])) == Base.front(size(set[i]))
@@ -86,10 +86,11 @@ selectdata(data::AbstractArray{<:Any,1}, idx) = data[idx]
 selectdata(data::AbstractArray{<:Any,2}, idx) = data[:,idx]
 selectdata(data::AbstractArray{<:Any,3}, idx) = data[:,:,idx]
 selectdata(data::AbstractArray{<:Any,4}, idx) = data[:,:,:,idx]
-selectdata(data::Tuple, idx) = map(d -> selectdata(d, idx), data)
+selectdata(data::Union{Tuple,NamedTuple}, idx) = map(d -> selectdata(d, idx), data)
 
 ndata(data) = last(size(data))
 ndata(data::Tuple) = last(size(first(data)))
+ndata(data::NamedTuple) = last(size(first(values(data))))
 
 function Base.getproperty(dl::DataLoader, k::Symbol)
     if k in (:train, :test, :validation)
