@@ -13,8 +13,10 @@ end
 
 Base.size(d::UniformNoise) = d.size
 
-mean(d::UniformNoise{T}) where {T} = zeros(T, d.size)
-var(d::UniformNoise{T}) where {T} = ones(T, d.size) / 3
+_mean(d::UniformNoise{T}) where {T} = zeros(T, d.size)
+mean(d::UniformNoise{T,Val{:cpu}}) where {T} = _mean(d)
+_var(d::UniformNoise{T}) where {T} = ones(T, d.size) / 3
+var(d::UniformNoise{T,Val{:cpu}}) where {T} = _var(d)
 
 UniformNoise(T, dim::Int) = UniformNoise(T, :cpu, (dim,))
 UniformNoise(size::Int...) = UniformNoise(Float64, :cpu, size)
@@ -42,8 +44,10 @@ end
 
 Base.size(d::GaussianNoise) = d.size
 
-mean(d::GaussianNoise{T}) where {T} = zeros(T, d.size)
-var(d::GaussianNoise{T}) where {T} = ones(T, d.size)
+_mean(d::GaussianNoise{T}) where {T} = zeros(T, d.size)
+mean(d::GaussianNoise{T,Val{:cpu}}) where {T} = _mean(d)
+_var(d::GaussianNoise{T}) where {T} = ones(T, d.size)
+var(d::GaussianNoise{T,Val{:cpu}}) where {T} = _var(d)
 
 GaussianNoise(T, dim::Int) = GaussianNoise(T, :cpu, (dim,))
 GaussianNoise(size::Int...) = GaussianNoise(Float64, :cpu, size)

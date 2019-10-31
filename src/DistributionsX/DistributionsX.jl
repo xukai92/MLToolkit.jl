@@ -82,7 +82,9 @@ function test_stat(
     atol::AbstractFloat
 )
     dim = length(size(samples))
-    @test dropdims(fstat(samples; dims=dim); dims=dim) ≈ fstat(dist) atol=atol
+    stat_est = dropdims(fstat(samples; dims=dim); dims=dim)
+    stat_exact = fstat(dist)
+    @test stat_est ≈ stat_exact atol=atol
     return samples
 end
 
