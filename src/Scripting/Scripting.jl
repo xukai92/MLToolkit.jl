@@ -66,4 +66,9 @@ export argstring, argstring_flat, process_argdict, DATETIME_FMT, find_latestdir,
 include("check.jl")
 export isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics
 
+# Reexport
+using Logging: with_logger
+using TensorBoardLogger: TBLogger
+export with_logger, TBLogger
+
 end # module

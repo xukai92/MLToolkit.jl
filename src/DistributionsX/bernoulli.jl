@@ -6,7 +6,7 @@ end
 
 Broadcast.broadcastable(b::BatchBernoulli) = Ref(b)
 
-Distributions.Bernoulli(p::AbstractArray) = BatchBernoulli(p)
+Bernoulli(p::AbstractArray) = BatchBernoulli(p)
 
 function logpdf(b::BatchBernoulli, x)
     ϵ = eps(b.p)

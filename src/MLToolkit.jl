@@ -3,7 +3,7 @@ module MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, PGFPlots, Parameters, LinearAlgebra
+import PyCall, PyPlot, Distributions, Reexport, Distributed, Flux, Tracker, PGFPlots, Parameters, LinearAlgebra, Random
 
 ### Constants
 
@@ -23,10 +23,18 @@ export mpl, plt, FloatT
 ### Homeless functions
 
 include("utility.jl")
-export count_leadingzeros, include_list_as_module
 if Flux.use_cuda
     include("gpu.jl")
+    function seed!(s::Int)
+        Random.seed!(s)
+        CuArrays.CURAND.seed!(s)
+    end
+else
+    function seed!(s::Int)
+        Random.seed!
+    end
 end
+export count_leadingzeros, include_list_as_module, seed!
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
@@ -50,6 +58,8 @@ Reexport.@reexport using .Neural
 ### Module init
 
 function __init__()
+    # Do not show figures automatically in IJulia
+    PyPlot.isjulia_display[] = false
     # Bind Python libraries
     copy!(axes_grid1, PyCall.pyimport("mpl_toolkits.axes_grid1"))
     copy!(mpl, PyPlot.matplotlib)

@@ -10,12 +10,9 @@ NeuralSampler(base, f) = NeuralSampler(base, f, 1)
 
 Flux.@functor NeuralSampler
 
-function Distributions.rand(rng::AbstractRNG, g::NeuralSampler, n::Int=g.n_default)
-    z = rand(g.base, n)
-    return g.f(usegpu[] ? gpu(z) : z)
-end
+Distributions.rand(rng::AbstractRNG, g::NeuralSampler, dims::Vararg{Int}=g.n_default) = g.f(rand(g.base, dims...))
 
-Distributions.rand(g::NeuralSampler, n::Int) = rand(GLOBAL_RNG, g, n)
+Distributions.rand(g::NeuralSampler, dims::Vararg{Int}=g.n_default) = rand(GLOBAL_RNG, g, dims...)
 
 ### Discriminator
 

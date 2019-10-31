@@ -30,6 +30,7 @@ randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, r
 
 using Distributions: Distributions, VariateForm, ValueSupport, Discrete, Continuous, Distribution, ContinuousMultivariateDistribution
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, var, mode, minimum, maximum
+import Distributions: Bernoulli
 
 struct Batch <: VariateForm end
 const BatchDistribution{S<:ValueSupport} = Distribution{Batch,S}
