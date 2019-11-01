@@ -27,11 +27,11 @@ if Flux.use_cuda
     include("gpu.jl")
     function seed!(s::Int)
         Random.seed!(s)
-        CuArrays.CURAND.seed!(s)
+        Flux.CuArrays.CURAND.seed!(s)
     end
 else
     function seed!(s::Int)
-        Random.seed!
+        Random.seed!(s)
     end
 end
 export count_leadingzeros, include_list_as_module, seed!

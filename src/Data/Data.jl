@@ -73,12 +73,12 @@ end
 
 ## Data loader
 
-struct DataLoader
+struct DataLoader{T<:Union{Val{false},Val{true}}}
     dataset::Dataset
     batch_size::Int
     batch_size_eval::Int
-    function DataLoader(dataset::Dataset, batch_size::Int, batch_size_eval::Int=batch_size)
-        return new(dataset, batch_size, batch_size_eval)
+    function DataLoader(dataset::Dataset, batch_size::Int, batch_size_eval::Int=batch_size; withidx=false)
+        return new{Val{withidx}}(dataset, batch_size, batch_size_eval)
     end
 end
 
@@ -92,13 +92,16 @@ ndata(data) = last(size(data))
 ndata(data::Tuple) = last(size(first(data)))
 ndata(data::NamedTuple) = last(size(first(values(data))))
 
-function Base.getproperty(dl::DataLoader, k::Symbol)
+makegenerator(::DataLoader{Val{true}}, data, idx_iterator) = ((data=selectdata(data, idx), idx=idx) for idx in idx_iterator)
+makegenerator(::DataLoader{Val{false}}, data, idx_iterator) = (selectdata(data, idx) for idx in idx_iterator)
+
+function Base.getproperty(dl::DataLoader{T}, k::Symbol) where {T}
     if k in (:train, :test, :validation)
         data = getproperty(dl.dataset, k)
         n = ndata(data)
         batch_size = k == :train ? dl.batch_size : dl.batch_size_eval
         idx_iterator = Iterators.partition(MLDataUtils.shuffleobs(1:n), batch_size)
-        return ((data=selectdata(data, idx), idx=idx) for idx in idx_iterator)
+        return makegenerator(dl, data, idx_iterator)
     else
         getfield(dl, k)
     end

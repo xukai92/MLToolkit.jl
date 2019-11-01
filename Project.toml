@@ -6,8 +6,6 @@ version = "0.3.0"
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
-CUDAdrv = "c5f51814-7f29-56b8-a69c-e4d8f6be1fde"
-CUDAnative = "be33ccc6-a3ff-5ff2-a52e-74243cff1e17"
 CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
 CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"

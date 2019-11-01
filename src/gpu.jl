@@ -1,11 +1,11 @@
 using CuArrays
-using CuArrays: @cufunc, CuMatOrAdj, CuOrAdj
+using CuArrays: @cufunc, CuMatOrAdj, CuOrAdj, CUBLAS
 import Tracker
 using Tracker: TrackedArray, @grad, data
 
 ### Base
 
-Base.inv(x::CuMatOrAdj{<:AbstractFloat}) = CuArrays.CUBLAS.matinv_batched([x])[2][1]
+Base.inv(x::CuMatOrAdj{<:AbstractFloat}) = CUBLAS.matinv_batched([x])[2][1]
 
 import Base: \
 
@@ -19,6 +19,14 @@ A::TrackedArray \ B::CuOrAdj      = Tracker.track(\, A, B)
         return (∇A,  AtransposedivΔ)
     end
 end
+
+### Flux
+
+using NNlib: logσ
+import Flux: logitbinarycrossentropy, binarycrossentropy
+
+@cufunc logitbinarycrossentropy(logitŷ, y) = (y - 1) * logitŷ - logσ(logitŷ)
+@cufunc binarycrossentropy(ŷ, y; ϵ=eps(ŷ)) = -y * log(ŷ + ϵ) - (1 - y) * log(1 - ŷ + ϵ)
 
 ### StatsFuns
 
