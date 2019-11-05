@@ -21,7 +21,7 @@ There are helper functions to convert an arguments between these forms.
 - `argdict` -> `argstr_flat` by `argstring_flat`
   - This is called by `process_argdict` to generate `expname` automatically.
 
-These functions provides some keyword arguments for flexibility, e.g. you can exclude some keys when making a flatten argument string for naming. Check the (source code)[https://github.com/xukai92/MLToolkit.jl/blob/master/src/Scripting/args.jl] which should be self-explained. Or the (test file)[https://github.com/xukai92/MLToolkit.jl/blob/master/test/Scripting/args.jl] for more concrete examples.
+These functions provides some keyword arguments for flexibility, e.g. you can exclude some keys when making a flatten argument string for naming. Check the [source code](https://github.com/xukai92/MLToolkit.jl/blob/master/src/Scripting/args.jl) which should be self-explained. Or the [test file](https://github.com/xukai92/MLToolkit.jl/blob/master/test/Scripting/args.jl) for more concrete examples.
 
 I'd like the same code run in Jupyter and as script, however, there usually some statements you'd like to run only in Jupyter or as a script. Here are two helper functions / macros for this purpose.
 
@@ -42,8 +42,8 @@ It basically iterates all combinations of the parameters provided (using `maxasy
 
 #### Other helper functions
 
-You can parse a `.toml` file to `argdict` by `parse_toml`. See (here)[https://github.com/xukai92/MLToolkit.jl/blob/master/test/Scripting/Test.toml] for an example file.
+You can parse a `.toml` file to `argdict` by `parse_toml`. See [here](https://github.com/xukai92/MLToolkit.jl/blob/master/test/Scripting/Test.toml) for an example file.
 
-You can use `find_latestdir` to find a folder with the lastest datatime format (`ddmmyyyy-H-M-S`). This is useful if you save results as `$argstr_flat/$datatime` for resolve clash of multiple runs of the same experiment. See (here)[https://github.com/xukai92/MLToolkit.jl/tree/master/test/Scripting] for an example of folders.
+You can use `find_latestdir` to find a folder with the lastest datatime format (`ddmmyyyy-H-M-S`). This is useful if you save results as `$argstr_flat/$datatime` for resolve clash of multiple runs of the same experiment. See [here](https://github.com/xukai92/MLToolkit.jl/tree/master/test/Scripting) for an example of folders.
 
 You can use `@tb expr` to execute `expr` only if the current logger is a `TBLogger`. The corresponding function `istb` is also available for use.
