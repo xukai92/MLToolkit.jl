@@ -1,5 +1,8 @@
 module MLToolkit
 
+const MLT = MLToolkit
+export MLT
+
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
