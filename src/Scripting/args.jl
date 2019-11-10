@@ -37,7 +37,7 @@ function process_argdict(
         if argdict[k] == v
             @warn "The values for key :$k in `argdict` and `override` are the same ($v)."
         else
-            @info "Overriding :$k - $(argdict[k]) => $v"
+            @info "Overriding :$k as $(argdict[k]) => $v"
         end
         argdict[k] = v
     end

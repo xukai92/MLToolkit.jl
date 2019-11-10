@@ -1,4 +1,4 @@
-optional_BatchNorm(D, σ, isnorm) = isnorm ? BatchNorm(D, σ) : x -> σ.(x)
+optional_BatchNorm(D, σ, isnorm; kwargs...) = isnorm ? BatchNorm(D, σ; kwargs...) : x -> σ.(x)
 
 ### DenseNet
 
@@ -46,6 +46,8 @@ Flux.@functor ConvNet
 function ConvNet(WHCin::Tuple{Int,Int,Int}, Dout::Int, args...; kwargs...)
     if WHCin == (28, 28, 1)
         f = build_convnet_inmnist(Dout, args...; kwargs...)
+    elseif WHCin == (32, 32, 3)
+        f = build_convnet_incifar(Dout, args...; kwargs...)
     else
         throw(ErrorException("Unsupported input and output size for `build_convnet`: WHCin=$WHCin, Dout=$Dout."))
     end
@@ -67,11 +69,11 @@ function build_convnet_inmnist(Dout::Int, σs; isnorm::Bool=false)
     @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_inmnist`"
     return Chain(
         #    28 x 28 x  1 x B
-        Conv((3, 3), 1 => 16,  pad=(1, 1)), optional_BatchNorm(16, σs[1], isnorm), MaxPool((2, 2)),
+        Conv((3, 3),  1 => 16; pad=(1, 1)), optional_BatchNorm(16, σs[1], isnorm), MaxPool((2, 2)),
         # -> 14 x 14 x 16 x B
-        Conv((3, 3), 16 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[2], isnorm), MaxPool((2, 2)),
+        Conv((3, 3), 16 => 32; pad=(1, 1)), optional_BatchNorm(32, σs[2], isnorm), MaxPool((2, 2)),
         # ->  7 x  7 x 32 x B
-        Conv((3, 3), 32 => 32, pad=(1, 1)), optional_BatchNorm(32, σs[3], isnorm), MaxPool((2, 2)),
+        Conv((3, 3), 32 => 32; pad=(1, 1)), optional_BatchNorm(32, σs[3], isnorm), MaxPool((2, 2)),
         # ->  3 x  3 x 32 x B
         x -> reshape(x, :, size(x, 4)),
         # ->  288 x B
@@ -80,16 +82,60 @@ function build_convnet_inmnist(Dout::Int, σs; isnorm::Bool=false)
 end
 
 build_convnet_inmnist(Dout::Int, σ::Function, σlast::Function; kwargs...) = build_convnet_inmnist(Dout, (σ, σ, σ, σlast); kwargs...)
-build_convnet_inmnist(Dout::Int, σ::Function; kwargs...) = build_convnet_inmnist(Dout, σ, σ; kwargs...)
 
-# function build_conv_chain(D_in, D_h, D_out, σ, σ_last)
-#     return Chain(
-#         Dense(D_z, 144, relu),
-#         x -> reshape(x, 3, 3, 16, last(size(x))), # ( 3,  3, 16, 1)
-#         ConvTranspose((3, 3), 16 => 8, relu),     # ( 5,  5,  8, 1)
-#         ConvTranspose((6, 6), 8 => 4, relu),      # (10, 10,  4, 1)
-#         ConvTranspose((8, 8), 4 => 2, relu),      # (17, 17,  2, 1)
-#         ConvTranspose((12, 12), 2 => 1, sigmoid), # (28, 28,  1, 1)
-#         x -> reshape(x, D_x, last(size(x)))
-#     )
-# end
+#  function build_convnet_incifar(Dout::Int, σs; isnorm::Bool=false)
+#      @assert length(σs) == 5 "Length of `σs` must be `5` for `build_convnet_incifar`"
+#      return Chain(
+#          #    32 x 32 x   3 x B
+#          Conv((4, 4),  3 =>  32; stride=(2, 2), pad=(1, 1)), optional_BatchNorm( 32, σs[1], isnorm),
+#          # -> 16 x 16 x  32 x B
+#          Conv((4, 4), 32 =>  64; stride=(2, 2), pad=(1, 1)), optional_BatchNorm( 64, σs[2], isnorm),
+#          # ->  8 x  8 x  64 x B
+#          Conv((4, 4), 64 => 128; stride=(2, 2), pad=(1, 1)), optional_BatchNorm(128, σs[3], isnorm),
+#          # ->  4 x  4 x 128 x B
+#          x -> reshape(x, :, size(x, 4)),
+#          # -> 2048 x B
+#          Dense(2048, 512), optional_BatchNorm(512, σs[4], isnorm),
+#          # ->  512 x B
+#          Dense(512, Dout, σs[5])
+#          # -> Dout x B
+#      )
+#  end
+
+#  function build_convnet_incifar(Dout::Int, σs; isnorm::Bool=false)
+#      @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_incifar`"
+#      return Chain(
+#          #    32 x 32 x   3 x B
+#          Conv((4, 4),  3 =>  32; pad=(1, 1)), optional_BatchNorm( 32, σs[1], isnorm), MaxPool((2, 2)),
+#          # -> 15 x 15 x  32 x B
+#          Conv((4, 4), 32 =>  64; pad=(1, 1)), optional_BatchNorm( 64, σs[2], isnorm), MaxPool((2, 2)),
+#          # ->  7 x  7 x  64 x B
+#          Conv((4, 4), 64 => 128; pad=(1, 1)), optional_BatchNorm(128, σs[3], isnorm), MaxPool((2, 2)),
+#          # ->  3 x  3 x 128 x B
+#          x -> reshape(x, :, size(x, 4)),
+#          # -> 1152 x B
+#          Dense(1152, Dout, σs[4])
+#          # -> Dout x B
+#      )
+#  end
+
+# Akash version
+function build_convnet_incifar(Dout::Int, σs; isnorm::Bool=false)
+    @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_incifar`"
+    return Chain(
+        #    32 x 32 x   3 x B
+        Conv((4, 4),  3 =>  32, σs[1]; stride=(2, 2), pad=(1, 1)), 
+        # -> 16 x 16 x  32 x B
+        Conv((4, 4), 32 =>  64; stride=(2, 2), pad=(1, 1)), optional_BatchNorm( 64, σs[2], isnorm),
+        # ->  8 x  8 x  64 x B
+        Conv((4, 4), 64 => 128; stride=(2, 2), pad=(1, 1)), optional_BatchNorm(128, σs[3], isnorm),
+        # ->  4 x  4 x 128 x B
+        x -> reshape(x, :, size(x, 4)),
+        # -> 2048 x B
+        Dense(2048, Dout, σs[4])
+        # -> Dout x B
+    )
+end
+
+build_convnet_incifar(Dout::Int, σ::Function, σlast::Function; kwargs...) = build_convnet_incifar(Dout, (σ, σ, σ, σlast); kwargs...)
+

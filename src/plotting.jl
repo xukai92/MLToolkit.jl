@@ -75,6 +75,11 @@ function GrayImages(imgs::AbstractMatrix{<:AbstractFloat}, shape::Tuple{Int,Int}
     return GrayImages(imgs)
 end
 
+function GrayImages(imgs::AbstractArray{<:AbstractFloat,4})
+    imgs = dropdims(imgs; dims=3)
+    return GrayImages(imgs)
+end
+
 function plot(gimgs::GrayImages, n_rows::Int, n_cols::Int)
     imggrid = make_imggrid(gimgs, n_rows, n_cols)
     return Axis(Plots.Image(imggrid, (1, size(imggrid, 2)), (1, size(imggrid, 1)); colormap=ColorMaps.GrayMap(invert=false)); axisEqualImage=true)
@@ -96,11 +101,41 @@ function plot!(gimgs::GrayImages, n_rows::Int, n_cols::Int; ax=plt.gca())
     return ax
 end
 
-function plot!(gimgs::GrayImages; ax=plt.gca())
-    n = last(size(gimgs.imgs))
+# TODO: merge GrayImages and RGBImages
+struct RGBImages{T<:AbstractArray{<:AbstractFloat,4}}
+    imgs::T
+end
+
+function make_imggrid(imgs::RGBImages, n_rows, n_cols; gap::Int=1)
+    d_row, d_col, n_channels, n = size(imgs.imgs)
+    @assert n_channels == 3
+    imggrid = 0.5 * ones(n_rows * (d_row + gap) + gap, n_cols * (d_col + gap) + gap, 3)
+    i = 1
+    for row = 1:n_rows, col = 1:n_cols
+        if i <= n
+            i_row = (row - 1) * (d_row + gap) + 1
+            i_col = (col - 1) * (d_col + gap) + 1
+            imggrid[i_row+1:i_row+d_row,i_col+1:i_col+d_col,:] .= imgs.imgs[:,:,:,i]
+        else
+            break
+        end
+        i += 1
+    end
+    return imggrid
+end
+
+function plot!(imgs::RGBImages, n_rows::Int, n_cols::Int; ax=plt.gca())
+    im = ax."imshow"(make_imggrid(imgs, n_rows, n_cols))
+    plt.axis("off")
+    return ax
+end
+
+# Automatic decide the rows and cols based on batch size
+function plot!(imgs::Union{GrayImages, RGBImages}; ax=plt.gca())
+    n = last(size(imgs.imgs))
     n_rows = ceil(Int, sqrt(n))
     n_cols = n_rows * (n_rows - 1) > n ? n_rows - 1 : n_rows
-    return plot!(gimgs, n_rows, n_cols; ax=ax)
+    return plot!(imgs, n_rows, n_cols; ax=ax)
 end
 
 ### Contour

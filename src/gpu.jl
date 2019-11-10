@@ -2,6 +2,7 @@ using CuArrays
 using CuArrays: @cufunc, CuMatOrAdj, CuOrAdj, CUBLAS
 import Tracker
 using Tracker: TrackedArray, @grad, data
+using Flux.Zygote: @adjoint
 
 ### Base
 
@@ -20,6 +21,12 @@ A::TrackedArray \ B::CuOrAdj      = Tracker.track(\, A, B)
     end
 end
 
+@adjoint Base.:\(A::CuMatOrAdj, B::CuOrAdj) = A \ B, function (Δ)
+    AtransposedivΔ = transpose(A) \ Δ
+    ∇A = transpose(A \ B * transpose(-AtransposedivΔ))
+    return (∇A,  AtransposedivΔ)
+end
+
 ### Flux
 
 using NNlib: logσ
@@ -33,7 +40,3 @@ import Flux: logitbinarycrossentropy, binarycrossentropy
 import StatsFuns: logit, logistic, log1pexp, logexpm1
 
 @cufunc logit(x) = log(x / (one(x) - x))
-@cufunc logistic(x) = inv(exp(-x) + one(x))
-@cufunc log1pexp(x) = x < 9  ? log1p(exp(x)) : x < 16  ? x + exp(-x) : x
-@cufunc logexpm1(x) = x <= 9 ? log(expm1(x)) : x <= 16 ? x - exp(-x) : x
-

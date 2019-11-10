@@ -22,15 +22,13 @@ function Flux.Optimise.update!(opt, xs::Tracker.Params, Δs)
     end
 end
 
-using Tracker: losscheck, @interrupts, back!, Grads, tracker, extract_grad!
-
 function Tracker.gradient(f, xs::Tracker.Params; once=true)
     l = f()
-    losscheck(l)
-    @interrupts back!(l; once=once)
-    gs = Grads()
+    Tracker.losscheck(l)
+    Tracker.@interrupts Tracker.back!(l; once=once)
+    gs = Tracker.Grads()
     for x in xs
-        gs[tracker(x)] = extract_grad!(x)
+        gs[Tracker.tracker(x)] = Tracker.extract_grad!(x)
     end
     return gs
 end
@@ -51,6 +49,34 @@ export trackerparams, track
 nparams(m) = sum(prod.(size.(Flux.params(m))))
 
 export nparams
+
+### Zygote extensions
+
+function Flux.Zygote.pullback(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params...)
+    ps = (p1, p2, prest...)
+    n = length(ps)
+    cx = Flux.Zygote.Context()
+    ys, back = Flux.Zygote._pullback(cx, f)
+    @assert length(ys) == n
+    caches = [copy(cx.cache) for i in 1:n]
+    function back_i(Δ, i)
+        cx.cache = caches[i]
+        for pi in ps[i]
+          Flux.Zygote.cache(cx)[pi] = nothing
+        end
+        back(Δ)
+        Flux.Zygote.Grads(cx.cache)
+    end
+    ys, tuple((Δ -> back_i(Δ, i) for i in 1:n)...)
+end
+
+function Flux.Zygote.gradient(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params...)
+    ps = (p1, p2, prest...)
+    ys, backs = Flux.Zygote.pullback(f, ps...)
+    n = length(ys)
+    makes(i) = tuple(map(j -> i == j ? Flux.Zygote.sensitivity(ys[i]) : zero(ys[i]), 1:n)...)
+    return tuple([backs[i](makes(i)) for i in 1:n]...)
+end
 
 ### 
 

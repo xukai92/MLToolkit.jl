@@ -10,6 +10,10 @@ rsimilar(rng::CURAND.RNG, f!, x::CuArray, dims::Int...) = _rsimilar(rng, f!, x, 
 
 rsimilar(::AbstractRNG, f!, x::CuArray, dims::Int...) = _rsimilar(CURAND.generator(), f!, x, dims...)
 
+# Rse bleow if we want rsimilar to be reproducible
+# TODO: add a global switch
+#  rsimilar(rng::AbstractRNG, f, x::CuArray, dims::Int...) = _rsimilar(rng, f, x, dims...) |> cu
+
 ### Noise
 
 _rand_nograd_gpu(rng, d, dims...) = _rand(rng, d, dims...) |> gpu

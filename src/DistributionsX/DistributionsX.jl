@@ -55,7 +55,7 @@ using Tracker, Flux
 
 include("ad.jl")
 
-Flux.use_cuda && include("gpu.jl")
+Flux.use_cuda[] && include("gpu.jl")
 
 for T in [
     GumbelSoftmax,

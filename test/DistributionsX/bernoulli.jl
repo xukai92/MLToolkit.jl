@@ -2,7 +2,7 @@ using Test, MLToolkit
 using Distributions: Beta
 using Statistics: mean
 using StatsFuns: logit, logistic
-using Flux: gpu, use_cuda
+using Flux: gpu
 
 @testset "Bernoulli" begin
     n_randtests = 5

@@ -26,7 +26,7 @@ export mpl, plt, FloatT
 ### Homeless functions
 
 include("utility.jl")
-if Flux.use_cuda
+if Flux.use_cuda[]
     include("gpu.jl")
     function seed!(s::Int)
         Random.seed!(s)
@@ -46,7 +46,7 @@ Reexport.@reexport using .Data
 include("Scripting/Scripting.jl")
 Reexport.@reexport using .Scripting
 include("plotting.jl")
-export TwoYAxesLines, GrayImages, make_imggrid, plot, plot!, save, plot_actmat!, autoset_lim!, ContourFunction
+export TwoYAxesLines, GrayImages, RGBImages, make_imggrid, plot, plot!, save, plot_actmat!, autoset_lim!, ContourFunction
 
 # TODO: merge `distributions` and `DistributionsX`
 include("distributions/distributions.jl")
