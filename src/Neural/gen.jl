@@ -10,7 +10,7 @@ NeuralSampler(base, f) = NeuralSampler(base, f, 1)
 
 Flux.@functor NeuralSampler
 
-Distributions.rand(rng::AbstractRNG, g::NeuralSampler, dims::Vararg{Int}=g.n_default) = g.f(rand(g.base, dims...))
+Distributions.rand(rng::AbstractRNG, g::NeuralSampler, dims::Vararg{Int}=g.n_default) = g.f(rand(rng, g.base, dims...))
 
 Distributions.rand(g::NeuralSampler, dims::Vararg{Int}=g.n_default) = rand(GLOBAL_RNG, g, dims...)
 

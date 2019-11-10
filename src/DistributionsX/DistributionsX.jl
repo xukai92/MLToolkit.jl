@@ -26,6 +26,17 @@ rsimilar(rng, f!, x::AbstractArray, dims::Int...) = _rsimilar(rng, f!, x, dims..
 randsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, rand!, x, dims...)
 randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, randn!, x, dims...)
 
+#  function _rsimilar(rng::AbstractRNG, f::Function, x::AbstractArray, dims::Int...)
+#      u = f(rng, eltype(x), size(x)..., dims...)
+#      return u
+#  end
+
+#  rsimilar(rng, f, x::AbstractArray, dims::Int...) = _rsimilar(rng, f, x, dims...)
+
+#  randsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, rand, x, dims...)
+#  randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, randn, x, dims...)
+
+
 ### Distributions
 
 using Distributions: Distributions, VariateForm, ValueSupport, Discrete, Continuous, Distribution, ContinuousMultivariateDistribution
