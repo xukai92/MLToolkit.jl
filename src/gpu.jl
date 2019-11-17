@@ -30,10 +30,9 @@ end
 ### Flux
 
 using NNlib: logσ
-import Flux: logitbinarycrossentropy, binarycrossentropy
+import Flux: logitbinarycrossentropy
 
 @cufunc logitbinarycrossentropy(logitŷ, y) = (y - 1) * logitŷ - logσ(logitŷ)
-@cufunc binarycrossentropy(ŷ, y; ϵ=eps(ŷ)) = -y * log(ŷ + ϵ) - (1 - y) * log(1 - ŷ + ϵ)
 
 ### StatsFuns
 

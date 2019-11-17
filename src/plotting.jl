@@ -209,6 +209,12 @@ function autoset_lim!(x; ax=plt.gca())
     dim = size(x, 1)
     ax.set_xlim(xlims)
     ax.set_ylim(ylims)
+    if size(x, 1) == 3
+        zlims = [extrema(x[3,:])...]
+        dz = zlims[2] - zlims[1]
+        zlims += [-0.1dz, +0.1dz]
+        ax.set_zlim(zlims)
+    end
 end
 
 # function plot_contour!(f; contourevals=100, alpha=0.3, ax=plt.gca())
