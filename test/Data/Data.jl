@@ -23,7 +23,7 @@ using Test, MLToolkit.Data
             dataset = Dataset(train)
 
             batch_size = 20
-            loader = DataLoader(dataset, batch_size)
+            loader = DataLoader(dataset, batch_size; withidx=true)
             @test length(loader.train) == 5
             x1, y1 = first(loader.train).data
             @test size(x1, 2) == batch_size

@@ -6,17 +6,11 @@ os:
   - linux
 
 julia:
+  - 1.0
   - 1.1
+  - 1.2
+  - 1.3
   - nightly
-
-addons:
-  apt:
-    packages:
-      - python3-matplotlib
-
-env:
-  matrix:
-    - PYTHON=python3
 
 matrix:
   allow_failures:
