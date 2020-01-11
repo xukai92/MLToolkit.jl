@@ -1,11 +1,25 @@
 """
-    get_features_griffiths2011indian()
+Feature dataset.
+"""
+struct FeatureDataset{T<:AbstractFloat} <: ContinuousMultivariateDistribution
+    features::AbstractArray{T}
+end
+
+function Distributions.rand(rng::Random.AbstractRNG, ring::FeatureDataset{T}, n::Int) where {T}
+    n_features = size(features, 2)
+    activation_matrix = rand(n_features, n) .> 0.5
+    return features * activation_matrix
+end
+
+
+"""
+    get_features_griffiths2011()
 
 Generate the same features for the synthesised dataset used in (Griffiths and Ghahramani, 2011).
 
 Ref: http://www.jmlr.org/papers/v12/griffiths11a.html
 """
-function get_features_griffiths2011indian()
+function get_features_griffiths2011()
     features = []
 
     push!(features, vec(Int[0 1 0 0 0 0;
@@ -43,11 +57,13 @@ end
 
 
 """
-    get_features_large()
+    get_features_xu2019()
 
-Generate 35 12x12 features.
+Generate 35 12x12 features, the same features for the synthesised dataset used in (Xu et al., 2019).
+
+Ref: http://proceedings.mlr.press/v97/xu19e.html
 """
-function get_features_large()
+function get_features_xu2019()
 
     features = []
 
@@ -529,5 +545,5 @@ function get_features_large()
                             0 0 0 0 0 0  0 0 0 0 0 0]))
 
     features = hcat(features...)
-    return features[:,[1, 17, 16, 6, 22, 19, 11, 2, 28, 33, 4, 29, 31, 13, 27, 20, 18, 5, 9, 34, 23, 24, 25, 15, 21, 7, 32, 30, 12, 10, 8, 26, 14, 3]]
+    return features[:,[1,17,16,6,22,19,11,2,28,33,4,29,31,13,27,20,18,5,9,34,23,24,25,15,21,7,32,30,12,10,8,26,14,3]]
 end
