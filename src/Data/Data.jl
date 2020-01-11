@@ -2,7 +2,7 @@ module Data
 
 using Random: AbstractRNG
 import Distributions: rand, logpdf
-using Distributions: ContinuousMultivariateDistribution, ContinuousMatrixvariateDistribution, MixtureModel, MvNormal
+using Distributions: ContinuousMultivariateDistribution, MixtureModel, MvNormal
 
 include("ring.jl")
 export RingDataset

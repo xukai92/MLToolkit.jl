@@ -1,8 +1,8 @@
 module Neural
 
-using ..MLToolkit: DataLoader, Reexport
-using Random: AbstractRNG, GLOBAL_RNG
+import ..MLToolkit: Reexport
 Reexport.@reexport using Flux
+using Random: AbstractRNG, GLOBAL_RNG
 
 import Flux, Tracker, Distributions, ProgressMeter, BSON
 
@@ -86,7 +86,7 @@ abstract type Trainable <: AbstractNeuralModel end
 
 function train!(
         model::Trainable, 
-        dataloader::DataLoader, 
+        dataloader, 
         n_epochs::Int=1;
         evalevery::Int=length(dataloader.train),
         cbeval::Function=function cbeval()
