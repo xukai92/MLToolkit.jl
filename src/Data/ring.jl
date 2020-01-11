@@ -5,7 +5,7 @@ struct RingDataset{T<:AbstractFloat} <: ContinuousMultivariateDistribution
     mixturemodel
 end
 
-function RingDataset(n_clusters::Int, s::Int, σ::T) where {T<:AbstractFloat}
+function RingDataset(n_clusters::Int, s::T, σ::T) where {T<:AbstractFloat}
     π_typed = convert(T, π)
     cluster_indices = collect(0:n_clusters-1)
     base_angle = π_typed * 2 / n_clusters
