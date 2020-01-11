@@ -1,7 +1,7 @@
 """
 Feature dataset.
 """
-struct FeatureDataset{T<:AbstractFloat} <: ContinuousMultivariateDistribution
+struct FeatureDataset{T} <: ContinuousMultivariateDistribution
     features::Matrix{T}
 end
 
