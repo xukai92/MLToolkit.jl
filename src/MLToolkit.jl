@@ -35,7 +35,7 @@ include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("Data/Data.jl")
-Reexport.@reexport using .Dataset
+Reexport.@reexport using .Datasets
 include("Scripting/Scripting.jl")
 Reexport.@reexport using .Scripting
 
