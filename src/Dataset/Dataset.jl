@@ -1,4 +1,4 @@
-module Data
+module Dataset
 
 using Random: AbstractRNG
 import Distributions: rand, logpdf
