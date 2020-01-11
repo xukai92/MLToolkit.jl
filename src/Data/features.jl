@@ -5,10 +5,10 @@ struct FeatureDataset{T} <: ContinuousMultivariateDistribution
     features::Matrix{T}
 end
 
-function rand(rng::AbstractRNG, ring::FeatureDataset{T}, n::Int) where {T}
-    n_features = size(features, 2)
+function rand(rng::AbstractRNG, dataset::FeatureDataset{T}, n::Int) where {T}
+    n_features = size(dataset.features, 2)
     activation_matrix = rand(n_features, n) .> 0.5
-    return features * activation_matrix
+    return dataset.features * activation_matrix
 end
 
 

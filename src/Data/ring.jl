@@ -14,6 +14,6 @@ function RingDataset(n_clusters::Int, s::T, σ::T) where {T<:AbstractFloat}
     return RingDataset{T}(MixtureModel([MvNormal(μ[:,i], σ) for i in 1:size(μ, 2)]))
 end
 
-rand(rng::AbstractRNG, ring::RingDataset{T}, n::Int) where {T} = convert.(T, rand(rng, ring.mixturemodel, n))
+rand(rng::AbstractRNG, dataset::RingDataset{T}, n::Int) where {T} = convert.(T, rand(rng, dataset.mixturemodel, n))
 
-logpdf(ring::RingDataset, x::AbstractArray{<:AbstractFloat,2}) = logpdf(ring.mixturemodel, x)
+logpdf(dataset::RingDataset, x::AbstractArray{<:AbstractFloat,2}) = logpdf(dataset.mixturemodel, x)
