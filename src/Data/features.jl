@@ -2,7 +2,7 @@
 Feature dataset.
 """
 struct FeatureDataset{T<:AbstractFloat} <: ContinuousMultivariateDistribution
-    features::AbstractArray{T}
+    features::Matrix{T}
 end
 
 function rand(rng::AbstractRNG, ring::FeatureDataset{T}, n::Int) where {T}
