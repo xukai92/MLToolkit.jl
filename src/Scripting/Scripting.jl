@@ -8,7 +8,7 @@ function Base.reduce(op::Function, ts::Union{AbstractVector{T}, Tuple{Vararg{T}}
 end
 
 """
-    sweepcmd(template, sweeps)
+    sweepcmd(template, sweeps::Pair...)
 
 Generate a list of commands given a command template and sweep mappings.
 
@@ -36,7 +36,7 @@ function sweepcmd(template, sweeps::Pair...)
 end
 
 """
-    sweepcmd(template, sweeps)
+    sweeprun(template, sweeps::Pair...; maxasync=0)
 
 Run a list of commands given a command template and sweep mappings.
 
@@ -64,11 +64,6 @@ include("args.jl")
 export argstring, argstring_flat, process_argdict, DATETIME_FMT, find_latestdir, parse_toml, parse_argstr
 
 include("check.jl")
-export isjupyter, istb, @jupyter, @script, @tb, checknumerics, @checknumerics
-
-# Reexport
-using Logging: with_logger
-using TensorBoardLogger: TBLogger
-export with_logger, TBLogger
+export @jupyter, @script, @tb, @wb, @checknumerics
 
 end # module

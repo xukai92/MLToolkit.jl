@@ -1,4 +1,4 @@
-using Test, MLToolkit
+using Test, MLToolkit.Scripting
 
 @testset "Scripting" begin
     @testset "Dict <-> NamedTuple" begin
@@ -42,5 +42,22 @@ using Test, MLToolkit
 
     include("args.jl")
     
-    include("check.jl")
+    @testset "Scripting.check" begin
+        x = 1
+        
+        @test @jupyter(:(x + 1), default=3) == 2
+        @test @script(:(x + 1), default=3) == 3
+        @test @tb(:(x + 1), default=3) == 2
+        @test @wb(:(x + 1), default=3) == 2
+        
+        vc = [1 Inf 3; NaN 5 6]
+        vm1 = [1 2 3; 3 4 5]
+        vm2 = [11 22 33; 44 55 66]
+
+        check_strs = Scripting.checknumerics_strs(vc, vm1, vm2; vcheckname="vc", vmonitornames=["vm1", "vm2"])
+        @test check_strs[1] == "vc[2,1] = NaN\n  vm1[2,1] = 3\n  vm2[2,1] = 44"
+        @test check_strs[2] == "vc[1,2] = Inf\n  vm1[1,2] = 2\n  vm2[1,2] = 22"
+
+        @warn "`@checknumerics` is not tested."
+    end
 end
