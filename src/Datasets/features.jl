@@ -1,16 +1,3 @@
-"""
-Feature dataset.
-"""
-struct FeatureDataset{T} <: ContinuousMultivariateDistribution
-    features::Matrix{T}
-end
-
-function rand(rng::AbstractRNG, dataset::FeatureDataset{T}, n::Int) where {T}
-    n_features = size(dataset.features, 2)
-    activation_matrix = rand(n_features, n) .> 0.5
-    return dataset.features * activation_matrix
-end
-
 
 """
     get_features_griffiths2011()
