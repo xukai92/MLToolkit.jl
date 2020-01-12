@@ -5,7 +5,7 @@ using MLToolkit: include_list_as_module
     tests = [
         "Plots/Plots.jl",    
         "Neural/Neural.jl",
-        "Datasets/Datasets.jl",
+        # "Datasets/Datasets.jl",
         "Scripting/Scripting.jl",
         "MonteCarlo/MonteCarlo.jl",
         # "distributions/distributions.jl",

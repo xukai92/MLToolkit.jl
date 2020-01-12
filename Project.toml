@@ -42,9 +42,10 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 ZygoteRules = "700de1a5-db45-46bc-99cf-38207098b444"
 
 [extras]
-FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+MLDatasets = "eb30cadb-4394-5ae3-aed4-317e484a6458"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
 
 [targets]
-test = ["Test", "LaTeXStrings", "FiniteDifferences"]
+test = ["Test", "MLDatasets", "LaTeXStrings", "FiniteDifferences"]
