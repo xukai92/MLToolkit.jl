@@ -2,7 +2,7 @@ module Plots
 
 using PyCall: PyNULL, pyimport
 using PyPlot: isjulia_display, matplotlib
-using Parameters: @with_kw, @unpack
+using Parameters: @unpack
 
 # Pre-allocate Python bindings
 const mpl         = PyNULL()    # Matplotlib
@@ -14,16 +14,18 @@ const tikzplotlib = PyNULL()    # Tikzplotlib
 export mpl, plt
 
 function __init__()
-    # Do not show figures automatically in IJulia
-    isjulia_display[] = false
     # Bind Python libraries
     copy!(tikzplotlib, pyimport("tikzplotlib"))
     copy!(axes_grid1, pyimport("mpl_toolkits.axes_grid1"))
     copy!(mpl, matplotlib)
     copy!(plt, mpl.pyplot)
     copy!(backend_agg, mpl.backends.backend_agg)
+
     # Ensure not using Type 3 fonts
     plt.rc("pdf", fonttype=42)
+
+    # Do not show figures automatically in IJulia
+    isjulia_display[] = false
 end
 
 ### APIs
@@ -50,41 +52,72 @@ plot!(ax, p)
 ```
 """
 plot!(ax, p::AbstractPlot) = throw(MethodError(plot!, p))
-plot!(p::AbstractPlot) = plot!(plt.gca(), p)
+plot!(p::AbstractPlot; kwargs...) = plot!(plt.gca(), p; kwargs...)
 
 """
-    get_tikz_code(p::AbstractPlot)
+    get_tikz_code([fig], p::AbstractPlot; kwargs...)
 
 Usage:
 ```julia
-code = get_tikz_code(p)
+fig = plot(p)
+code = get_tikz_code(fig, p)
 ```
 """
-get_tikz_code(p::AbstractPlot) = tikzplotlib.get_tikz_code(plot(p))
+get_tikz_code(fig, p::AbstractPlot; kwargs...) = tikzplotlib.get_tikz_code(plot(p); kwargs...)
+get_tikz_code(p::AbstractPlot; kwargs...) = get_tikz_code(plt.gcf(), p; kwargs...)
 
-export plot, plot!, get_tikz_code
+"""
+    savefig([fig], p::AbstractPlot, fname::String)
+
+Usage:
+```julia
+fig = plot(p)
+savefig(fig, p)
+```
+"""
+function savefig(fig, p::AbstractPlot, fname::String; kwargs...)
+    name, ext = split(fname, ".")
+    if ext == "tex"
+        open(fname, "w") do io
+            write(io, get_tikz_code(fig, p; kwargs...))
+        end
+    else
+        fig.savefig(fname; kwargs...)
+    end
+end
+savefig(p::AbstractPlot; kwargs...) = savefig(plt.gcf(), p; kwargs...)
+
+export plot, plot!, get_tikz_code, savefig
 
 ### Ultilies
 
-function autoset_lim!(x; ax=plt.gca())
+function autoget_lims(x)
     xlims = [extrema(x[1,:])...]
     dx = xlims[2] - xlims[1]
     xlims += [-0.1dx, +0.1dx]
     ylims = [extrema(x[2,:])...]
     dy = ylims[2] - ylims[1]
     ylims += [-0.1dy, +0.1dy]
-    dim = size(x, 1)
-    ax.set_xlim(xlims)
-    ax.set_ylim(ylims)
     if size(x, 1) == 3
         zlims = [extrema(x[3,:])...]
         dz = zlims[2] - zlims[1]
         zlims += [-0.1dz, +0.1dz]
-        ax.set_zlim(zlims)
+    else
+        zlims = nothing
     end
+    return xlims, ylims, zlims
 end
 
-export autoset_lim!
+function autoset_lims!(ax, x)
+    dim = size(x, 1)
+    xlims, ylims, zlims = autoget_lims(x)
+    ax.set_xlim(xlims)
+    ax.set_ylim(ylims)
+    !isnothing(zlims) && ax.set_zlim(zlims)
+end
+autoset_lims!(x) = autoset_lims!(plt.gca(), x)
+
+export autoget_lims, autoset_lims!
 
 ### Plots
 

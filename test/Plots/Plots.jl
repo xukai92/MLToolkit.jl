@@ -17,35 +17,30 @@ using MLToolkit.Plots
     )
 end
 
-const is_testsaveimage = "--testsaveimage" in ARGS
-
 @testset "plot and save" begin
-    # Line
+    # Two axes lines
     x = collect(1:0.1:10)
     y1 = sin.(x)
     y2 = x .^ 2
 
-    p = plot(TwoYAxesLines(x=x, y1=y1, y2=y2, xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2"))
+    p = TwoYAxesLines(x, y1, y2)
+    fig = plot(p, "--"; xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2")
 
-    save("test_two_y_axes_lines.tex", p, include_preamble=false)
-    is_testsaveimage && save("test_two_y_axes_lines.pdf", p)
+    savefig(fig, p, "test.tex")
+    savefig(fig, p, "test.png"; bbox_inches="tight")
 
-    # Image
-    imgs = GrayImages(rand(16, 16, 10))
+    # # Images
+    # imgs = GrayImages(rand(16, 16, 10))
 
-    plt.figure()
-    plot!(imgs)
+    # plt.figure()
+    # plot!(imgs)
 
-    is_testsaveimage && plt.savefig("test_gray_images.pdf", bbox_inches="tight")
+    # plt.savefig("test_gray_images.pdf", bbox_inches="tight")
 
-    # p = plot(imgs)
 
-    # save("test_gray_images.tex", p, include_preamble=false)
-    # save("test_gray_images.pdf", p)
+    # # Two-dimensional density
+    # p = plot(MvNormal(zeros(2), 1), (-3, 3), (-3, 3))
 
-    # Two-dimensional density
-    p = plot(MvNormal(zeros(2), 1), (-3, 3), (-3, 3))
-
-    save("test_contour_data.tex", p, include_preamble=false)
-    is_testsaveimage && save("test_contour_data.pdf", p)
+    # save("test_contour_data.tex", p, include_preamble=false)
+    # save("test_contour_data.pdf", p)
 end
