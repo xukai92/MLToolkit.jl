@@ -6,7 +6,7 @@ export MLT
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 # Package level imports all go here
-import Distributions, Reexport, Distributed, Flux, Tracker, Parameters, LinearAlgebra, Random
+import Distributions, Reexport, Flux, Tracker, Parameters, LinearAlgebra, Random
 
 ### Constants
 
@@ -18,7 +18,6 @@ export FloatT
 
 ### Homeless functions
 
-include("utility.jl")
 if Flux.use_cuda[]
     include("gpu.jl")
     function seed!(s::Int)
@@ -30,7 +29,8 @@ else
         Random.seed!(s)
     end
 end
-export count_leadingzeros, include_list_as_module, seed!
+export seed!
+
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp

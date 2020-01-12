@@ -1,12 +1,10 @@
-using Test
-using MLToolkit: include_list_as_module
+using Test, MLToolkit.Neural
 
 @testset "Neural" begin
     tests = [
         "architecture.jl",
     ]
-
-    include_list_as_module(tests, "TestNeural")
+    foreach(include, tests)
 
     @warn "`Neural.jl` is not tested."
 

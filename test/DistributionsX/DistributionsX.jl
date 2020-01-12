@@ -1,5 +1,4 @@
-using Test
-using MLToolkit: include_list_as_module
+using Test, MLToolkit.DistributionsX
 
 @testset "DistributionsX" begin
     tests = [
@@ -12,8 +11,7 @@ using MLToolkit: include_list_as_module
         # "beta.jl",
         # "npd.jl",
     ]
-
-    include_list_as_module(tests, "TestDistributionsX")
+    foreach(include, tests)
 
     @warn "`DistributionsX.jl` is not tested."
 end

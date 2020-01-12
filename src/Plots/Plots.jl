@@ -47,7 +47,7 @@ function plot(p::AbstractPlot, args...; figsize=nothing, kwargs...)
 end
 
 """
-    plot!([ax=plt.gca()], p::AbstractPlot)
+    plot!([ax=plt.gca()], p::AbstractPlot, args...; kwargs...)
 
 Usage:
 ```julia
@@ -55,8 +55,8 @@ fig, ax = plt.subplots()
 plot!(ax, p)
 ```
 """
-plot!(ax, p::AbstractPlot) = throw(MethodError(plot!, p))
 plot!(p::AbstractPlot, args...; kwargs...) = plot!(plt.gca(), p, args...; kwargs...)
+plot!(ax, p::AbstractPlot) = throw(MethodError(plot!, p))
 
 """
     get_tikz_code([fig], p::AbstractPlot; kwargs...)
@@ -71,22 +71,23 @@ get_tikz_code(fig, p::AbstractPlot; kwargs...) = tikzplotlib.get_tikz_code(plot(
 get_tikz_code(p::AbstractPlot; kwargs...) = get_tikz_code(plt.gcf(), p; kwargs...)
 
 """
-    savefig([fig], p::AbstractPlot, fname::String; kwargs...)
+    savefig([fig], p::AbstractPlot, fname::String; bbox_inches="tight", kwargs...)
 
 Usage:
 ```julia
 fig = plot(p)
-savefig(fig, p)
+savefig(fig, p, "fig.png)
+savefig(fig, p, "fig.tex)
 ```
 """
-function savefig(fig, p::AbstractPlot, fname::String; kwargs...)
+function savefig(fig, p::AbstractPlot, fname::String; bbox_inches="tight", kwargs...)
     ext = last(split(fname, "."))
     if ext == "tex"
         open(fname, "w") do io
             write(io, get_tikz_code(fig, p; kwargs...))
         end
     else
-        fig.savefig(fname; kwargs...)
+        fig.savefig(fname; bbox_inches=bbox_inches, kwargs...)
     end
 end
 savefig(p::AbstractPlot; kwargs...) = savefig(plt.gcf(), p; kwargs...)

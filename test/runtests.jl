@@ -1,9 +1,8 @@
-using Test
-using MLToolkit: include_list_as_module
+using Test, Distributed
 
 @testset "Tests" begin
     tests = [
-        "Plots/Plots.jl",    
+        "Plots/Plots.jl",
         "Neural/Neural.jl",
         # "Datasets/Datasets.jl",
         "Scripting/Scripting.jl",
@@ -14,5 +13,10 @@ using MLToolkit: include_list_as_module
         "transformations.jl",
     ]
 
-    include_list_as_module(tests, "Test")
+    pmap(tests) do t
+        @eval module $(Symbol("Test", t))
+            include($t)
+        end
+        return
+    end
 end

@@ -38,7 +38,7 @@ end
 
 @testset "Plots" begin
     function test_savefig(fig, p, fname)
-        savefig(fig, p, joinpath(@__DIR__, "$fname.png"); bbox_inches="tight")
+        savefig(fig, p, joinpath(@__DIR__, "$fname.png"))
         savefig(fig, p, joinpath(@__DIR__, "$fname.tex"))
     end
     

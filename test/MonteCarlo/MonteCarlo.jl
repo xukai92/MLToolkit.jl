@@ -1,13 +1,10 @@
-using Test
-using MLToolkit.MonteCarlo
-using MLToolkit: include_list_as_module
+using Test, MLToolkit.MonteCarlo
 
 @testset "Monte Carlo" begin
     tests = [
         "russian_roulette.jl",
     ]
-
-    include_list_as_module(tests, "TestMonteCarlo")
+    foreach(include, tests)
 
     @testset "estimator_stats" begin
         n_mc = 10_000
