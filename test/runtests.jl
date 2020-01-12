@@ -3,13 +3,14 @@ using MLToolkit: include_list_as_module
 
 @testset "Tests" begin
     tests = [
-        "Data/Data.jl",
+        "Plots/Plots.jl",    
         "Neural/Neural.jl",
-        "utility.jl",
-        # "special.jl",
+        "Datasets/Datasets.jl",
         "Scripting/Scripting.jl",
         "MonteCarlo/MonteCarlo.jl",
         # "distributions/distributions.jl",
+        "utility.jl",
+        # "special.jl",
         "transformations.jl",
     ]
 

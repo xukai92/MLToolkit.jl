@@ -34,8 +34,10 @@ export count_leadingzeros, include_list_as_module, seed!
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
-include("Data/Data.jl")
+include("Datasets/Datasets.jl")
 Reexport.@reexport using .Datasets
+include("Plots/Plots.jl")
+Reexport.@reexport using .Plots
 include("Scripting/Scripting.jl")
 Reexport.@reexport using .Scripting
 
