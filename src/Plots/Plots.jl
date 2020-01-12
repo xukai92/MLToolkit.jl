@@ -22,7 +22,7 @@ function __init__()
     copy!(backend_agg, mpl.backends.backend_agg)
 
     # Ensure not using Type 3 fonts
-    plt.rc("pdf", fonttype=42)
+    plt.rc("pdf"; fonttype=42)
 
     # Do not show figures automatically in IJulia
     isjulia_display[] = false
@@ -40,8 +40,8 @@ Usage:
 fig = plot(p)
 ```
 """
-function plot(p::AbstractPlot, args...; kwargs...)
-    fig, ax = plt.subplots()
+function plot(p::AbstractPlot, args...; figsize=nothing, kwargs...)
+    fig, ax = plt.subplots(; figsize=figsize)
     plot!(ax, p, args...; kwargs...)
     return fig
 end
@@ -147,22 +147,23 @@ function make_imggrid(img::AbstractArray{<:Number,4}, n_rows, n_cols; gap::Int=1
     return imggrid
 end
 
-function make_imggrid(img::AbstractArray{<:Number,3}, n_rows, n_cols; gap::Int=1)
+function make_imggrid(img::AbstractArray{<:Number,3}, args...; kwargs...)
     w, h, n = size(img)
-    return make_imggrid(reshape(img, w, h, 1, n), n_rows, n_cols; gap=gap)
+    img = reshape(img, w, h, 1, n)
+    return make_imggrid(img, args...; kwargs...)
 end
 
 """
-    make_imggrid(img; gap::Int=1)
+    make_imggrid(img; kwargs...)
 
 Create an approximately squared image grid based on the number of images.
 For example, if last(size(img)) is 100, the grid will be 10 by 10.
 """
-function make_imggrid(img; gap::Int=1)
+function make_imggrid(img; kwargs...)
     n = last(size(img))
     n_rows = ceil(Int, sqrt(n))
     n_cols = n_rows * (n_rows - 1) > n ? n_rows - 1 : n_rows
-    return make_imggrid(img, n_rows, n_cols; gap=gap)
+    return make_imggrid(img, n_rows, n_cols; kwargs...)
 end
 
 export autoget_lims, autoset_lims!, make_imggrid
@@ -171,18 +172,8 @@ export autoget_lims, autoset_lims!, make_imggrid
 
 include("line.jl")
 include("image.jl")
-# include("contour.jl")
+include("contour.jl")
 
-function plot_actmat!(Z::Matrix; ax=plt.gca())
-    # TODO: implement a sorting version
-    # col_sort_idcs = sortperm(vec([count_leadingzeros(Z[:,k]) for k = 1:size(Z, 2)]))
-    # Z = Z[:,col_sort_idcs]
-    ax."imshow"(Z, cmap="Greys", interpolation="nearest", vmin=0.0, vmax=1.0)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    return ax
-end
-
-export TwoYAxesLines, ImageGrid, ContourFunction, plot_actmat!
+export TwoYAxesLines, ImageGrid, TwoDimContour, FeatureActivation
 
 end # module

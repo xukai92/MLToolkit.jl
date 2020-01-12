@@ -1,5 +1,4 @@
-using Test, LaTeXStrings, MLDatasets, Distributions
-using MLToolkit.Plots
+using Test, MLToolkit.Plots
 
 @testset "Utilites" begin
     @testset "autoget_lims" begin
@@ -35,6 +34,8 @@ end
 
 @testset "Plots" begin
     @testset "TwoYAxesLines" begin
+        using LaTeXStrings
+
         x = collect(1:0.5:10)
         y1 = sin.(x)
         y2 = x .^ 2
@@ -47,6 +48,8 @@ end
     end
 
     @testset "ImageGrid" begin
+        using MLDatasets
+
         for (dataset, x) in [
             ("mnist", reshape(permutedims(MNIST.traintensor(Float32, 1:100), (2, 1, 3)), 784, :)),
             ("cifar10", permutedims(CIFAR10.traintensor(Float32, 1:100), (2, 1, 3, 4))),
@@ -59,9 +62,13 @@ end
         end
     end
 
-    # # Two-dimensional density
-    # p = plot(MvNormal(zeros(2), 1), (-3, 3), (-3, 3))
+    @testset "TwoDimContour" begin
+        using Distributions
 
-    # save("test_contour_data.tex", p, include_preamble=false)
-    # save("test_contour_data.pdf", p)
+        p = TwoDimContour(MvNormal(zeros(2), 1))
+        fig = plot(p, (-3, 3), (-3, 3); figsize=(5, 5))
+
+        savefig(fig, p, joinpath(@__DIR__, "two_dim_contour.tex"))
+        savefig(fig, p, joinpath(@__DIR__, "two_dim_contour.png"); bbox_inches="tight")
+    end
 end

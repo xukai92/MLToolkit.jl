@@ -19,14 +19,14 @@ function plot(
 )
     @unpack x, y1, y2 = lines
     fig, ax1 = plt.subplots()
-    ax1.plot(x, y1, fmt, c=colour1, kwargs...)
+    ax1.plot(x, y1, fmt; c=colour1, kwargs...)
     xlabel == nothing || ax1.set_xlabel(xlabel)
-    ylabel1 == nothing || ax1.set_ylabel(ylabel1, color=colour1)
-    ax1.tick_params(axis="y", labelcolor=colour1)
+    ylabel1 == nothing || ax1.set_ylabel(ylabel1; color=colour1)
+    ax1.tick_params(axis="y"; labelcolor=colour1)
     ax2 = ax1.twinx()
     ax2.plot(x, y2, fmt, c=colour2, kwargs...)
-    ylabel2 == nothing || ax2.set_ylabel(ylabel2, color=colour2, rotation="-90")
-    ax2.tick_params(axis="y", labelcolor=colour2)
+    ylabel2 == nothing || ax2.set_ylabel(ylabel2; color=colour2, rotation="-90")
+    ax2.tick_params(axis="y"; labelcolor=colour2)
     fig.tight_layout()
     return fig
 end
