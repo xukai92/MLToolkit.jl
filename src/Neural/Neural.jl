@@ -1,8 +1,7 @@
 module Neural
 
-import ..MLToolkit: Reexport
-Reexport.@reexport using Flux
 using Random: AbstractRNG, GLOBAL_RNG
+using Flux
 
 import Flux, Tracker, Distributions, ProgressMeter, BSON
 
