@@ -2,8 +2,6 @@ using Test, MLToolkit
 using ArgParse: ArgParseSettings, @add_arg_table
 
 @testset "Scripting.args" begin
-    FILEDIR = first(splitdir(@__FILE__))
-
     argdict = Dict(:a => 1, :b => "two", :d => NaN, :c => true)
 
     @testset "argstring" begin
@@ -11,8 +9,7 @@ using ArgParse: ArgParseSettings, @add_arg_table
     end
 
     @testset "argstring_flat" begin
-        for delimiter in ["-", ","],
-            eqsym in ["-", "="]
+        for delimiter in ["-", ","], eqsym in ["-", "="]
             argstr_flat = argstring_flat(argdict; exclude=[:d], delimiter=delimiter, eqsym=eqsym)
             @test argstr_flat == "a$(eqsym)1$(delimiter)b$(eqsym)two$(delimiter)c$(eqsym)true"
         end
@@ -51,11 +48,11 @@ using ArgParse: ArgParseSettings, @add_arg_table
 
     @testset "find_latestdir" begin
         @test DATETIME_FMT == "ddmmyyyy-H-M-S"
-        @test find_latestdir(FILEDIR) == "20051994-12-34-56"
+        @test find_latestdir(@__DIR__) == "20051994-12-34-56"
     end
 
     @testset "parse_toml" begin
-        tomlpath = FILEDIR * "/Test.toml"
+        tomlpath = joinpath(@__DIR__, "Test.toml")
 
         argdict = parse_toml(tomlpath, (:level1 => "a1", :level2 => "b1",))
         @test argdict[:f1] == 1
