@@ -2,15 +2,19 @@ using Test, Distributed
 
 @testset "Tests" begin
     tests = [
+        # Cleaned
         "Plots/Plots.jl",
-        "Neural/Neural.jl",
-        # "Datasets/Datasets.jl",
+        "Datasets/Datasets.jl",
         "Scripting/Scripting.jl",
+        # To clean
+        "Neural/Neural.jl",
         "MonteCarlo/MonteCarlo.jl",
-        # "distributions/distributions.jl",
         "utility.jl",
         # "special.jl",
         "transformations.jl",
+        # Deprecated
+        # "distributions/distributions.jl",
+        # "neural/neural.jl",
     ]
 
     pmap(tests) do t
