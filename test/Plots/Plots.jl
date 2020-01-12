@@ -35,15 +35,15 @@ end
 
 @testset "Plots" begin
     @testset "TwoYAxesLines" begin
-        x = collect(1:0.1:10)
+        x = collect(1:0.5:10)
         y1 = sin.(x)
         y2 = x .^ 2
-
+        
         p = TwoYAxesLines(x, y1, y2)
-        fig = plot(p, "--"; xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2")
+        fig = plot(p, "--o"; xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2")
 
-        savefig(fig, p, "two_y_axes_lines.tex")
-        savefig(fig, p, "tetwo_y_axes_lines.png"; bbox_inches="tight")
+        savefig(fig, p, joinpath(@__DIR__, "two_y_axes_lines.tex"))
+        savefig(fig, p, joinpath(@__DIR__, "tetwo_y_axes_lines.png"); bbox_inches="tight")
     end
 
     @testset "ImageGrid" begin
@@ -54,8 +54,8 @@ end
             p = ImageGrid(x)
             fig = plot(p)
 
-            savefig(fig, p, "imagegrid_$dataset.tex")
-            savefig(fig, p, "imagegrid_$dataset.png"; bbox_inches="tight")
+            savefig(fig, p, joinpath(@__DIR__, "imagegrid_$dataset.tex"))
+            savefig(fig, p, joinpath(@__DIR__, "imagegrid_$dataset.png"); bbox_inches="tight")
         end
     end
 

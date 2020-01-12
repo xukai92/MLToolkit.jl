@@ -80,7 +80,7 @@ savefig(fig, p)
 ```
 """
 function savefig(fig, p::AbstractPlot, fname::String; kwargs...)
-    name, ext = split(fname, ".")
+    ext = last(split(fname, "."))
     if ext == "tex"
         open(fname, "w") do io
             write(io, get_tikz_code(fig, p; kwargs...))
