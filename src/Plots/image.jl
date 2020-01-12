@@ -24,7 +24,7 @@ end
 function plot!(ax, p::ImageGrid, args::Int...; kwargs...)
     imggrid = make_imggrid(p.img, args...; kwargs...)
     if length(size(imggrid)) == 2
-        im = ax.imshow(imggrid; cmap="gray", vmin=0.0, vmax=1.0))
+        im = ax.imshow(imggrid; cmap="gray", vmin=0.0, vmax=1.0)
         divider = axes_grid1.make_axes_locatable(ax)
         cax = divider.append_axes("bottom"; size="5%", pad=0.05)
         plt.colorbar(im; cax=cax, orientation="horizontal")
