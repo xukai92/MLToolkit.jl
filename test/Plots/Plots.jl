@@ -1,4 +1,4 @@
-using Test, MLToolkit.Plots
+using Test, MLToolkit.Plots, LaTeXStrings
 
 @testset "Utilites" begin
     @testset "autoget_lims" begin
@@ -30,12 +30,19 @@ using Test, MLToolkit.Plots
             n_cols * d + gap * (n_cols + 1)
         )
     end
+
+    @testset "count_leadingzeros" begin
+        @test count_leadingzeros([0, 0, 1]) == 2
+    end
 end
 
 @testset "Plots" begin
+    function test_savefig(fig, p, fname)
+        savefig(fig, p, joinpath(@__DIR__, "$fname.png"); bbox_inches="tight")
+        savefig(fig, p, joinpath(@__DIR__, "$fname.tex"))
+    end
+    
     @testset "TwoYAxesLines" begin
-        using LaTeXStrings
-
         x = collect(1:0.5:10)
         y1 = sin.(x)
         y2 = x .^ 2
@@ -43,8 +50,7 @@ end
         p = TwoYAxesLines(x, y1, y2)
         fig = plot(p, "--o"; xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2")
 
-        savefig(fig, p, joinpath(@__DIR__, "two_y_axes_lines.tex"))
-        savefig(fig, p, joinpath(@__DIR__, "tetwo_y_axes_lines.png"); bbox_inches="tight")
+        test_savefig(fig, p, "TwoYAxesLines")
     end
 
     @testset "ImageGrid" begin
@@ -57,8 +63,7 @@ end
             p = ImageGrid(x)
             fig = plot(p)
 
-            savefig(fig, p, joinpath(@__DIR__, "imagegrid_$dataset.tex"))
-            savefig(fig, p, joinpath(@__DIR__, "imagegrid_$dataset.png"); bbox_inches="tight")
+            test_savefig(fig, p, "ImageGrid_$dataset")
         end
     end
 
@@ -68,7 +73,15 @@ end
         p = TwoDimContour(MvNormal(zeros(2), 1))
         fig = plot(p, (-3, 3), (-3, 3); figsize=(5, 5))
 
-        savefig(fig, p, joinpath(@__DIR__, "two_dim_contour.tex"))
-        savefig(fig, p, joinpath(@__DIR__, "two_dim_contour.png"); bbox_inches="tight")
+        test_savefig(fig, p, "TwoDimContour")
+    end
+
+    @testset "FeatureActivations" begin
+        Z = rand(Bool, 20, 50)
+
+        p = FeatureActivations(Z)
+        fig = plot(p)
+        
+        test_savefig(fig, p, "FeatureActivations")
     end
 end

@@ -36,15 +36,25 @@ function plot!(ax, p::ImageGrid, args::Int...; kwargs...)
     return ax
 end
 
-struct FeatureActivation <: AbstractPlot
+"""
+A plot of feature activations.
+"""
+struct FeatureActivations <: AbstractPlot
     Z::Matrix{Bool}
 end
 
-function plot!(ax, p::FeatureActivation)
-    # TODO: implement a sorting version
-    # col_sort_idcs = sortperm(vec([count_leadingzeros(Z[:,k]) for k = 1:size(Z, 2)]))
-    # Z = Z[:,col_sort_idcs]
-    ax.imshow(p.Z; cmap="gray", interpolation="nearest", vmin=0.0, vmax=1.0)
+function FeatureActivations(Z::Matrix{Int})
+    @assert Set(unique(Z)) == Set((0, 1))
+    return FeatureActivations(Matrix{Bool}(Z))
+end
+
+function plot!(ax, p::FeatureActivations; sort=false)
+    Z = p.Z
+    if sort
+        col_sort_idcs = sortperm(vec([count_leadingzeros(Z[:,k]) for k = 1:size(Z, 2)]))
+        Z = Z[:,col_sort_idcs]
+    end
+    ax.imshow(Z; cmap="gray", interpolation="nearest", vmin=0.0, vmax=1.0)
     ax.set_xticks([])
     ax.set_yticks([])
     return ax

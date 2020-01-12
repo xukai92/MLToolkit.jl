@@ -33,7 +33,7 @@ end
 abstract type AbstractPlot end
 
 """
-    plot(p::AbstractPlot)
+    plot(p::AbstractPlot, args...; figsize=nothing, kwargs...)
 
 Usage:
 ```julia
@@ -71,7 +71,7 @@ get_tikz_code(fig, p::AbstractPlot; kwargs...) = tikzplotlib.get_tikz_code(plot(
 get_tikz_code(p::AbstractPlot; kwargs...) = get_tikz_code(plt.gcf(), p; kwargs...)
 
 """
-    savefig([fig], p::AbstractPlot, fname::String)
+    savefig([fig], p::AbstractPlot, fname::String; kwargs...)
 
 Usage:
 ```julia
@@ -122,16 +122,16 @@ end
 autoset_lims!(x) = autoset_lims!(plt.gca(), x)
 
 """
-    make_imggrid(img::AbstractArray{<:Number,4}, n_rows, n_cols; gap::Int=1)
+    make_imggrid(img::AbstractArray{<:Number,4}, nrows, ncols; gap::Int=1)
 
-Create a n_rows by n_cols image grid.
+Create a nrows by ncols image grid.
 """
-function make_imggrid(img::AbstractArray{<:Number,4}, n_rows, n_cols; gap::Int=1)
+function make_imggrid(img::AbstractArray{<:Number,4}, nrows, ncols; gap::Int=1)
     w, h, c, n = size(img)
     @assert c == 1 || c == 3
-    imggrid = 0.5 * ones(n_rows * (w + gap) + gap, n_cols * (h + gap) + gap, c)
+    imggrid = 0.5 * ones(nrows * (w + gap) + gap, ncols * (h + gap) + gap, c)
     i = 1
-    for row = 1:n_rows, col = 1:n_cols
+    for row = 1:nrows, col = 1:ncols
         if i <= n
             i_row = (row - 1) * (w + gap) + 1
             i_col = (col - 1) * (h + gap) + 1
@@ -161,19 +161,29 @@ For example, if last(size(img)) is 100, the grid will be 10 by 10.
 """
 function make_imggrid(img; kwargs...)
     n = last(size(img))
-    n_rows = ceil(Int, sqrt(n))
-    n_cols = n_rows * (n_rows - 1) > n ? n_rows - 1 : n_rows
-    return make_imggrid(img, n_rows, n_cols; kwargs...)
+    nrows = ceil(Int, sqrt(n))
+    ncols = nrows * (nrows - 1) > n ? nrows - 1 : nrows
+    return make_imggrid(img, nrows, ncols; kwargs...)
 end
 
-export autoget_lims, autoset_lims!, make_imggrid
+function count_leadingzeros(z::Vector)
+    # Iterate until the frist non-zero item
+    n = 1
+    while n <= length(z) && z[n] == 0
+        n = n + 1
+    end
+    return n - 1
+end
+
+export autoget_lims, autoset_lims!, make_imggrid, count_leadingzeros
 
 ### Plots
 
 include("line.jl")
+export TwoYAxesLines
 include("image.jl")
+export ImageGrid, FeatureActivations
 include("contour.jl")
-
-export TwoYAxesLines, ImageGrid, TwoDimContour, FeatureActivation
+export TwoDimContour
 
 end # module
