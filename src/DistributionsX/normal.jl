@@ -32,6 +32,7 @@ end
 Broadcast.broadcastable(bd::BroadcastedNormalStd) = Ref(bd)
 
 Normal(m::AbstractArray, s::AbstractArray) = BroadcastedNormalStd(m, s)
+NormalStd(m::AbstractArray, s::AbstractArray) = BroadcastedNormalStd(m, s)
 
    std(bd::BroadcastedNormalStd) = bd.s
    var(bd::BroadcastedNormalStd) = bd.s.^2
@@ -85,7 +86,7 @@ end
 
 Broadcast.broadcastable(bd::BroadcastedNormalLogVar) = Ref(bd)
 
-NormalLogStd(m::AbstractArray, logv::AbstractArray) = BroadcastedNormalLogVar(m, logv)
+NormalLogVar(m::AbstractArray, logv::AbstractArray) = BroadcastedNormalLogVar(m, logv)
 
    std(bd::BroadcastedNormalLogVar) = exp.(bd.logv ./ 2)
    var(bd::BroadcastedNormalLogVar) = exp.(bd.logv)
