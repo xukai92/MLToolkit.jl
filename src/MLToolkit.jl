@@ -31,8 +31,7 @@ else
 end
 export seed!
 
-sum_dropdims(x, dims) = dropdims(sum(x; dims=dims); dims=dims)
-export sum_dropdims
+Base.sum(x, drop=false; dims=:) = drop ? dropdims(sum(x; dims=dims); dims=dims) : sum(x; dims=dims)
 
 include("special.jl")
 include("transformations.jl")
