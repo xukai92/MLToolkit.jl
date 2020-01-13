@@ -1,4 +1,28 @@
-struct BroadcastedNormal{T<:Number,Tm<:AbstractArray{T},Ts<:AbstractArray{T}} <: ContinuousBatchDistribution
+abstract type AbstractNormal{T} <: ContinuousBatchDistribution end
+
+function rand(rng::AbstractRNG, bd::AbstractNormal, dims::Int...)
+    return bd.m .+ std(bd) .* randnsimilar(rng, bd.m, dims...)
+end
+
+function logpdf(bd::AbstractNormal{T}, x) where {T}
+    diff = x .- bd.m
+    return -(log(2 * T(pi)) .+ logvar(bd) .+ diff .* diff ./ var(bd)) ./ 2
+end
+
+mean(bd::AbstractNormal) = bd.m
+mode(bd::AbstractNormal) = bd.m
+
+function kldiv(bd1::AbstractNormal{T}, bd2::AbstractNormal{T}) where {T}
+    diff = bd2.m .- bd1.m
+    v1, logv1 = _vlogv(bd1)
+    v2, logv2 = _vlogv(bd2)
+    return (logv2 .- logv1 .- 1 .+ v1 ./ v2 .+ diff .* diff ./ v2) / 2
+end
+
+"""
+Broadcasted Normal distribution.
+"""
+struct BroadcastedNormal{T<:Number,Tm<:AbstractArray{T},Ts<:AbstractArray{T}} <: AbstractNormal{T}
     m::Tm
     s::Ts
 end
@@ -7,62 +31,35 @@ Broadcast.broadcastable(bd::BroadcastedNormal) = Ref(bd)
 
 Normal(m::AbstractArray, s::AbstractArray) = BroadcastedNormal(m, s)
 
-function rand(rng::AbstractRNG, bd::BroadcastedNormal, dims::Int...)
-    return bd.m .+ bd.s .* randnsimilar(rng, bd.m, dims...)
+   std(bd::BroadcastedNormal) = bd.s
+   var(bd::BroadcastedNormal) = bd.s.^2
+logvar(bd::BroadcastedNormal) = 2log.(bd.s)
+
+_vlogv(bd::BroadcastedNormal) = (var(bd), logvar(bd))
+
+"""
+Broadcasted Normal distribution with log standard deviation.
+"""
+struct BroadcastedNormalLogStd{T<:Number,Tm<:AbstractArray{T},Ts<:AbstractArray{T}} <: AbstractNormal{T}
+       m::Tm    # mean
+    logs::Ts    # log std
 end
 
-function logpdf(bd::BroadcastedNormal{T}, x) where {T}
-    diff = x .- bd.m
-    v = bd.s.^2
-    return -(log(2 * T(pi)) .+ log.(v) .+ diff .* diff ./ v) ./ 2
-end
+Broadcast.broadcastable(bd::BroadcastedNormalLogStd) = Ref(bd)
 
-mean(bd::BroadcastedNormal) = bd.m
+NormalLogStd(m::AbstractArray, logs::AbstractArray) = BroadcastedNormalLogStd(m, logs)
 
-std(bd::BroadcastedNormal) = bd.s
+   std(bd::BroadcastedNormalLogStd) = exp.(bd.logs)
+   var(bd::BroadcastedNormalLogStd) = exp.(2bd.logs)
+logvar(bd::BroadcastedNormalLogStd) = 2bd.logs
 
-var(bd::BroadcastedNormal) = bd.s.^2
-
-mode(bd::BroadcastedNormal) = bd.m
-
-function kldiv(bd1::BroadcastedNormal{T}, bd2::BroadcastedNormal{T}) where {T}
-    diff = bd2.m .- bd1.m
-    v1 = bd1.s.^2
-    v2 = bd2.s.^2
-    return (log.(v2) .- log.(v1) .- 1 .+ v1 ./ v2 .+ diff .* diff ./ v2) / 2
+function _vlogv(bd::BroadcastedNormalLogStd)
+    logv = 2bd.logs
+    v = exp.(logv)
+    return v, logv
 end
 
 ###
-
-
-
-# struct BatchNormalLogVar{T}
-#     μ::T    # mean
-#     logΣ    # log-variance
-# end
-
-# function rand(dn::BatchNormalLogVar{T}) where {T}
-#     ϵ = randnsimilar(dn.μ)
-#     return dn.μ + exp.(dn.logΣ ./ 2) .* ϵ
-# end
-
-# function logpdf(dn::BatchNormalLogVar, x)
-#     diff = x .- dn.μ
-#     return -(log(2 * eltype(dn.μ)(pi)) .+ dn.logΣ .+ diff .* diff ./ exp.(dn.logΣ)) ./ 2
-# end
-
-# mean(bn::BatchNormalLogVar) = bn.μ
-# mode(bn::BatchNormalLogVar) = bn.μ
-
-# function kldiv(bnlv1::BatchNormalLogVar, bn2::BatchNormal)
-#     if eltype(bnlv1.μ) != eltype(bn2.μ)
-#         @warn "Float type are different for bnlv1 and bn2" eltype(bnlv1.μ) eltype(bn2.μ)
-#     end
-#     diff = bn2.μ .- bnlv1.μ
-#     logΣ1 = bnlv1.logΣ
-#     Σ2 = bn2.Σ
-#     return (log.(Σ2) .- logΣ1 .- 1 .+ exp.(logΣ1) ./ Σ2 .+ diff .* diff ./ Σ2) ./ 2
-# end
 
 # using LinearAlgebra: det, tr, inv
 # using Distributions: MvNormal
