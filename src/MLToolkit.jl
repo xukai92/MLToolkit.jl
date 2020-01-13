@@ -31,7 +31,7 @@ else
 end
 export seed!
 
-Base.sum(x, drop=false; dims=:) = drop ? dropdims(sum(x; dims=dims); dims=dims) : sum(x; dims=dims)
+Base.sum(x::AbstractArray, drop::Bool; dims=:) = drop ? dropdims(sum(x; dims=dims); dims=dims) : sum(x; dims=dims)
 
 include("special.jl")
 include("transformations.jl")
