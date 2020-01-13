@@ -3,9 +3,7 @@ module Scripting
 namedtuple2dict(t::NamedTuple) = Dict(pairs(t)...)
 dict2namedtuple(d::Dict) = NamedTuple{tuple(keys(d)...),typeof(tuple(values(d)...))}(tuple(values(d)...))
 
-function Base.reduce(op::Function, ts::Union{AbstractVector{T}, Tuple{Vararg{T}}}) where {T<:NamedTuple}
-    return T(tuple(map(op, zip(values.(ts)...))...))
-end
+Base.:(+)(x::T, y::T) where {T<:NamedTuple} = T(tuple((values(x) .+ values(y))...))
 
 """
     sweepcmd(template, sweeps::Pair...)

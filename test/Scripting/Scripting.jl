@@ -19,11 +19,13 @@ using Test, MLToolkit.Scripting
         @test isnan(argdict_copy[:d])
     end
 
-    @testset "Reduce NamedTuple" begin
+    @testset "Addition for NamedTuple" begin
         t1 = (x=1, y=2)
         t2 = (x=3, y=4)
-        t = reduce(sum, (t1, t2))
-        @test t == (x=4, y=6)
+        tsum = t1 + t2
+        @test tsum == (x=4, y=6)
+        t = reduce(+, (t1, t2))
+        @test t == tsum
     end
 
     @testset "sweepcmd" begin
