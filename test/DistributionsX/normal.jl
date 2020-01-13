@@ -11,11 +11,11 @@ seed!(1)
     d, n = 5, 10
     rtol = 0.02
 
-    @testset "BroadcastedNormal" begin
+    @testset "BroadcastedNormalStd" begin
         for _ = 1:n_randtests
             # Construction
             m, s = randn(d, n) |> gpu, rand(d, n) |> gpu
-            bd1 = BroadcastedNormal(m, s)
+            bd1 = BroadcastedNormalStd(m, s)
             # Statistics
             @test mean(bd1) == m
             @test std(bd1)  == s
@@ -32,10 +32,10 @@ seed!(1)
             # Density (multi)
             X1 = X[:,:,1]
             m1, s1 = m[:,1], s[:,1]
-            @test logpdf(MvNormal(m1, s1), X1) ≈ sum(logpdf(BroadcastedNormal(m1, s1), X1), true; dims=1)
+            @test logpdf(MvNormal(m1, s1), X1) ≈ sum(logpdf(BroadcastedNormalStd(m1, s1), X1), true; dims=1)
             # KL divergence
             m, s = (m, s) .+ (randn(d, n) |> gpu, rand(d, n) |> gpu)
-            bd2 = BroadcastedNormal(m, s)
+            bd2 = BroadcastedNormalStd(m, s)
             kl_mc = mean(logpdf.(bd1, xs) - logpdf.(bd2, xs))
             @test kldiv(bd1, bd2) ≈ kl_mc rtol=rtol
         end

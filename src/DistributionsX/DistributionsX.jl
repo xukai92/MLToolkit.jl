@@ -52,7 +52,7 @@ rand(bd::BatchDistribution, dims::Int...; kwargs...) = rand(GLOBAL_RNG, bd, dims
 include("noise.jl")
 export UniformNoise, GaussianNoise
 include("normal.jl")
-export Normal, BroadcastedNormal, NormalLogStd, BroadcastedNormalLogStd
+export Normal, NormalStd, BroadcastedNormalStd, NormalVar, BroadcastedNormalVar, NormalLogStd, BroadcastedNormalLogStd, NormalLogVar, BroadcastedNormalLogVar
 include("gumbel.jl")
 export GumbelSoftmax, GumbelSoftmax2D, GumbelBernoulli, GumbelBernoulliLogit
 include("bernoulli.jl")
