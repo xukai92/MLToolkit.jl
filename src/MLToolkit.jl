@@ -31,6 +31,9 @@ else
 end
 export seed!
 
+sum_dropdims(x, dims) = dropdims(sum(x; dims=dims); dims=dims)
+export sum_dropdims
+
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp

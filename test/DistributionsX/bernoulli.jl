@@ -5,7 +5,7 @@ using StatsFuns: logit, logistic
 using Flux: gpu
 
 @testset "Bernoulli" begin
-    n_randtests = 5
+    n_randtests = 3
     n_samples = 5_000
     d, n = 2, 10
     atol = 0.015
@@ -20,7 +20,8 @@ using Flux: gpu
 
             @test logpdf.(Bernoulli.(p), xs[1]) ≈ logpdf(b, xs[1])
 
-            b2 = Bernoulli(rand(d, n) |> gpu)
+            p2 = rand(d, n) |> gpu
+            b2 = Bernoulli(p2)
             kl_mc = mean(logpdf.(b, xs) - logpdf.(b2, xs))
             @test kldiv(b, b2) ≈ kl_mc atol=atol * d * n
         end
