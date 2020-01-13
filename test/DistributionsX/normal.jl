@@ -32,7 +32,7 @@ seed!(1)
             # Density (multi)
             X1 = X[:,:,1]
             m1, s1 = m[:,1], s[:,1]
-            @test logpdf(MvNormal(m1, s1), X1) ≈ dropdims(sum(logpdf(BroadcastedNormal(m1, s1), X1); dims=1); dims=1)
+            @test logpdf(MvNormal(m1, s1), X1) ≈ sum(logpdf(BroadcastedNormal(m1, s1), X1), true; dims=1)
             # KL divergence
             m, s = (m, s) .+ (randn(d, n) |> gpu, rand(d, n) |> gpu)
             bd2 = BroadcastedNormal(m, s)
