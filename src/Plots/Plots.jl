@@ -185,12 +185,12 @@ export TwoYAxesLines, OneDimFunction
 include("image.jl")
 export ImageGrid, FeatureActivations
 include("contour.jl")
-export TwoDimContour
+export TwoDimFunction
 
 using Distributions: ContinuousUnivariateDistribution, ContinuousMultivariateDistribution, logpdf
 
 Plot(dist::ContinuousUnivariateDistribution)   = OneDimFunction(x -> exp.(logpdf(dist, x)))
-Plot(dist::ContinuousMultivariateDistribution) = TwoDimContour( x -> exp.(logpdf(dist, x)))
+Plot(dist::ContinuousMultivariateDistribution) = TwoDimFunction( x -> exp.(logpdf(dist, x)))
 
 export Plot
 

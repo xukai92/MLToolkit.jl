@@ -1,13 +1,13 @@
 """
-A plot of 2D contour.
+A plot of 2D function.
 """
-struct TwoDimContour{T<:Function} <: AbstractPlot
+struct TwoDimFunction{T<:Function} <: AbstractPlot
     f::T
 end
 
 function plot!(
     ax, 
-    p::TwoDimContour, 
+    p::TwoDimFunction, 
     xrange=ax.get_xlim(), 
     yrange=ax.get_ylim(); 
     contourevals=100, 

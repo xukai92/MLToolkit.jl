@@ -40,7 +40,7 @@ function get_tikz_code(fig, lines::TwoYAxesLines)
 end
 
 """
-A plot of one dimensional function.
+A plot of 1D function.
 """
 struct OneDimFunction <: AbstractPlot
     f

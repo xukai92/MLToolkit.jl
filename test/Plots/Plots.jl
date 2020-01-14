@@ -76,13 +76,13 @@ end
         end
     end
 
-    @testset "TwoDimContour" begin
+    @testset "TwoDimFunction" begin
         using Distributions
 
         p = Plot(MvNormal(zeros(2), 1))
         fig = plot(p, (-3, 3), (-3, 3); figsize=(5, 5))
 
-        test_savefig(fig, p, "TwoDimContour")
+        test_savefig(fig, p, "TwoDimFunction")
     end
 
     @testset "FeatureActivations" begin
