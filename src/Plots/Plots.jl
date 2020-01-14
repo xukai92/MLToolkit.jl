@@ -181,10 +181,17 @@ export autoget_lims, autoset_lims!, make_imggrid, count_leadingzeros
 ### Plots
 
 include("line.jl")
-export TwoYAxesLines
+export TwoYAxesLines, OneDimFunction
 include("image.jl")
 export ImageGrid, FeatureActivations
 include("contour.jl")
 export TwoDimContour
+
+using Distributions: ContinuousUnivariateDistribution, ContinuousMultivariateDistribution, logpdf
+
+Plot(dist::ContinuousUnivariateDistribution)   = OneDimFunction(x -> exp.(logpdf(dist, x)))
+Plot(dist::ContinuousMultivariateDistribution) = TwoDimContour( x -> exp.(logpdf(dist, x)))
+
+export Plot
 
 end # module

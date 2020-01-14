@@ -5,12 +5,6 @@ struct TwoDimContour{T<:Function} <: AbstractPlot
     f::T
 end
 
-using Distributions: ContinuousMultivariateDistribution, logpdf
-
-function TwoDimContour(dist::ContinuousMultivariateDistribution)
-    return TwoDimContour(x -> exp.(logpdf(dist, x)))
-end
-
 function plot!(
     ax, 
     p::TwoDimContour, 

@@ -37,9 +37,9 @@ using Test, MLToolkit.Plots, LaTeXStrings
 end
 
 @testset "Plots" begin
-    function test_savefig(fig, p, fname)
+    function test_savefig(fig, p, fname; tex=true)
         savefig(fig, p, joinpath(@__DIR__, "$fname.png"))
-        savefig(fig, p, joinpath(@__DIR__, "$fname.tex"))
+        tex && savefig(fig, p, joinpath(@__DIR__, "$fname.tex"))
     end
     
     @testset "TwoYAxesLines" begin
@@ -51,6 +51,15 @@ end
         fig = plot(p, "--o"; xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2")
 
         test_savefig(fig, p, "TwoYAxesLines")
+    end
+
+    @testset "OneDimFunction" begin
+        using Distributions
+
+        p = Plot(Normal(0, 1))
+        fig = plot(p, (-3, 3); figsize=(5, 5))
+
+        test_savefig(fig, p, "OneDimFunction"; tex=false)   # FIXME: cannot save this to .tex file
     end
 
     @testset "ImageGrid" begin
@@ -70,7 +79,7 @@ end
     @testset "TwoDimContour" begin
         using Distributions
 
-        p = TwoDimContour(MvNormal(zeros(2), 1))
+        p = Plot(MvNormal(zeros(2), 1))
         fig = plot(p, (-3, 3), (-3, 3); figsize=(5, 5))
 
         test_savefig(fig, p, "TwoDimContour")

@@ -38,3 +38,24 @@ function get_tikz_code(fig, lines::TwoYAxesLines)
     tikz_code = replace(tikz_code, "axis y line=right" => "yticklabel pos=right, xtick=\\empty"; count=1)
     return tikz_code
 end
+
+"""
+A plot of one dimensional function.
+"""
+struct OneDimFunction <: AbstractPlot
+    f
+end
+
+function plot!(
+    ax,
+    odf::OneDimFunction,
+    startstop;
+    nbins=1_000,
+    kwargs...
+)
+    f = odf.f
+    x = range(startstop...; length=nbins)
+    y = f.(x)
+    ax.plot(x, y; kwargs...)
+    return ax
+end
