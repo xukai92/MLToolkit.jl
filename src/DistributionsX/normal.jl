@@ -6,7 +6,7 @@ end
 
 function logpdf(bd::AbstractBroadcastedNormal{T}, x) where {T}
     diff = x .- bd.m
-    return -(log(2 * T(pi)) .+ logvar(bd) .+ diff .* diff ./ var(bd)) ./ 2
+    return -(log(2 * T(pi)) .+ logvar(bd) .+ diff .* diff ./ var(bd)) / 2
 end
 
 mean(bd::AbstractBroadcastedNormal) = bd.m
