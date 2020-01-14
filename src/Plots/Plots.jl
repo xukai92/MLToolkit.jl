@@ -24,6 +24,9 @@ function __init__()
     # Ensure not using Type 3 fonts
     plt.rc("pdf"; fonttype=42)
 
+    # Use ggplot style
+    plt.style.use("ggplot")
+
     # Do not show figures automatically in IJulia
     isjulia_display[] = false
 end
