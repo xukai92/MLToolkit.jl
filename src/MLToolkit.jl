@@ -37,6 +37,10 @@ function Base.getproperty(ts::AbstractArray{<:NamedTuple}, k::Symbol)
     return map(t -> getproperty(t, k), ts)
 end
 
+function Base.getindex(ts::AbstractArray{<:NamedTuple}, k::Symbol)
+    return map(t -> getproperty(t, k), ts)
+end
+
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
