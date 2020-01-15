@@ -62,6 +62,18 @@ end
         test_savefig(fig, p, "OneDimFunction"; tex=false)   # FIXME: cannot save this to .tex file
     end
 
+    @testset "LinesWithErrorBar" begin
+        x = 1:10
+        ys = [sin.(x) + rand(10) for i in 1:3]
+
+        p = LinesWithErrorBar(x, ys)
+        
+        fig = plot(p; label="Noisy sin(x)")
+        plt.legend()
+
+        test_savefig(fig, p, "LinesWithErrorBar")
+    end
+
     @testset "ImageGrid" begin
         using MLDatasets
 

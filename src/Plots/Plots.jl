@@ -184,7 +184,7 @@ export autoget_lims, autoset_lims!, make_imggrid, count_leadingzeros
 ### Plots
 
 include("line.jl")
-export TwoYAxesLines, OneDimFunction
+export TwoYAxesLines, OneDimFunction, LinesWithErrorBar
 include("image.jl")
 export ImageGrid, FeatureActivations
 include("contour.jl")

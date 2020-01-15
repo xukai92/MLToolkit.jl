@@ -33,6 +33,10 @@ export seed!
 
 Base.sum(x::AbstractArray, drop::Val{:drop}; dims=:) = dropdims(sum(x; dims=dims); dims=dims)
 
+function Base.getproperty(ts::AbstractArray{<:NamedTuple}, k::Symbol)
+    return map(t -> getproperty(t, k), ts)
+end
+
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp

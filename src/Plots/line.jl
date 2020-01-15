@@ -59,3 +59,28 @@ function plot!(
     ax.plot(x, y; kwargs...)
     return ax
 end
+
+using Statistics: mean, std
+
+"""
+A plot of lines with shaded error bar.
+"""
+struct LinesWithErrorBar <: AbstractPlot
+    x
+    ys
+end
+
+function plot!(
+    ax,
+    linesbar::LinesWithErrorBar;
+    nstd=1,
+    alpha=0.5,
+    kwargs...
+)
+    @unpack x, ys = linesbar
+    y = mean(ys)
+    dy = nstd * std(ys)
+    ax.plot(x, y; kwargs...)
+    ax.fill_between(x, y - dy, y + dy; alpha=alpha)
+    return ax
+end
