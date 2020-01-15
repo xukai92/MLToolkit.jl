@@ -34,11 +34,11 @@ export seed!
 Base.sum(x::AbstractArray, drop::Val{:drop}; dims=:) = dropdims(sum(x; dims=dims); dims=dims)
 
 function Base.getproperty(ts::AbstractArray{<:NamedTuple}, k::Symbol)
-    return map(t -> getproperty(t, k), ts)
+    return getproperty.(ts, k)
 end
 
 function Base.getindex(ts::AbstractArray{<:NamedTuple}, k::Symbol)
-    return map(t -> getproperty(t, k), ts)
+    return getindex.(ts, k)
 end
 
 include("special.jl")
