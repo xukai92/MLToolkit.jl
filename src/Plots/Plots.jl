@@ -1,7 +1,7 @@
 module Plots
 
 using PyCall: PyNULL, pyimport
-using PyPlot: isjulia_display, matplotlib
+using PyPlot: PyPlot, isjulia_display, matplotlib
 using Parameters: @unpack
 
 # Pre-allocate Python bindings
@@ -70,8 +70,12 @@ fig = plot(p)
 code = get_tikz_code(fig, p)
 ```
 """
-get_tikz_code(fig, p::AbstractPlot; kwargs...) = tikzplotlib.get_tikz_code(plot(p); kwargs...)
+get_tikz_code(fig::PyPlot.Figure, p::AbstractPlot; kwargs...) = tikzplotlib.get_tikz_code(plot(p); kwargs...)
 get_tikz_code(p::AbstractPlot; kwargs...) = get_tikz_code(plt.gcf(), p; kwargs...)
+function get_tikz_code(fig::PyPlot.Figure, p::Nothing=nothing; kwargs...)
+    @warn "The TeX file by get_tikz_code(fig) may differ from Matplotlib's. Use get_tikz_code(fig, p) whenever possible."
+    return tikzplotlib.get_tikz_code(fig; kwargs...)
+end
 
 """
     savefig([fig], p::AbstractPlot, fname::String; bbox_inches="tight", kwargs...)
@@ -83,7 +87,7 @@ savefig(fig, p, "fig.png)
 savefig(fig, p, "fig.tex)
 ```
 """
-function savefig(fig, p::AbstractPlot, fname::String; bbox_inches="tight", kwargs...)
+function savefig(fig::PyPlot.Figure, p::Union{AbstractPlot, Nothing}, fname::String; bbox_inches="tight", kwargs...)
     ext = last(split(fname, "."))
     if ext == "tex"
         open(fname, "w") do io
@@ -93,6 +97,7 @@ function savefig(fig, p::AbstractPlot, fname::String; bbox_inches="tight", kwarg
         fig.savefig(fname; bbox_inches=bbox_inches, kwargs...)
     end
 end
+savefig(fig::PyPlot.Figure, fname::String; kwargs...) = savefig(fig, nothing, fname; kwargs...)
 savefig(p::AbstractPlot; kwargs...) = savefig(plt.gcf(), p; kwargs...)
 
 export plot, plot!, get_tikz_code, savefig

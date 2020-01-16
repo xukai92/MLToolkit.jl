@@ -31,7 +31,7 @@ function plot(
     return fig
 end
 
-function get_tikz_code(fig, lines::TwoYAxesLines)
+function get_tikz_code(fig::PyPlot.Figure, lines::TwoYAxesLines)
     tikz_code = tikzplotlib.get_tikz_code(fig)
     tikz_code = replace(tikz_code, "tick pos=both" => "tick pos=left";  count=1)
     tikz_code = replace(tikz_code, "tick pos=both" => "tick pos=right"; count=1)
