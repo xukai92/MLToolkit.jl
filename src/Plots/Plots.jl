@@ -20,6 +20,7 @@ function __init__()
     copy!(mpl, matplotlib)
     copy!(plt, mpl.pyplot)
     copy!(backend_agg, mpl.backends.backend_agg)
+    pyimport("mpl_toolkits.mplot3d")    # enable 3D plots
 
     # Ensure not using Type 3 fonts
     plt.rc("pdf"; fonttype=42)
