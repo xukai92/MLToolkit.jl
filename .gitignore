@@ -5,3 +5,4 @@
 *.pdf
 *.DS_Store
 test/jl_*
+Manifest.toml

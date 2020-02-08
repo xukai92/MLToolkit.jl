@@ -1,3 +1,16 @@
+struct FeatureDataset
+    X
+end
+
+n_display(::FeatureDataset) = 49
+
+function FeatureDataset(n_data::Int, features::Matrix{T}; seed::Int=1) where {T}
+    rng = MersenneTwister(seed)
+    n_features = size(dataset.features, 2)
+    activation_matrix = rand(rng, n_features, n_data) .> 0.5
+    X = features * activation_matrix
+    return FeatureDataset(X)
+end
 
 """
     get_features_griffiths2011()
