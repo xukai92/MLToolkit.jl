@@ -1,14 +1,14 @@
-using CuArrays
-using CuArrays: @cufunc, CuMatOrAdj, CuOrAdj, CUBLAS
-import Tracker
-using Tracker: TrackedArray, @grad, data
-using Flux.Zygote: @adjoint
+using CuArrays: CuArrays, @cufunc, CuMatOrAdj, CuOrAdj, CUBLAS
 
-### Base
-
-Base.inv(x::CuMatOrAdj{<:AbstractFloat}) = CUBLAS.matinv_batched([x])[2][1]
+### Base.:\
 
 import Base: \
+
+# Tracker
+
+using Tracker: Tracker, TrackedArray, @grad, data
+
+Base.inv(x::CuMatOrAdj{<:AbstractFloat}) = CUBLAS.matinv_batched([x])[2][1]
 
 A::CuMatOrAdj   \ B::TrackedArray = Tracker.track(\, A, B)
 A::TrackedArray \ B::CuOrAdj      = Tracker.track(\, A, B)
@@ -20,6 +20,10 @@ A::TrackedArray \ B::CuOrAdj      = Tracker.track(\, A, B)
         return (∇A,  AtransposedivΔ)
     end
 end
+
+# Zygote
+
+using Zygote: @adjoint
 
 @adjoint Base.:\(A::CuMatOrAdj, B::CuOrAdj) = A \ B, function (Δ)
     AtransposedivΔ = transpose(A) \ Δ
@@ -39,3 +43,4 @@ import Flux: logitbinarycrossentropy
 import StatsFuns: logit, logistic, log1pexp, logexpm1
 
 @cufunc logit(x) = log(x / (one(x) - x))
+@cufunc logistic(x) = inv(exp(-x) + one(x))

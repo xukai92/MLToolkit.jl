@@ -77,7 +77,10 @@ function Zygote.gradient(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params
     return tuple([backs[i](makes(i)) for i in 1:n]...)
 end
 
-Flux.trainable(bn::BatchNorm) = (bn.β, bn.γ, bn.μ, bn.σ²)
+Flux.Zygote.@nograd Flux.gpu
+
+# TODO: enable below if saving and loading params is buggy
+# Flux.trainable(bn::BatchNorm) = (bn.β, bn.γ, bn.μ, bn.σ²)
 
 ###
 
