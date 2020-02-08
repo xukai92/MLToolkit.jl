@@ -44,10 +44,10 @@ end
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
-include("Datasets/Datasets.jl")
-Reexport.@reexport using .Datasets
 include("Plots/Plots.jl")
 Reexport.@reexport using .Plots
+include("Datasets/Datasets.jl")
+Reexport.@reexport using .Datasets
 include("Scripting/Scripting.jl")
 Reexport.@reexport using .Scripting
 

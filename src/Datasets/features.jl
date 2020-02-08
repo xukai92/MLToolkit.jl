@@ -1,15 +1,26 @@
-struct FeatureDataset
+struct FeatureDataset{T, D} <: ImageDataset{T, D}
     X
+    Xt
 end
 
-n_display(::FeatureDataset) = 49
+n_display(::FeatureDataset) = 64
 
-function FeatureDataset(n_data::Int, features::Matrix{T}; seed::Int=1) where {T}
+function FeatureDataset(
+    n_data::Int, 
+    features::Matrix{T1}; 
+    seed::Int=1,
+    test_ratio=1/6,
+    n_test::Int=ratio2num(n_data, test_ratio),
+    alpha::T2=0f0,
+    is_link::Bool=false,
+) where {T1, T2}
     rng = MersenneTwister(seed)
-    n_features = size(dataset.features, 2)
-    activation_matrix = rand(rng, n_features, n_data) .> 0.5
-    X = features * activation_matrix
-    return FeatureDataset(X)
+    D, n_features = size(features)
+    X = features * rand(rng, Bool, n_features, n_data)
+    X = preprocess(rng, X, alpha, is_link)
+    Xt = features * rand(rng, Bool, n_features, n_test)
+    Xt = preprocess(rng, Xt, alpha, is_link)
+    return FeatureDataset{Val{is_link}, D}(X, Xt)
 end
 
 """

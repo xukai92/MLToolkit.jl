@@ -18,45 +18,37 @@ Distributions.rand(rng::AbstractRNG, ring::Ring{T}, n::Int) where {T<:AbstractFl
 
 Distributions.logpdf(dataset::Ring, X::AbstractArray{<:AbstractFloat,2}) = logpdf(dataset.mixturemodel, X)
 
-abstract type RingDataset <: AbstractDataset end
+struct RingDataset{D} <: AbstractDataset{D}
+    X
+    Xt
+end
 
 n_display(d::RingDataset) = 2_000
 
-struct TwoDimRingDataset <: RingDataset
-    X
-end
+Tz(angle) = [cos(angle) 0 sin(angle); 0 1 0; -sin(angle) 0 cos(angle)]
 
 function RingDataset(
     n_data::Int,
     n_clusters::Int=10,
-    distance::T=2.5f0,
-    var::T=0.25f0; 
-    seed::Int=1
-) where {T<:AbstractFloat}
+    distance::T1=2.5f0,
+    var::T1=0.25f0,
+    z_angle::T2=nothing,
+    z_std::T2=nothing;
+    seed::Int=1,
+    test_ratio=1/6,
+    n_test::Int=ratio2num(n_data, test_ratio),
+) where {T1<:AbstractFloat, T2<:Union{T1, Nothing}}
     rng = MersenneTwister(seed)
     ring = Ring(n_clusters, distance, var)
+    function make3d(X)
+        return Tz(z_angle) * cat(X, randn(T1, 1, size(X, 2)) * z_std; dims=1)
+    end
     X = rand(rng, ring, n_data)
-    return TwoDimRingDataset(X)
-end
-
-struct ThreeDimRingDataset <: RingDataset
-    X
-end
-
-Tz(theta) = [cos(theta) 0 sin(theta); 0 1 0; -sin(theta) 0 cos(theta)]
-
-function RingDataset(
-    n_data::Int,
-    n_clusters::Int,
-    distance::T,
-    var::T,
-    z_angle::T, 
-    z_noise_level::T;
-    seed::Int=1
-) where {T<:AbstractFloat}
-    rng = MersenneTwister(seed)
-    ring = Ring(n_clusters, distance, var)
-    X = rand(rng, ring, n_data)
-    X = Tz(z_angle) * cat(X, randn(T, 1, n_data) * z_noise_level; dims=1)
-    return ThreeDimRingDataset(X)
+    Xt = rand(rng, ring, n_test)
+    if isnothing(z_angle) || isnothing(z_std)
+        dataset = RingDataset{2}(X, Xt)
+    else
+        dataset = RingDataset{3}(make3d(X), make3d(Xt))
+    end
+    return dataset
 end
