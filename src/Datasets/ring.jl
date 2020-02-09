@@ -30,8 +30,8 @@ Tz(angle) = [cos(angle) 0 sin(angle); 0 1 0; -sin(angle) 0 cos(angle)]
 function RingDataset(
     n_data::Int,
     n_clusters::Int=10,
-    distance::T1=2.5f0,
-    var::T1=0.25f0,
+    distance::T1=25f-1,
+    var::T1=25f-2,
     z_angle::T2=nothing,
     z_std::T2=nothing;
     seed::Int=1,

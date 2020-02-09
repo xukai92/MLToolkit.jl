@@ -41,6 +41,9 @@ function Base.getindex(ts::AbstractArray{<:NamedTuple}, k::Symbol)
     return getindex.(ts, k)
 end
 
+Base.getindex(arr::AbstractArray{<:Any,3}, ::Colon, i) = arr[:,:,i]
+Base.getindex(arr::AbstractArray{<:Any,4}, ::Colon, i) = arr[:,:,:,i]
+
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp

@@ -17,9 +17,9 @@ function FeatureDataset(
     rng = MersenneTwister(seed)
     D, n_features = size(features)
     X = features * rand(rng, Bool, n_features, n_data)
-    X = preprocess(rng, X, alpha, is_link)
+    X = preprocess(rng, X, false, alpha, is_link)
     Xt = features * rand(rng, Bool, n_features, n_test)
-    Xt = preprocess(rng, Xt, alpha, is_link)
+    Xt = preprocess(rng, Xt, false, alpha, is_link)
     return FeatureDataset{Val{is_link}, D}(X, Xt)
 end
 
