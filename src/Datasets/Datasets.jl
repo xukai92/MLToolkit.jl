@@ -1,6 +1,6 @@
 module Datasets
 
-using Random: AbstractRNG, MersenneTwister
+using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister
 
 abstract type AbstractDataset{D} end
 
@@ -61,19 +61,15 @@ function get_image_data(
 ) where {T}
     onehot_enc = LabelEnc.OneOfK(K)
 
-    function preprocess_tuple(X, y)
-        X = preprocess(rng, X, is_flatten, alpha, is_link)
-        Y = convertlabel(onehot_enc, y)
-        return X, y, Y
-    end
-
     X = permutedims(IMAGE.traintensor(T, 1:n_data), perm)
     y = IMAGE.trainlabels(1:n_data) .+ 1
-    X, y, Y = preprocess_tuple(X,  y)
+    X = preprocess(rng, X, is_flatten, alpha, is_link)
+    Y = convertlabel(onehot_enc, y)
 
     Xt = permutedims(IMAGE.testtensor(T, 1:n_test), perm)
     yt = IMAGE.testlabels(1:n_test) .+ 1
-    Xt, yt, Yt = preprocess_tuple(Xt, yt)
+    Xt = preprocess(rng, Xt, is_flatten, alpha, is_link)
+    Yt = convertlabel(onehot_enc, yt)
     
     return X, y, Y, Xt, yt, Yt
 end
