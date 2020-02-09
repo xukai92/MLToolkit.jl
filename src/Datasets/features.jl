@@ -13,8 +13,8 @@ function FeatureDataset(
     n_test::Int=ratio2num(n_data, test_ratio),
     alpha::T2=0f0,
     is_link::Bool=false,
+    rng=MersenneTwister(seed),
 ) where {T1, T2}
-    rng = MersenneTwister(seed)
     D, n_features = size(features)
     X = features * rand(rng, Bool, n_features, n_data)
     X = preprocess(rng, X, false, alpha, is_link)

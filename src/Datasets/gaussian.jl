@@ -14,9 +14,11 @@ function GaussianDataset(
     seed::Int=1,
     test_ratio=1/6,
     n_test::Int=ratio2num(n_data, test_ratio),
+    rng=MersenneTwister(seed),
 ) where {T<:AbstractFloat}
-    rng = MersenneTwister(seed)
     X = rand(rng, MvNormal(mean, cov), n_data)
     Xt = rand(rng, MvNormal(mean, cov), n_test)
     return GaussianDataset{length(mean)}(X, Xt)
 end
+
+GaussianDataset(n_data; kwargs...) = GaussianDataset(n_data, 2f0 * ones(Float32, 2), [1 81f-2; 81f-2 1])

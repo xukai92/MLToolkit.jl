@@ -1,6 +1,6 @@
 module Datasets
 
-using Random: MersenneTwister
+using Random: AbstractRNG, MersenneTwister
 
 abstract type AbstractDataset{D} end
 
@@ -9,7 +9,7 @@ ratio2num(n_data, ratio) = floor(Int, n_data * ratio)
 ### Synthetic datasets
 
 include("ring.jl")
-export RingDataset
+export RingDataset, TwoDimRingDataset, ThreeDimRingDataset
 include("gaussian.jl")
 export GaussianDataset
 
@@ -57,9 +57,8 @@ function get_image_data(
     is_link::Bool,
     K::Int,
     perm::Union{NTuple{3,Int}, NTuple{4,Int}};
-    seed::Int=1,
+    rng::AbstractRNG=GLOBAL_RNG,
 ) where {T}
-    rng = MersenneTwister(seed)
     onehot_enc = LabelEnc.OneOfK(K)
 
     function preprocess_tuple(X, y)
@@ -86,38 +85,11 @@ export CIFAR10Dataset
 include("features.jl")
 export FeatureDataset, get_features_griffiths2011, get_features_xu2019
 
-### Visualizations
+include("vis.jl")
+export n_display, vis
+include("utilites.jl")
+export Dataset
 
-using ..MLToolkit.Plots
-
-function vis(dataset::AbstractDataset, args...; kwargs...)
-    fig, ax = plt.subplots(figsize=(5, 5))
-    vis!(ax, dataset, args...; kwargs...)
-    return fig
-end
-
-function vis(dataset::AbstractDataset{3}, args...; kwargs...)
-    fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(projection="3d")
-    vis!(ax, dataset, args...; kwargs...)
-    return fig
-end
-
-vis!(ax, d::AbstractDataset, x) = vis!(ax, d, (x=x,))
-
-function vis!(ax, ::Union{AbstractDataset{2}, AbstractDataset{3}}, nt::NamedTuple)
-    alpha = length(nt) > 0.75 ? 0.5 : 1.0
-    for (x, label) in zip(values(nt), keys(nt))
-        ax.scatter([x[i,:] for i in 1:size(x, 1)]..., marker=".", alpha=alpha, label=label)
-    end
-    autoset_lims!(ax, first(values(nt)))
-    length(nt) > 1 && ax.legend(fancybox=true, framealpha=0.5)
-end
-
-function vis!(ax, d::ImageDataset, nt::NamedTuple{T1, <:NTuple{N, T2}}) where {T1, N, T2}
-    plot!(ax, ImageGrid(invlink(d, cat(values(nt)...; dims=ndims(T2)))))
-end
-
-export Datasets, n_display, vis
+export Datasets
 
 end # module

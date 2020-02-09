@@ -15,7 +15,6 @@ function Ring(n_clusters::Int, distance::T, var::T) where {T<:AbstractFloat}
 end
 
 Distributions.rand(rng::AbstractRNG, ring::Ring{T}, n::Int) where {T<:AbstractFloat} = convert.(T, rand(rng, ring.mixturemodel, n))
-
 Distributions.logpdf(dataset::Ring, X::AbstractArray{<:AbstractFloat,2}) = logpdf(dataset.mixturemodel, X)
 
 struct RingDataset{D} <: AbstractDataset{D}
@@ -25,30 +24,32 @@ end
 
 n_display(d::RingDataset) = 2_000
 
-Tz(angle) = [cos(angle) 0 sin(angle); 0 1 0; -sin(angle) 0 cos(angle)]
-
 function RingDataset(
     n_data::Int,
+    z_angle::T1=Float32(pi / 3),
+    z_std::T1=1f-1,
     n_clusters::Int=10,
-    distance::T1=25f-1,
-    var::T1=25f-2,
-    z_angle::T2=nothing,
-    z_std::T2=nothing;
+    distance::T2=25f-1,
+    var::T2=25f-2;
     seed::Int=1,
     test_ratio=1/6,
     n_test::Int=ratio2num(n_data, test_ratio),
-) where {T1<:AbstractFloat, T2<:Union{T1, Nothing}}
-    rng = MersenneTwister(seed)
+    rng=MersenneTwister(seed),
+) where {T<:AbstractFloat, T1<:Union{Nothing, T}, T2<:T}
     ring = Ring(n_clusters, distance, var)
-    function make3d(X)
-        return Tz(z_angle) * cat(X, randn(T1, 1, size(X, 2)) * z_std; dims=1)
-    end
-    X = rand(rng, ring, n_data)
-    Xt = rand(rng, ring, n_test)
+    Tz(angle) = [cos(angle) 0 sin(angle); 0 1 0; -sin(angle) 0 cos(angle)]
+    make3d(X) = Tz(z_angle) * cat(X, randn(T1, 1, size(X, 2)) * z_std; dims=1)
+    X, Xt = rand(rng, ring, n_data), rand(rng, ring, n_test)
     if isnothing(z_angle) || isnothing(z_std)
-        dataset = RingDataset{2}(X, Xt)
+        return RingDataset{2}(X, Xt)
     else
-        dataset = RingDataset{3}(make3d(X), make3d(Xt))
+        X, Xt = make3d.((X, Xt))
+        return RingDataset{3}(X, Xt)
     end
-    return dataset
 end
+
+RingDataset{2}(n_data::Int=60_000, args...; kwargs...) = RingDataset(n_data, nothing, nothing, args...; kwargs...)
+TwoDimRingDataset = RingDataset{2}
+
+RingDataset{3}(n_data::Int=60_000, args...; kwargs...) = RingDataset(n_data, args...; kwargs...)
+ThreeDimRingDataset = RingDataset{3}

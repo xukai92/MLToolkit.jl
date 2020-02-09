@@ -6,13 +6,21 @@ struct ImageGrid{T<:AbstractArray{<:Number}} <: AbstractPlot
 end
 
 function ImageGrid(img::AbstractMatrix{<:Number})
-    dsq = size(img, 1)
+    local shape
     try
-        d = convert(Int, sqrt(dsq))
-        return ImageGrid(img, (d, d))
+        d = size(img, 1)
+        if d == 784         # MNIST-like
+            shape = (28, 28)
+        elseif d == 3072    # CIFAR-like
+            shape = (32, 32, 3)
+        else
+            l = convert(Int, sqrt(d))
+            shape = (l, l)
+        end
     catch
         @error "Cannot automatically convert an image which is not squared."
     end
+    return ImageGrid(img, shape)
 end
 
 function ImageGrid(img::AbstractMatrix{<:Number}, shape::Tuple{Vararg{Int,N}}) where {N}

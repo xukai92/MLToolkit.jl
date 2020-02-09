@@ -1,4 +1,4 @@
-using Test, MLToolkit.Neural
+using Test, MLToolkit.Datasets
 
 @testset "Neural" begin
     tests = [
@@ -6,5 +6,7 @@ using Test, MLToolkit.Neural
     ]
     foreach(include, tests)
 
-    @warn "`Datasets.jl` is not tested."
+    for name in Datasets.DATASET_NAMES
+        dataset = Dataset(name, 30_000)
+    end
 end
