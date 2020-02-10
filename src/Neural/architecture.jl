@@ -49,7 +49,7 @@ function ConvNet(WHCin::Tuple{Int,Int,Int}, Dout::Int, args...; kwargs...)
     elseif WHCin == (32, 32, 3)
         f = build_convnet_incifar(Dout, args...; kwargs...)
     else
-        throw(ErrorException("Unsupported input and output size for `build_convnet`: WHCin=$WHCin, Dout=$Dout."))
+        throw(ErrorException("Unsupported input and output size for `ConvNet`: `WHCin`=$WHCin, `Dout`=$Dout."))
     end
     return ConvNet(WHCin, f)
 end

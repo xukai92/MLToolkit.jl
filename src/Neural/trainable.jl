@@ -6,6 +6,7 @@ using ProgressMeter: ProgressMeter, Progress, next!
 # Interface and extensible functions
 abstract type Trainable <: AbstractNeuralModel end
 loss(m::Trainable, data) = throw(MethodError(m, data))
+prepare(m::Trainable, data) = data
 prepare(m::Trainable, data::AbstractArray) = gpu(data)
 
 function update!(opt, m::Trainable, data)
@@ -50,7 +51,11 @@ function train!(
             verbose && @info "eval" step=step cbeval()... commit=false
         end
         if saveevery > 0 && (step % saveevery == 0 || step % length(dataiter) == 0 ) && !isnothing(savedir)
-            saveparams(m, joinpath(savedir, "m-$step.bson"); verbose=verbose)
+            modelname = "model-$step.bson"
+            saveparams(m, joinpath(savedir, modelname); verbose=verbose)
+            if epoch == n_epochs && step % length(dataiter) == 0
+                symlink(joinpath(savedir, "model.bson"), joinpath(savedir, modelname))
+            end
         end
         verbose && @info "train" step=step info...
         # Progress
@@ -58,20 +63,20 @@ function train!(
     end
 end
 
-function saveparams(m::Trainable, savepath::String; verbose=true)
-    weights = Array.(Flux.params(cpu(m)))
-    tagsave(savepath, Dict(:weights => weights, :step => m.step[]); safe=true)
-    verbose && println("Saved m at step $step to $savepath.")
+function saveparams(m::T, savepath::String; verbose=true) where {T<:Trainable}
+    savedict = Dict(:weights => Array.(params(m)))
+    if :step in fieldnames(T)
+        savedict[:step] = m.step[]
+    end
+    tagsave(savepath, savedict; safe=true)
+    verbose && println("Saved $T to $savepath.")
 end
 
 function Flux.loadparams!(m::T, loadpath::String; verbose=true) where {T<:Trainable}
     modelfile = load(loadpath)
-    Flux.loadparams!(m, modelfile[:weights])
-    step = modelfile[:step]
+    loadparams!(m, modelfile[:weights])
     if :step in fieldnames(T)
-        m.step[] = step
-    else 
-        @warn "`$T` doesn't have field `step`."
+        m.step[] = modelfile[:step]
     end
-    verbose && println("Loaded m at step $step from $loadpath.")
+    verbose && println("Loaded $T from $loadpath.")
 end

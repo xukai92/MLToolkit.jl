@@ -63,6 +63,7 @@ function Dataset(name::String, n_data::Int, args...; is_preview=true, kwargs...)
             (train=dataset.X[:,1:nd_half], test=dataset.Xt[:,1:nd_half])
         )
         display(fig)
+        println()
     end
     
     return dataset

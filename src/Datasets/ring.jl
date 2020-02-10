@@ -14,7 +14,8 @@ function Ring(n_clusters::Int, distance::T, var::T) where {T<:AbstractFloat}
     return Ring{T}(MixtureModel([MvNormal(mean[:,i], var) for i in 1:n_clusters]))
 end
 
-Distributions.rand(rng::AbstractRNG, ring::Ring{T}, n::Int) where {T<:AbstractFloat} = convert.(T, rand(rng, ring.mixturemodel, n))
+Distributions.rand(rng::AbstractRNG, ring::Ring{T}, n::Int) where {T<:AbstractFloat} = 
+    convert.(T, rand(rng, ring.mixturemodel, n))
 Distributions.logpdf(dataset::Ring, X::AbstractArray{<:AbstractFloat,2}) = logpdf(dataset.mixturemodel, X)
 
 struct RingDataset{D} <: AbstractDataset{D}

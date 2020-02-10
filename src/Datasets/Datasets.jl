@@ -36,6 +36,8 @@ invlink(d::ImageDataset{Val{:false}}, x) = x
 function preprocess(rng, X, is_flatten, alpha, is_link::Bool=false)
     if is_flatten
         X = flatten(X)
+    elseif ndims(X) == 3    # MNIST from MLDatasets has shape of (28, 28, 1, ?)
+        X = reshape(X, (Base.front(size(X))..., 1, last(size(X))))
     end
     if !iszero(alpha)
         X = dequantize.(Ref(rng), X, alpha)
