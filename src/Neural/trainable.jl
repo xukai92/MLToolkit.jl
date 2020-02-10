@@ -1,11 +1,12 @@
 using MLDataUtils: eachbatch
 using DrWatson: DrWatson, tagsave, load
 using Flux: Flux, gpu, cpu, params, loadparams!, Optimise
-using ProgressMeter: Progress, next!
+using ProgressMeter: ProgressMeter, Progress, next!
 
+# Interface and extensible functions
 abstract type Trainable <: AbstractNeuralModel end
-
 loss(m::Trainable, data) = throw(MethodError(m, data))
+prepare(m::Trainable, data::AbstractArray) = gpu(data)
 
 function update!(opt, m::Trainable, data)
     ps = params(m)
@@ -18,13 +19,18 @@ function update!(opt, m::Trainable, data)
     return info
 end
 
+function ProgressMeter.next!(m::T) where {T<:Trainable}
+    if :step in fieldnames(T)
+        m.step[] += 1
+    end
+end
+
 # TODO: How to handle `train!` without `opt`?
 train!(opt, m::Trainable, dataset, n_epochs::Int, batch_size::Int; kwargs...) = 
     train!(opt, m, eachbatch(dataset; size=batch_size), n_epochs; kwargs...)
 function train!(
     opt, m::T, dataiter, n_epochs::Int;
     verbose::Bool=true, is_refresh::Bool=false,
-    prepare::Function=(data -> gpu(data)),
     evalevery::Int=length(dataiter), cbeval::Union{Nothing, Function}=nothing,
     saveevery::Int=length(dataiter), savedir::Union{Nothing, String}=nothing,
 ) where {T<:Trainable}
@@ -34,17 +40,12 @@ function train!(
         # NOTE: It's very hard to unify `cbeval` within `update!`
         #       not only because the signature could be `cbeval(data)`
         #       but also that we do not gurantee to get internal variables out of `update!`.
-        info = update!(opt, m, prepare(data))
+        info = update!(opt, m, prepare(m, data))
         let l = info.loss
             (isnan(l) || isinf(l)) && error("Loss has numeric error; loss=$l.")
         end
-        next!(progress)
         # Logging
-        if :step in fieldnames(T)
-            step = (m.step[] += 1)
-        else 
-            step = progress.counter 
-        end
+        step = :step in fieldnames(T) ? m.step[] : progress.counter 
         if evalevery > 0 && (step % evalevery == 0 || step % length(dataiter) == 0 ) && !isnothing(cbeval)
             verbose && @info "eval" step=step cbeval()... commit=false
         end
@@ -52,6 +53,8 @@ function train!(
             saveparams(m, joinpath(savedir, "m-$step.bson"); verbose=verbose)
         end
         verbose && @info "train" step=step info...
+        # Progress
+        next!.((progress, m)) 
     end
 end
 
