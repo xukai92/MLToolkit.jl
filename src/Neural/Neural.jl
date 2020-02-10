@@ -86,13 +86,10 @@ Flux.Zygote.@nograd Flux.gpu
 
 abstract type AbstractNeuralModel end
 
-include("interface.jl")
-
-export Trainable, train!, update!, loss, evaluate, getopt, getlogger, getiter, setiter!, increment!, savemodel, loadmodel!
+include("trainable.jl")
+export train!, saveparams, loadparams!
 
 include("architecture.jl")
 export DenseNet, ConvNet
-include("gen.jl")
-export NeuralSampler, Discriminator, Projector
 
 end # module

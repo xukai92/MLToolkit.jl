@@ -9,9 +9,9 @@ function ImageGrid(img::AbstractMatrix{<:Number})
     local shape
     try
         d = size(img, 1)
-        if d == 784         # MNIST-like
+        if d == 28 * 28         # MNIST-like
             shape = (28, 28)
-        elseif d == 3072    # CIFAR-like
+        elseif d == 32 * 32 * 3 # CIFAR-like
             shape = (32, 32, 3)
         else
             l = convert(Int, sqrt(d))
