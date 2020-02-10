@@ -3,7 +3,7 @@ module Neural
 using Random: AbstractRNG, GLOBAL_RNG
 using Flux
 
-import Flux, Zygote, Tracker, Distributions, ProgressMeter, BSON
+import Flux, Zygote, Tracker, Distributions, BSON
 
 ### Tracker extensions
 
@@ -91,5 +91,7 @@ export train!, saveparams, loadparams!
 
 include("architecture.jl")
 export DenseNet, ConvNet
+
+export Neural
 
 end # module
