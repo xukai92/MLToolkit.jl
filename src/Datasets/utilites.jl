@@ -1,3 +1,6 @@
+Base.getindex(arr::AbstractArray{<:Any,3}, ::Colon, i) = arr[:,:,i]
+Base.getindex(arr::AbstractArray{<:Any,4}, ::Colon, i) = arr[:,:,:,i]
+
 datadim(X::AbstractMatrix) = size(X, 1)
 datadim(X::AbstractArray) = Base.front(size(X))
 
@@ -13,6 +16,9 @@ function Base.getproperty(d::AbstractDataset, k::Symbol)
     end
     if k == :n_display
         return n_display(d)
+    end
+    if k == :x_display
+        return d.X[:,1:n_display(d)]
     end
     if k == :vis
         function _vis(args...)

@@ -1,6 +1,8 @@
 module DistributionsX
 
 using Random: AbstractRNG, GLOBAL_RNG, rand!, randn!
+using CuArrays: CuArrays, CuArray, CURAND
+using Flux: Flux
 import StatsFuns, NNlib
 
 ### Utility
@@ -26,6 +28,8 @@ rsimilar(rng, f!, x::AbstractArray, dims::Int...) = _rsimilar(rng, f!, x, dims..
 randsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, rand!, x, dims...)
 randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, randn!, x, dims...)
 
+### Use below if we don't want to use in-place rand cores
+
 #  function _rsimilar(rng::AbstractRNG, f::Function, x::AbstractArray, dims::Int...)
 #      u = f(rng, eltype(x), size(x)..., dims...)
 #      return u
@@ -36,6 +40,20 @@ randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, r
 #  randsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, rand, x, dims...)
 #  randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, randn, x, dims...)
 
+# NOTE: The two functions below achive the following behaviour
+# - Pass `rng` if it's of type `CuArrays.CURAND.RNG`;
+# - Ignore `rng` and use the global of `CuArrays.CURAND` otherwise.
+# The motivation is to avoid scalar operations on GPUs, which is the case when
+# a CPU's RNG is used for inplace random number generation on GPUs.
+
+rsimilar(rng::CURAND.RNG, f!, x::CuArray, dims::Int...) = _rsimilar(rng, f!, x, dims...)
+
+rsimilar(::AbstractRNG, f!, x::CuArray, dims::Int...) = _rsimilar(CURAND.generator(), f!, x, dims...)
+
+### Use bleow if we want rsimilar to be reproducible
+
+# TODO: add a global switch
+#  rsimilar(rng::AbstractRNG, f, x::CuArray, dims::Int...) = _rsimilar(rng, f, x, dims...) |> cu
 
 ### Distributions
 
@@ -64,11 +82,7 @@ export logpdflogit, logpdfCoV, logrand, logitrand, logvar, kldiv
 
 ### X
 
-using Tracker, Flux
-
 include("ad.jl")
-
-Flux.use_cuda[] && include("gpu.jl")
 
 for T in [
     GumbelSoftmax,

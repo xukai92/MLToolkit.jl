@@ -36,14 +36,17 @@ build_densenet(Din::Int, Dout::Int, arg...; kwargs...) = build_densenet([Din, Do
 
 ### ConvNet
 
-struct ConvNet <: AbstractNeuralModel
-    WHCin::Tuple{Int,Int,Int}
+struct ConvNet{Tin<:Union{Int, NTuple{3, Int}}, Tout<:Union{Int, NTuple{3, Int}}} <: AbstractNeuralModel
+    Sin::Tin
     f
+    Sout::Tout
 end
 
 Flux.@functor ConvNet
 
-function ConvNet(WHCin::Tuple{Int,Int,Int}, Dout::Int, args...; kwargs...)
+# Conv in
+
+function ConvNet(WHCin::NTuple{3, Int}, Dout::Int, args...; kwargs...)
     if WHCin == (28, 28, 1)
         f = build_convnet_inmnist(Dout, args...; kwargs...)
     elseif WHCin == (32, 32, 3)
@@ -51,11 +54,11 @@ function ConvNet(WHCin::Tuple{Int,Int,Int}, Dout::Int, args...; kwargs...)
     else
         throw(ErrorException("Unsupported input and output size for `ConvNet`: `WHCin`=$WHCin, `Dout`=$Dout."))
     end
-    return ConvNet(WHCin, f)
+    return ConvNet(WHCin, f, Dout)
 end
 
-function (m::ConvNet)(x::AbstractArray{<:Real,4})
-    let WHCin=m.WHCin
+function (m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,4})
+    let WHCin=m.Sin
         WHCin[1] != size(x, 1) && throw(DimensionMismatch("`WHCin[1]` ($(WHCin[1])) != `size(x, 1)` ($(size(x, 1)))"))
         WHCin[2] != size(x, 2) && throw(DimensionMismatch("`WHCin[2]` ($(WHCin[2])) != `size(x, 2)` ($(size(x, 2)))"))
         WHCin[3] != size(x, 3) && throw(DimensionMismatch("`WHCin[3]` ($(WHCin[3])) != `size(x, 3)` ($(size(x, 3)))"))
@@ -63,7 +66,7 @@ function (m::ConvNet)(x::AbstractArray{<:Real,4})
     return m.f(x)
 end
 
-(m::ConvNet)(x::AbstractArray{<:Real,2}) = m(reshape(x, m.WHCin..., size(x, 2)))
+(m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,2}) = m(reshape(x, m.WHCin..., size(x, 2)))
 
 function build_convnet_inmnist(Dout::Int, σs; isnorm::Bool=false)
     @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_inmnist`"
@@ -139,3 +142,37 @@ end
 
 build_convnet_incifar(Dout::Int, σ::Function, σlast::Function; kwargs...) = build_convnet_incifar(Dout, (σ, σ, σ, σlast); kwargs...)
 
+# Conv out
+
+function ConvNet(Din::Int, WHCout::Tuple{Int,Int,Int}, args...; kwargs...)
+    if WHCout == (28, 28, 1)
+        f = build_convnet_outmnist(Din, args...; kwargs...)
+    elseif WHCout == (32, 32, 3)
+        f = build_convnet_outcifar(Din, args...; kwargs...)
+    else
+        throw(ErrorException("Unsupported input and output size for `ConvNet`: `Din`=$Din, `WHCout`=$WHCout."))
+    end
+    return ConvNet(Din, f, WHCout)
+end
+
+(m::ConvNet{Int, NTuple{3, Int}})(x) = m.f(x)
+
+function build_convnet_outmnist(Din::Int, σs; isnorm::Bool=false)
+    @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_outmnist`"
+    return Chain(
+        #     Din x B
+        Dense(Din,  1024), optional_BatchNorm(1024, σs[1], isnorm),
+        #    1024 x B
+        Dense(1024, 6272),
+        # -> 6272 x B
+        x -> reshape(x, 7, 7, 128, last(size(x))), optional_BatchNorm(128, σs[2], isnorm),
+        # ->    7 x  7 x 128 x B
+        ConvTranspose((4, 4), 128 => 64; stride=(2, 2), pad=(1, 1)), optional_BatchNorm(64, σs[3], isnorm),
+        # ->   14 x 14 x  64 x B
+        ConvTranspose((4, 4),  64 =>  1; stride=(2, 2), pad=(1, 1)), x -> σs[4].(x)
+        # ->   28 x 28 x 1 x B
+    )
+end
+
+build_convnet_outmnist(Din::Int, σ::Function, σlast::Function; kwargs...) = 
+    build_convnet_outmnist(Din, (σ, σ, σ, σlast); kwargs...)

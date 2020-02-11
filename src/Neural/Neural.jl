@@ -77,7 +77,7 @@ function Zygote.gradient(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params
     return tuple([backs[i](makes(i)) for i in 1:n]...)
 end
 
-Flux.Zygote.@nograd Flux.gpu
+Zygote.@nograd Flux.gpu
 
 # TODO: enable below if saving and loading params is buggy
 # Flux.trainable(bn::BatchNorm) = (bn.β, bn.γ, bn.μ, bn.σ²)
@@ -89,8 +89,11 @@ abstract type AbstractNeuralModel end
 include("trainable.jl")
 export train!, saveparams, loadparams!
 
+NeuralNet(Sin::Int, Sout::Int, args...) = DenseNet(Sin, Sout, args...)
+NeuralNet(Sin::NTuple{3, Int}, Sout::Int, args...) = ConvNet(Sin, Sout, args...)
+NeuralNet(Sin::Int, Sout::NTuple{3, Int}, args...) = ConvNet(Sin, Sout, args...)
 include("architecture.jl")
-export DenseNet, ConvNet
+export NeuralNet, DenseNet, ConvNet
 
 export Neural
 

@@ -41,27 +41,19 @@ function Base.getindex(ts::AbstractArray{<:NamedTuple}, k::Symbol)
     return getindex.(ts, k)
 end
 
-Base.getindex(arr::AbstractArray{<:Any,3}, ::Colon, i) = arr[:,:,i]
-Base.getindex(arr::AbstractArray{<:Any,4}, ::Colon, i) = arr[:,:,:,i]
-
 include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 include("Plots/Plots.jl")
-Reexport.@reexport using .Plots
 include("Datasets/Datasets.jl")
-Reexport.@reexport using .Datasets
 include("Scripting/Scripting.jl")
-Reexport.@reexport using .Scripting
 
 # TODO: merge `distributions` and `DistributionsX`
 include("distributions/distributions.jl")
 include("DistributionsX/DistributionsX.jl")
-Reexport.@reexport using .DistributionsX
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
 # include("neural/neural.jl")
 include("Neural/Neural.jl")
-Reexport.@reexport using .Neural
 
 end # module
