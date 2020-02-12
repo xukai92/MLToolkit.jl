@@ -19,6 +19,6 @@ function vis!(ax, ::Union{AbstractDataset{2}, AbstractDataset{3}}, nt::NamedTupl
     plot!(ax, Scatter(nt))
 end
 
-function vis!(ax, d::ImageDataset, nt::NamedTuple{T1, <:NTuple{N, T2}}) where {T1, N, T2}
+function vis!(ax, d::ImageDataset, nt::NamedTuple{T1, <:NTuple{N, T2}}) where {T1, N, T2<:AbstractArray}
     plot!(ax, ImageGrid(invlink(d, cat(values(nt)...; dims=ndims(T2)))))
 end

@@ -60,8 +60,8 @@ function Zygote.pullback(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params
     caches = [copy(cx.cache) for i in 1:n]
     function back_i(Δ, i)
         cx.cache = caches[i]
-        for pi in ps[i]
-          Zygote.cache(cx)[pi] = nothing
+        for p in ps[i]
+          Zygote.cache(cx)[p] = nothing
         end
         back(Δ)
         Zygote.Grads(cx.cache)
@@ -70,11 +70,10 @@ function Zygote.pullback(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params
 end
 
 function Zygote.gradient(f, p1::Flux.Params, p2::Flux.Params, prest::Flux.Params...)
-    ps = (p1, p2, prest...)
-    ys, backs = Zygote.pullback(f, ps...)
+    ys, backs = Zygote.pullback(f, p1, p2, prest...)
     n = length(ys)
-    makes(i) = tuple(map(j -> i == j ? Zygote.sensitivity(ys[i]) : zero(ys[i]), 1:n)...)
-    return tuple([backs[i](makes(i)) for i in 1:n]...)
+    makesens(i) = tuple(map(j -> i == j ? Zygote.sensitivity(ys[i]) : zero(ys[i]), 1:n)...)
+    return tuple([backs[i](makesens(i)) for i in 1:n]...)
 end
 
 Zygote.@nograd Flux.gpu

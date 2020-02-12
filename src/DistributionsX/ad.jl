@@ -3,6 +3,7 @@ using Tracker, Flux
 ### Zygote
 
 Flux.Zygote.@nograd rsimilar
+Flux.Zygote.@nograd _rand_nograd
 
 ### Tracker
 

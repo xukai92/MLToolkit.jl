@@ -8,6 +8,13 @@ abstract type Trainable <: AbstractNeuralModel end
 prepare(m::Trainable, data) = data
 prepare(m::Trainable, data::AbstractArray) = gpu(data)
 
+function Base.getproperty(m::Trainable, k::Symbol)
+    if k == :prepare
+        return x -> prepare(m, x)
+    end
+    return getfield(m, k)
+end
+
 function update!(opt, m::Trainable, data)
     ps = params(m)
     local info, loss
@@ -43,11 +50,14 @@ function train!(
         #       not only because the signature could be `cbeval(data)`
         #       but also that we do not gurantee to get internal variables out of `update!`.
         info = update!(opt, m, prepare(m, data))
+        next!.((progress, m))   # progress
+        step = :step in fieldnames(T) ? 
+            m.step[] : progress.counter     # get step for logging and saving
         # Logging
-        step = :step in fieldnames(T) ? m.step[] : progress.counter 
         if evalevery > 0 && (step % evalevery == 0 || step % length(trainiter) == 0 ) && !isnothing(cbeval)
             verbose && @info "eval" step=step cbeval()... commit=false
         end
+        # Saving
         if saveevery > 0 && (step % saveevery == 0 || step % length(trainiter) == 0 ) && !isnothing(savedir)
             modelname = "model-$step.bson"
             saveparams(m, joinpath(savedir, modelname); verbose=verbose)
@@ -56,8 +66,6 @@ function train!(
             end
         end
         verbose && @info "train" step=step info...
-        # Progress
-        next!.((progress, m)) 
     end
 end
 

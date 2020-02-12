@@ -66,7 +66,7 @@ function (m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,4})
     return m.f(x)
 end
 
-(m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,2}) = m(reshape(x, m.WHCin..., size(x, 2)))
+(m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,2}) = m(reshape(x, m.Sin..., size(x, 2)))
 
 function build_convnet_inmnist(Dout::Int, σs; isnorm::Bool=false)
     @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_inmnist`"

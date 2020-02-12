@@ -1,5 +1,7 @@
 ### Uniform(-1, 1)
 
+_rand_nograd(rng, d, dims...) = _rand(rng, d, dims...)
+
 struct UniformNoise{
     T<:AbstractFloat,
     D<:Union{Val{:cpu},Val{:gpu}},
@@ -24,7 +26,7 @@ UniformNoise(size::Int...) = UniformNoise(Float64, :cpu, size)
 _rand(rng, d::UniformNoise{T}, dims::Int...) where {T} = 2 * rand(rng, T, d.size..., dims...) .- 1
 
 function rand(rng::AbstractRNG, d::UniformNoise{T,Val{:cpu}}, dims::Int...) where {T}
-    return _rand(rng, d, dims...)
+    return _rand_nograd(rng, d, dims...)
 end
 
 logpdf(d::UniformNoise{T}, x::AbstractArray{T}) where {T} = fill(-log(2one(T)), size(x))
@@ -39,7 +41,7 @@ mean(d::UniformNoise{T,Val{:gpu}}) where {T} = gpu(mean_cpu(d))
 var(d::UniformNoise{T,Val{:gpu}}) where {T} = gpu(var_cpu(d))
 
 function rand(rng::AbstractRNG, d::UniformNoise{T,Val{:gpu}}, dims::Int...) where {T}
-    return gpu(_rand(rng, d, dims...))
+    return gpu(_rand_nograd(rng, d, dims...))
 end
 
 ### Standard Normal
@@ -68,7 +70,7 @@ GaussianNoise(size::Int...) = GaussianNoise(Float64, :cpu, size)
 _rand(rng, d::GaussianNoise{T}, dims::Int...) where {T} = randn(rng, T, d.size..., dims...)
 
 function rand(rng::AbstractRNG, d::GaussianNoise{T,Val{:cpu}}, dims::Int...) where {T}
-    return _rand(rng, d, dims...)
+    return _rand_nograd(rng, d, dims...)
 end
 
 logpdf(d::GaussianNoise{T}, x::AbstractArray{T}) where {T} = -(log(2T(π)) .+ map(abs2, x)) / 2
@@ -83,5 +85,5 @@ mean(d::GaussianNoise{T,Val{:gpu}}) where {T} = gpu(mean_cpu(d))
 var(d::GaussianNoise{T,Val{:gpu}}) where {T} = gpu(var_cpu(d))
 
 function rand(rng::AbstractRNG, d::GaussianNoise{T,Val{:gpu}}, dims::Int...) where {T}
-    return gpu(_rand(rng, d, dims...))
+    return gpu(_rand_nograd(rng, d, dims...))
 end
