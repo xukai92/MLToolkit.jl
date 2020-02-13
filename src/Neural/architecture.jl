@@ -12,9 +12,9 @@ Flux.@functor DenseNet
 
 DenseNet(args...; kwargs...) = DenseNet(build_densenet(args...; kwargs...))
 
-(m::DenseNet)(x::AbstractArray{<:Real,2}) = m.f(x)
+(m::DenseNet)(x::AbstractMatrix) = m.f(x)
 
-(m::DenseNet)(x::AbstractArray{<:Real,4}) = m.f(reshape(x, prod(Base.front(size(x))), size(x, 4)))
+(m::DenseNet)(x::AbstractArray) = m(reshape(x, prod(Base.front(size(x))), last(size(x))))
 
 function build_densenet(Dhs::IntIte, σs; isnorm::Bool=false)
     @assert length(σs) == length(Dhs) - 1 "Length of `σs` should be greater than the length of `Dhs` by 1."
@@ -66,7 +66,7 @@ function (m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,4})
     return m.f(x)
 end
 
-(m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,2}) = m(reshape(x, m.Sin..., size(x, 2)))
+(m::ConvNet{NTuple{3, Int}, Int})(x::AbstractMatrix) = m(reshape(x, m.Sin..., size(x, 2)))
 
 function build_convnet_inmnist(Dout::Int, σs; isnorm::Bool=false)
     @assert length(σs) == 4 "Length of `σs` must be `4` for `build_convnet_inmnist`"

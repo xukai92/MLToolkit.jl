@@ -15,11 +15,11 @@ function Base.getproperty(m::Trainable, k::Symbol)
     return getfield(m, k)
 end
 
-function update!(opt, m::Trainable, data)
+function update!(opt, m::Trainable, data; kwargs...)
     ps = params(m)
     local info, loss
     gs = gradient(ps) do
-        info = m(data)
+        info = m(data; kwargs...)
         loss = first(info)
         loss
     end
@@ -42,6 +42,7 @@ function train!(
     verbose::Bool=true, is_refresh::Bool=false,
     evalevery::Int=length(trainiter), cbeval::Union{Nothing, Function}=nothing,
     saveevery::Int=length(trainiter), savedir::Union{Nothing, String}=nothing,
+    kwargs...
 ) where {T<:Trainable}
     is_refresh && Flux.Zygote.refresh()
     progress = Progress(n_epochs * length(trainiter); desc="Training: ")
@@ -49,7 +50,7 @@ function train!(
         # NOTE: It's very hard to unify `cbeval` within `update!`
         #       not only because the signature could be `cbeval(data)`
         #       but also that we do not gurantee to get internal variables out of `update!`.
-        info = update!(opt, m, prepare(m, data))
+        info = update!(opt, m, prepare(m, data); kwargs...)
         next!.((progress, m))   # progress
         step = :step in fieldnames(T) ? 
             m.step[] : progress.counter     # get step for logging and saving
