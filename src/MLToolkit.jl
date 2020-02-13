@@ -18,16 +18,10 @@ export FloatT
 
 ### Homeless functions
 
-if Flux.use_cuda[]
-    include("gpu.jl")
-    function seed!(s::Int)
-        Random.seed!(s)
-        Flux.CuArrays.CURAND.seed!(s)
-    end
-else
-    function seed!(s::Int)
-        Random.seed!(s)
-    end
+include("gpu.jl")
+function seed!(s::Int)
+    Random.seed!(s)
+    Flux.use_cuda[] && Flux.CuArrays.CURAND.seed!(s)
 end
 export seed!
 
