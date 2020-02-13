@@ -45,7 +45,9 @@ export trackerparams, track
 
 ### Flux extensions
 
-nparams(m) = sum(prod.(size.(Flux.params(m))))
+using Humanize: Humanize
+
+nparams(m; ishuman=true) = (n = sum(prod.(size.(Flux.params(m)))); ishuman ? Humanize.digitsep(n) : n) 
 
 export nparams
 
