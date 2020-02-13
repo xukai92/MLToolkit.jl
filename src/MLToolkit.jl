@@ -18,13 +18,6 @@ export FloatT
 
 ### Homeless functions
 
-include("gpu.jl")
-function seed!(s::Int)
-    Random.seed!(s)
-    Flux.use_cuda[] && Flux.CuArrays.CURAND.seed!(s)
-end
-export seed!
-
 Base.sum(x::AbstractArray, drop::Val{:drop}; dims=:) = dropdims(sum(x; dims=dims); dims=dims)
 
 function Base.getproperty(ts::AbstractArray{<:NamedTuple}, k::Symbol)
@@ -34,6 +27,13 @@ end
 function Base.getindex(ts::AbstractArray{<:NamedTuple}, k::Symbol)
     return getindex.(ts, k)
 end
+
+include("gpu.jl")
+function seed!(s::Int)
+    Random.seed!(s)
+    Flux.use_cuda[] && Flux.CuArrays.CURAND.seed!(s)
+end
+export seed!
 
 # TODO: clean-up `special`
 include("special.jl")

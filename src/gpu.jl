@@ -31,13 +31,6 @@ using Zygote: @adjoint
     return (∇A,  AtransposedivΔ)
 end
 
-### Flux
-
-using NNlib: logσ
-import Flux: logitbinarycrossentropy
-
-@cufunc logitbinarycrossentropy(logitŷ, y) = (y - 1) * logitŷ - logσ(logitŷ)
-
 ### StatsFuns
 
 import StatsFuns: logit, logistic, log1pexp, logexpm1
