@@ -18,7 +18,9 @@ function GaussianDataset(
 ) where {T<:AbstractFloat}
     X = rand(rng, MvNormal(mean, cov), n_data)
     Xt = rand(rng, MvNormal(mean, cov), n_test)
-    return GaussianDataset{length(mean)}(X, Xt)
+    D = length(mean)
+    @info "Oh you just get the $D D Gaussian dataset" n_data=n_data n_test=n_test mean=mean cov=cov
+    return GaussianDataset{D}(X, Xt)
 end
 
 GaussianDataset(n_data; kwargs...) = GaussianDataset(n_data, 2f0 * ones(Float32, 2), [1 81f-2; 81f-2 1])

@@ -20,6 +20,7 @@ function FeatureDataset(
     X = preprocess(rng, X, false, alpha, is_link)
     Xt = features * rand(rng, Bool, n_features, n_test)
     Xt = preprocess(rng, Xt, false, alpha, is_link)
+    @info "Oh you just get the feature dataset" n_data=n_data n_test=n_test alpha=alpha is_link=is_link
     return FeatureDataset{Val{is_link}, D}(X, Xt)
 end
 

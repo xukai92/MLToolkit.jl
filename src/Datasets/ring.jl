@@ -42,9 +42,11 @@ function RingDataset(
     make3d(X) = Tz(z_angle) * cat(X, randn(T1, 1, size(X, 2)) * z_std; dims=1)
     X, Xt = rand(rng, ring, n_data), rand(rng, ring, n_test)
     if isnothing(z_angle) || isnothing(z_std)
+        @info "Oh you just get the 2D ring dataset" n_data=n_data n_test=n_test n_clusters=n_clusters distance=distance var=var
         return RingDataset{2}(X, Xt)
     else
         X, Xt = make3d.((X, Xt))
+        @info "Oh you just get the 3D ring dataset" n_data=n_data n_test=n_test n_clusters=n_clusters distance=distance var=var z_angle=z_angle z_std=z_std
         return RingDataset{3}(X, Xt)
     end
 end

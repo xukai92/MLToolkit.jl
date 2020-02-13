@@ -32,5 +32,6 @@ function MNISTDataset(
     X, y, Y, Xt, yt, Yt = get_image_data(
         MNIST, n_data, n_test, is_flatten, alpha, is_link, 10, (2, 1, 3); rng=rng
     )
+    @info "Oh you just get the MNIST dataset" n_data=n_data n_test=n_test is_flatten=is_flatten alpha=alpha is_link=is_link
     return MNISTDataset{Val{is_link}, 784}(X, y, Y, Xt, yt, Yt)
 end
