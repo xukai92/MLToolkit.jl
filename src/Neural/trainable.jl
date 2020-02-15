@@ -52,8 +52,7 @@ function train!(
         #       but also that we do not gurantee to get internal variables out of `update!`.
         info = update!(opt, m, prepare(m, data); kwargs...)
         next!.((progress, m))   # progress
-        step = :step in fieldnames(T) ? 
-            m.step[] : progress.counter     # get step for logging and saving
+        step = :step in fieldnames(T) ? m.step[] : progress.counter # get step for logging and saving
         # Logging
         if evalevery > 0 && (step % evalevery == 0 || step % length(trainiter) == 0 ) && !isnothing(cbeval)
             verbose && @info "eval" step=step cbeval()... commit=false

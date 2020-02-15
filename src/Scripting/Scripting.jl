@@ -14,7 +14,7 @@ end
 #   savename    ::  String      :   "x=1-y=2"
 #   cmdstr      ::  String      :   "--x 1 --y 2"
 
-function overwirte(args, override)
+function overwrite(args, override)
     argdict = ntuple2dict(args)
     for k in keys(override)
         if k in keys(argdict)
@@ -78,7 +78,7 @@ function parse_argstr(argstr::AbstractString, settings; as_symbols::Bool=false)
     return ArgParse.parse_args(split(replace(argstr, r"\s+" => " "), " "), settings; as_symbols=as_symbols)
 end
 
-export overwirte, cmdstr, DATETIME_FMT, find_latestdir, parse_toml, parse_argstr
+export overwrite, cmdstr, DATETIME_FMT, find_latestdir, parse_toml, parse_argstr
 
 include("check.jl")
 export @jupyter, @script, @tb, @wb, @checknumerics
