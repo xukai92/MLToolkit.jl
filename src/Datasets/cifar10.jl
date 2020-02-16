@@ -9,7 +9,7 @@ struct CIFAR10Dataset{T, D} <: ImageDataset{T, D}
     Yt
 end
 
-n_display(::CIFAR10Dataset) = 100
+n_display(::CIFAR10Dataset) = 64
 
 function CIFAR10Dataset(
     n_data::Int=50_000; 

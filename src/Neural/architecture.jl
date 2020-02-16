@@ -27,12 +27,17 @@ function build_densenet(Dhs::IntIte, σs; isnorm::Bool=false)
     return Chain(layers...)
 end
 
-build_densenet(Dhs::IntIte, σ::Function, σlast::Function; kwargs...) = build_densenet(Dhs, (fill(σ, length(Dhs) - 2)..., σlast); kwargs...)
+build_densenet(Dhs::IntIte, σ::Function, σlast::Function; kwargs...) = 
+    build_densenet(Dhs, (fill(σ, length(Dhs) - 2)..., σlast); kwargs...)
 
-build_densenet(Din::Int, Dhs::IntIte, arg...; kwargs...) = build_densenet([Din, Dhs...], arg...; kwargs...)
-build_densenet(Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_densenet([Dhs..., Dout], arg...; kwargs...)
-build_densenet(Din::Int, Dhs::IntIte, Dout::Int, arg...; kwargs...) = build_densenet([Din, Dhs..., Dout], arg...; kwargs...)
-build_densenet(Din::Int, Dout::Int, arg...; kwargs...) = build_densenet([Din, Dout], arg...; kwargs...)
+build_densenet(Din::Int, Dhs::IntIte, arg...; kwargs...) = 
+    build_densenet([Din, Dhs...], arg...; kwargs...)
+build_densenet(Dhs::IntIte, Dout::Int, arg...; kwargs...) = 
+    build_densenet([Dhs..., Dout], arg...; kwargs...)
+build_densenet(Din::Int, Dhs::IntIte, Dout::Int, arg...; kwargs...) = 
+    build_densenet([Din, Dhs..., Dout], arg...; kwargs...)
+build_densenet(Din::Int, Dout::Int, arg...; kwargs...) = 
+    build_densenet([Din, Dout], arg...; kwargs...)
 
 ### ConvNet
 
@@ -58,10 +63,10 @@ function ConvNet(WHCin::NTuple{3, Int}, Dout::Int, args...; kwargs...)
 end
 
 function (m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,4})
-    let WHCin=m.Sin
-        WHCin[1] != size(x, 1) && throw(DimensionMismatch("`WHCin[1]` ($(WHCin[1])) != `size(x, 1)` ($(size(x, 1)))"))
-        WHCin[2] != size(x, 2) && throw(DimensionMismatch("`WHCin[2]` ($(WHCin[2])) != `size(x, 2)` ($(size(x, 2)))"))
-        WHCin[3] != size(x, 3) && throw(DimensionMismatch("`WHCin[3]` ($(WHCin[3])) != `size(x, 3)` ($(size(x, 3)))"))
+    let (W, H, C) = m.Sin
+        W != size(x, 1) && throw(DimensionMismatch("`WHCin[1]` ($(WHCin[1])) != `size(x, 1)` ($(size(x, 1)))"))
+        H != size(x, 2) && throw(DimensionMismatch("`WHCin[2]` ($(WHCin[2])) != `size(x, 2)` ($(size(x, 2)))"))
+        C != size(x, 3) && throw(DimensionMismatch("`WHCin[3]` ($(WHCin[3])) != `size(x, 3)` ($(size(x, 3)))"))
     end
     return m.f(x)
 end
@@ -143,7 +148,8 @@ function build_convin_incifar(Dout::Int, σs; isnorm::Bool=false)
     )
 end
 
-build_convin_incifar(Dout::Int, σ::Function, σlast::Function; kwargs...) = build_convin_incifar(Dout, (σ, σ, σ, σlast); kwargs...)
+build_convin_incifar(Dout::Int, σ::Function, σlast::Function; kwargs...) = 
+    build_convin_incifar(Dout, (σ, σ, σ, σlast); kwargs...)
 
 ## Conv out
 
@@ -151,7 +157,7 @@ function ConvNet(Din::Int, WHCout::Tuple{Int,Int,Int}, args...; kwargs...)
     if WHCout == (28, 28, 1)
         f = build_convout_mnist(Din, args...; kwargs...)
     elseif WHCout == (32, 32, 3)
-        f = build_convout_outcifar(Din, args...; kwargs...)
+        f = build_convout_cifar(Din, args...; kwargs...)
     else
         throw(ErrorException("Unsupported input and output size for `ConvNet`: `Din`=$Din, `WHCout`=$WHCout."))
     end
