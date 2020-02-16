@@ -12,7 +12,7 @@ _getproperty(d::AbstractDataset, ::Val{:n_data})    = last(size(d.X))
 _getproperty(d::AbstractDataset, ::Val{:n_test})    = last(size(d.Xt))
 _getproperty(d::AbstractDataset, ::Val{:n_display}) = n_display(d)
 _getproperty(d::AbstractDataset, ::Val{:x_display}) = d.X[:,1:n_display(d)]
-_getproperty(d::AbstractDataset, ::Val{:x_display}) = (args...) -> vis(d, args...)
+_getproperty(d::AbstractDataset, ::Val{:vis})       = (args...) -> vis(d, args...)
 
 const DATASET_NAMES = (
     "gaussian", "2dring", "3dring", # simple
