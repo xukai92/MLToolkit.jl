@@ -22,11 +22,11 @@ function CIFAR10Dataset(
     rng=MersenneTwister(seed),
 ) where {T<:AbstractFloat}
     if n_data > 50_000
-        @warn "Attempts to access more than 50,000 train points in MNIST; clamped to 50,000."
+        @warn "Attempts to access more than 50,000 train points in CIFAR10; clamped to 50,000."
         n_data = 50_000
     end
     if n_test > 10_000
-        @warn "Attempts to access more than 10,000 test points in MNIST; clamped to 10,000."
+        @warn "Attempts to access more than 10,000 test points in CIFAR10; clamped to 10,000."
         n_test = 10_000
     end
     X, y, Y, Xt, yt, Yt = get_image_data(
