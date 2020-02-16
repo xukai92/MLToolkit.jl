@@ -4,39 +4,20 @@ Base.getindex(arr::AbstractArray{<:Any,4}, ::Colon, i) = arr[:,:,:,i]
 datadim(X::AbstractMatrix) = size(X, 1)
 datadim(X::AbstractArray) = Base.front(size(X))
 
-function Base.getproperty(d::AbstractDataset, k::Symbol)
-    if k == :dim
-        return datadim(d.X)
-    end
-    if k == :n_data
-        return last(size(d.X))
-    end
-    if k == :n_test
-        return last(size(d.Xt))
-    end
-    if k == :n_display
-        return n_display(d)
-    end
-    if k == :x_display
-        return d.X[:,1:n_display(d)]
-    end
-    if k == :vis
-        function _vis(args...)
-            return vis(d, args...)
-        end
-        return _vis
-    end
-    return getfield(d, k)
-end
+_getproperty(d::AbstractDataset, ::Val{T}) where {T} = getfield(d, T)
+Base.getproperty(d::AbstractDataset, k::Symbol) = _getproperty(d, Val(k))
+
+_getproperty(d::AbstractDataset, ::Val{:dim})       = datadim(d.X)
+_getproperty(d::AbstractDataset, ::Val{:n_data})    = last(size(d.X))
+_getproperty(d::AbstractDataset, ::Val{:n_test})    = last(size(d.Xt))
+_getproperty(d::AbstractDataset, ::Val{:n_display}) = n_display(d)
+_getproperty(d::AbstractDataset, ::Val{:x_display}) = d.X[:,1:n_display(d)]
+_getproperty(d::AbstractDataset, ::Val{:x_display}) = (args...) -> vis(d, args...)
 
 const DATASET_NAMES = (
-    "gaussian",
-    "2dring",
-    "3dring",
-    "mnist",
-    "cifar10",
-    "griffiths2011",
-    "xu2019",
+    "gaussian", "2dring", "3dring", # simple
+    "mnist", "cifar10",             # image
+    "griffiths2011", "xu2019",      # feature
 )
 
 function Dataset(name::String, n_data::Int, args...; is_preview=true, kwargs...)
