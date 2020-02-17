@@ -32,5 +32,6 @@ function CIFAR10Dataset(
     X, y, Y, Xt, yt, Yt = get_image_data(
         CIFAR10, n_data, n_test, is_flatten, alpha, is_link, 10, (2, 1, 3, 4); rng=rng
     )
+    @info "Oh you just get the CIFAR10 dataset" n_data=n_data n_test=n_test is_flatten=is_flatten alpha=alpha is_link=is_link
     return CIFAR10Dataset{Val{is_link}, 3072}(X, y, Y, Xt, yt, Yt)
 end
