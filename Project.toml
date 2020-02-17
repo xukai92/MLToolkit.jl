@@ -40,9 +40,7 @@ Flux = "0.10"
 [extras]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-MLDatasets = "eb30cadb-4394-5ae3-aed4-317e484a6458"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Distributed", "MLDatasets", "LaTeXStrings", "FiniteDifferences"]
+test = ["Test", "Distributed", "FiniteDifferences"]

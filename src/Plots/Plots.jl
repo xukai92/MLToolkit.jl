@@ -197,6 +197,8 @@ include("image.jl")
 export ImageGrid, FeatureActivations
 include("contour.jl")
 export TwoDimFunction
+include("path.jl")
+export TwoDimPath
 
 using Distributions: ContinuousUnivariateDistribution, ContinuousMultivariateDistribution, logpdf
 

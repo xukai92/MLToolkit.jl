@@ -1,6 +1,6 @@
-using Test, MLToolkit.Plots, LaTeXStrings
+using Test, MLToolkit.Plots
 
-@testset "Utilites" begin
+@testset "Plots" begin
     @testset "autoget_lims" begin
         x = [0 1; 0 1]
         xlims, ylims, zlims = autoget_lims(x)
@@ -48,7 +48,7 @@ end
         y2 = x .^ 2
         
         p = TwoYAxesLines(x, y1, y2)
-        fig = plot(p, "--o"; xlabel="x", ylabel1=L"\sin(x)", ylabel2=L"x^2")
+        fig = plot(p, "--o"; xlabel="x", ylabel1="sin(x)", ylabel2="x^2")
 
         test_savefig(fig, p, "TwoYAxesLines")
     end
@@ -104,5 +104,15 @@ end
         fig = plot(p)
         
         test_savefig(fig, p, "FeatureActivations")
+    end
+
+    @testset "TwoDimPath" begin
+        x = collect(1:10) + rand(10)
+        y = collect(1:10) + rand(10)
+
+        p = TwoDimPath(x, y)
+        fig = plot(p; first=(color="black", marker="^"), last=(color="red", marker="o"))
+        
+        test_savefig(fig, p, "TwoDimPath")
     end
 end
