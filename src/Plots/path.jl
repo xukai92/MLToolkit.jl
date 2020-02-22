@@ -3,9 +3,11 @@ struct TwoDimPath <: AbstractPlot
     ys
 end
 
+TwoDimPath(path::Matrix) = TwoDimPath(path[1,:], path[2,:])
+
 function plot!(
     ax, p::TwoDimPath, linestyle="-"; 
-    first=nothing, last=nothing, title=nothing, kwargs...
+    first=nothing, last=nothing, kwargs...
 )
     ax.plot(p.xs, p.ys, linestyle, kwargs...)
     !isnothing(first) && ax.scatter(
@@ -14,6 +16,4 @@ function plot!(
     !isnothing(last) && ax.scatter(
         p.xs[end], p.ys[end]; facecolor="none", marker=last.marker, color=last.color
     )
-    !isnothing(title) && ax.set_title(title)
 end
-
