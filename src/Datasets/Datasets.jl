@@ -13,10 +13,20 @@ export RingDataset, TwoDimRingDataset, ThreeDimRingDataset
 include("gaussian.jl")
 export GaussianDataset
 
+using StatsFuns: logit, logistic
+
+function link_bin(x)
+    a, b = zero(eltype(x)), one(eltype(x))
+    return logit.((x .- a) ./ (b - a))
+end
+function invlink_bin(y)
+    a, b = zero(eltype(y)), one(eltype(y))
+    return (b - a) .* logistic.(y) .+ a
+end
+
 ### Image datasets
 
 using MLDataUtils: convertlabel, LabelEnc
-include("broadcasted_logit.jl")
 
 abstract type ImageDataset{T, D} <: AbstractDataset{D} end
 
@@ -29,9 +39,9 @@ function dequantize(rng, x, alpha::T) where {T}
     return y
 end
 
-link_bin(x) = BroadcastedLogit(zero(eltype(x)), one(eltype(x)))(x)
-invlink(d::ImageDataset{Val{:true}}, x) = inv(BroadcastedLogit(zero(eltype(x)), one(eltype(x))))(x)
-invlink(d::ImageDataset{Val{:false}}, x) = x
+link(x) = link_bin(x)
+invlink(d::ImageDataset{Val{:true}}, y) = invlink_bin(y)
+invlink(d::ImageDataset{Val{:false}}, y) = y
 
 function preprocess(rng, X, is_flatten, alpha, is_link::Bool=false)
     if is_flatten
@@ -43,7 +53,7 @@ function preprocess(rng, X, is_flatten, alpha, is_link::Bool=false)
         X = dequantize.(Ref(rng), X, alpha)
     end
     if is_link
-        X = link_bin(X)
+        X = link(X)
     end
     return X
 end

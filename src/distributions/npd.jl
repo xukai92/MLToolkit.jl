@@ -15,9 +15,9 @@ struct LogitNPD{T<:Real,A<:AbstractVector{T}} <: Distributions.DiscreteUnivariat
     l_init  ::  T   # initial value for each logitρᵢ
 end
 
-LogitNPD(; l_init=zero(FT)) = LogitNPD(0; l_init=l_init)
-LogitNPD(alpha::AbstractFloat; l_init=zero(FT)) = LogitNPD(ceil(Int, alpha); l_init=l_init)
-LogitNPD(k_init::Int; l_init=zero(FT)) = LogitNPD(ones(FT, k_init) * l_init, l_init)
+LogitNPD(; l_init=zero(Double)) = LogitNPD(0; l_init=l_init)
+LogitNPD(alpha::AbstractFloat; l_init=zero(Double)) = LogitNPD(ceil(Int, alpha); l_init=l_init)
+LogitNPD(k_init::Int; l_init=zero(Double)) = LogitNPD(ones(Double, k_init) * l_init, l_init)
 
 function getlogitρ(lnpd::LogitNPD{T,A}, k::Int) where {T<:Real,A<:AbstractVector{T}}
     l = length(lnpd.logitρ)

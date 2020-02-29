@@ -1,9 +1,9 @@
-using Tracker, Flux
+using Zygote, Tracker
 
 ### Zygote
 
-Flux.Zygote.@nograd rsimilar
-Flux.Zygote.@nograd _rand_nograd
+Zygote.@nograd rsimilar
+Zygote.@nograd _rand_nograd
 
 ### Tracker
 

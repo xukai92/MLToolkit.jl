@@ -1,18 +1,16 @@
 name = "MLToolkit"
 uuid = "519e820e-097c-11e9-2274-1b004aeb0b9b"
 authors = ["Kai Xu <xukai921110@gmail.com>"]
-version = "0.4.2"
+version = "0.5.0"
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
 Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
-CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
-Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 GSL = "92c85e6c-cbff-5e0c-80f7-495c94daaecd"
 Humanize = "7ec9b9c5-1998-51e1-b7fc-fc3590c18259"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -26,6 +24,7 @@ PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
@@ -41,6 +40,7 @@ Flux = "0.10"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 
 [targets]
-test = ["Test", "Distributed", "FiniteDifferences"]
+test = ["FiniteDifferences", "Distributed", "Test"]

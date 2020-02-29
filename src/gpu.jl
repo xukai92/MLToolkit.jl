@@ -37,3 +37,10 @@ import StatsFuns: logit, logistic, log1pexp, logexpm1
 
 @cufunc logit(x) = log(x / (one(x) - x))
 @cufunc logistic(x) = inv(exp(-x) + one(x))
+
+# Helper
+
+function seed!(s::Int)
+    Random.seed!(s)
+    CuArrays.CURAND.seed!(s)
+end

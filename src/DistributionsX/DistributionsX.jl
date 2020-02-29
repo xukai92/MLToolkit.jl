@@ -1,9 +1,7 @@
 module DistributionsX
 
 using Random: AbstractRNG, GLOBAL_RNG, rand!, randn!
-using CuArrays: CuArrays, CuArray, CURAND
-using Flux: Flux
-import StatsFuns, NNlib
+import Requires, StatsFuns, NNlib
 
 ### Utility
 
@@ -40,21 +38,6 @@ randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, r
 #  randsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, rand, x, dims...)
 #  randnsimilar(rng::AbstractRNG, x::AbstractArray, dims::Int...) = rsimilar(rng, randn, x, dims...)
 
-# NOTE: The two functions below achive the following behaviour
-# - Pass `rng` if it's of type `CuArrays.CURAND.RNG`;
-# - Ignore `rng` and use the global of `CuArrays.CURAND` otherwise.
-# The motivation is to avoid scalar operations on GPUs, which is the case when
-# a CPU's RNG is used for inplace random number generation on GPUs.
-
-rsimilar(rng::CURAND.RNG, f!, x::CuArray, dims::Int...) = _rsimilar(rng, f!, x, dims...)
-
-rsimilar(::AbstractRNG, f!, x::CuArray, dims::Int...) = _rsimilar(CURAND.generator(), f!, x, dims...)
-
-### Use bleow if we want rsimilar to be reproducible
-
-# TODO: add a global switch
-#  rsimilar(rng::AbstractRNG, f, x::CuArray, dims::Int...) = _rsimilar(rng, f, x, dims...) |> cu
-
 ### Distributions
 
 using Distributions: Distributions, VariateForm, ValueSupport, Discrete, Continuous, Distribution, ContinuousMultivariateDistribution
@@ -84,14 +67,43 @@ export logpdflogit, logpdfCoV, logrand, logitrand, logvar, kldiv
 
 include("ad.jl")
 
-for T in [
-    GumbelSoftmax,
-    GumbelBernoulli,
-    GumbelBernoulliLogit,
-    BatchBernoulli,
-    BatchBernoulliLogit,
-]
-    @eval Flux.@functor $T
+function __init__()
+    Requires.@require Flux="587475ba-b771-5e3f-ad9e-33799f191a9c" begin
+        import Flux
+
+        Flux.adapt(::Type{Array}, x::UniformNoise{T,<:Any,S}) where {T,S} = UniformNoise(T, :cpu, x.size)
+        Flux.adapt(::Type{Array}, x::GaussianNoise{T,<:Any,S}) where {T,S} = GaussianNoise(T, :cpu, x.size)
+
+        for T in [
+            GumbelSoftmax,
+            GumbelBernoulli,
+            GumbelBernoulliLogit,
+            BatchBernoulli,
+            BatchBernoulliLogit,
+        ]
+            @eval Flux.@functor $T
+        end
+    end
+
+    Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" begin
+        import CuArrays
+
+        # NOTE: The two functions below achive the following behaviour
+        # - Pass `rng` if it's of type `CuArrays.CURAND.RNG`;
+        # - Ignore `rng` and use the global of `CuArrays.CURAND` otherwise.
+        # The motivation is to avoid scalar operations on GPUs, which is the case when
+        # a CPU's RNG is used for inplace random number generation on GPUs.
+        rsimilar(rng::CuArrays.CURAND.RNG, f!, x::CuArrays.CuArray, dims::Int...) = _rsimilar(rng, f!, x, dims...)
+        rsimilar(::AbstractRNG, f!, x::CuArrays.CuArray, dims::Int...) = _rsimilar(CuArrays.CURAND.generator(), f!, x, dims...)
+
+        ### Use below if we want rsimilar to be reproducible
+
+        # TODO: add a global switch
+        #  rsimilar(rng::AbstractRNG, f, x::CuArrays.CuArray, dims::Int...) = _rsimilar(rng, f, x, dims...) |> cu
+
+        CuArrays.cu(x::UniformNoise) = UniformNoise(Float32, :gpu, x.size)
+        CuArrays.cu(x::GaussianNoise) = GaussianNoise(Float32, :gpu, x.size)
+    end
 end
 
 ### Test
@@ -101,7 +113,7 @@ using Test: @test
 """
     test_stat(fstat, dist, n_samples, atol; samples)
 
-Test the emperical statistic using samples against the true one.
+Test the empirical statistic using samples against the true one.
 """
 function test_stat(
     fstat::Function,

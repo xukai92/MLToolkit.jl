@@ -63,8 +63,8 @@ Compute ``Kumaraswamy(x; a, b)``.
 WARN: this function is not tested.
 """
 function logpdf(kuma::BatchKumaraswamy, x)
-    _one = one(FT)
-    _eps = eps(FT)
+    _one = one(eltype(x))
+    _eps = eps(eltype(x))
     lp = log.(kuma.a) .+
          log.(kuma.b) .+
          (kuma.a .- _one) .* log.(x .+ _eps) .+
@@ -98,8 +98,8 @@ struct BatchBeta{T}
 end
 
 function logpdf(bb::BatchBeta, x)
-    _one = one(FT)
-    _eps = eps(FT)
+    _one = one(eltype(x))
+    _eps = eps(eltype(x))
     lp = (bb.α .- _one) .* log.(x .+ _eps) .+
          (bb.β .- _one) .* log.(_one + _eps .- x) .-
          lbeta(bb.α, bb.β)
@@ -139,17 +139,17 @@ function kldiv(kuma::BatchKumaraswamy, bb::BatchBeta; M::Int=11)
     b = kuma.b
     α = bb.α
     β = bb.β
-    FT = eltype(a)
-    _one = one(FT)
+    T = eltype(a)
+    _one = one(eltype(a))
 
     @assert M > 0
     a_times_b = a .* b
     acc = _one ./ (_one .+ a_times_b) .* beta(_one ./ a, b)
     for m = 2:M
-        acc = acc .+ _one ./ (FT(m) .+ a_times_b) .* beta(FT(m) ./ a, b)
+        acc = acc .+ _one ./ (T(m) .+ a_times_b) .* beta(T(m) ./ a, b)
     end
 
-    kl = (a .- α) ./ a .* (-FT(γ) .- digamma.(b) .- _one ./ b) .+ log.(a_times_b) .+
+    kl = (a .- α) ./ a .* (-T(γ) .- digamma.(b) .- _one ./ b) .+ log.(a_times_b) .+
          lbeta(α, β) .- (b .- _one) ./ b .+ (β - _one) .* b .* acc
     return kl
 end

@@ -2,8 +2,8 @@
 
 import Distributions: logpdf, pdf, cdf, invlogcdf, ccdf, rand, mean, mode, minimum, maximum
 
-# randarr(sz) = Knet.rand!(AT{FT,length(sz)}(undef, sz...))
-# randnarr(sz) = Knet.randn!(AT{FT,length(sz)}(undef, sz...))
+# randarr(sz) = Knet.rand!(AT{Double,length(sz)}(undef, sz...))
+# randnarr(sz) = Knet.randn!(AT{Double,length(sz)}(undef, sz...))
 # function randsimilar(arr, n::Int=1)
 #     T = typeof(AutoGrad.value(arr))
 #     sz = n == 1 ? size(arr) : (size(arr, 1), n)

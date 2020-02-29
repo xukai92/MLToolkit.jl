@@ -33,10 +33,6 @@ logpdf(d::UniformNoise{T}, x::AbstractArray{T}) where {T} = fill(-log(2one(T)), 
 
 ###
 
-CuArrays.cu(x::UniformNoise) = UniformNoise(Float32, :gpu, x.size)
-
-Flux.adapt(::Type{Array}, x::UniformNoise{T,<:Any,S}) where {T,S} = UniformNoise(T, :cpu, x.size)
-
 mean(d::UniformNoise{T,Val{:gpu}}) where {T} = gpu(mean_cpu(d))
 var(d::UniformNoise{T,Val{:gpu}}) where {T} = gpu(var_cpu(d))
 
@@ -76,10 +72,6 @@ end
 logpdf(d::GaussianNoise{T}, x::AbstractArray{T}) where {T} = -(log(2T(π)) .+ map(abs2, x)) / 2
 
 ###
-
-CuArrays.cu(x::GaussianNoise) = GaussianNoise(Float32, :gpu, x.size)
-
-Flux.adapt(::Type{Array}, x::GaussianNoise{T,<:Any,S}) where {T,S} = GaussianNoise(T, :cpu, x.size)
 
 mean(d::GaussianNoise{T,Val{:gpu}}) where {T} = gpu(mean_cpu(d))
 var(d::GaussianNoise{T,Val{:gpu}}) where {T} = gpu(var_cpu(d))
