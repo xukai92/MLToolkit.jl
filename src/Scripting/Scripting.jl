@@ -2,12 +2,6 @@ module Scripting
 
 using DrWatson
 
-Base.:(+)(nt1::T, nt2::T) where {T<:NamedTuple} = T(tuple((values(nt1) .+ values(nt2))...))
-
-function Base.union(nt1::NamedTuple{S1, T1}, nt2::NamedTuple{S2, T2}) where {S1, T1, S2, T2}
-    return NamedTuple{(S1..., S2...), Tuple{T1.types..., T2.types...}}((nt1..., nt2...))
-end
-
 # Conventions
 #   args        ::  NamedTuple  :   (x=1, y=2)
 #   argdict     ::  Dict        :   Dict(:x => 1, :y => 2)

@@ -43,7 +43,6 @@ function __init__()
     isjulia_display[] = false
 end
 
-
 ### APIs
 
 function figure(nrows=1, ncols=1, args...; figsize=nothing, kwargs...)

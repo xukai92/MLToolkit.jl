@@ -1,6 +1,3 @@
-Base.getindex(arr::AbstractArray{<:Any,3}, ::Colon, i) = arr[:,:,i]
-Base.getindex(arr::AbstractArray{<:Any,4}, ::Colon, i) = arr[:,:,:,i]
-
 datadim(X::AbstractMatrix) = size(X, 1)
 datadim(X::AbstractArray) = Base.front(size(X))
 
