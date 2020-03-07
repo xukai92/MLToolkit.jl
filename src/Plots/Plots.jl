@@ -5,13 +5,24 @@ using PyPlot: PyPlot, isjulia_display, matplotlib
 using Parameters: @unpack
 
 # Pre-allocate Python bindings
-const mpl         = PyNULL()    # Matplotlib
-const plt         = PyNULL()    # PyPlot
-const axes_grid1  = PyNULL()    # mpl_toolkits.axes_grid1
-const backend_agg = PyNULL()    # mpl.backends.backend_agg
-const tikzplotlib = PyNULL()    # Tikzplotlib
+const mpl          = PyNULL()   # Matplotlib
+const plt          = PyNULL()   # mpl.pyplot
+const axes_grid1   = PyNULL()   # mpl_toolkits.axes_grid1
+const backend_agg  = PyNULL()   # mpl.backends.backend_agg
+const tikzplotlib  = PyNULL()   # Tikzplotlib
 
-export mpl, plt
+# From `mpl.rcParams["axes.prop_cycle"]` of the `ggplot` style
+const COLORS = Dict(
+    :red => "#E24A33",
+    :blue => "#348ABD",
+    :purple => "#988ED5",
+    :gray => "#777777",
+    :yellow => "#FBC15E",
+    :green => "#8EBA42",
+    :pink => "#FFB5B8",
+)
+
+export mpl, plt, COLORS
 
 function __init__()
     # Bind Python libraries
@@ -32,7 +43,21 @@ function __init__()
     isjulia_display[] = false
 end
 
+
 ### APIs
+
+function figure(nrows=1, ncols=1, args...; figsize=nothing, kwargs...)
+    fig = mpl.figure.Figure(args...; figsize=figsize, kwargs...)
+    canvas = backend_agg.FigureCanvas(fig)
+    if nrows == ncols == 1
+        ax = fig.add_subplot(1, 1, 1)
+        return fig, ax
+    else
+        axes = [fig.add_subplot(nrows, ncols, i) for i in 1:nrows*ncols]
+        return fig, axes
+    end
+    return 
+end
 
 abstract type AbstractPlot end
 
@@ -45,7 +70,7 @@ fig = plot(p)
 ```
 """
 function plot(p::AbstractPlot, args...; figsize=nothing, kwargs...)
-    fig, ax = plt.subplots(; figsize=figsize)
+    fig, ax = figure(; figsize=figsize)
     plot!(ax, p, args...; kwargs...)
     return fig
 end
@@ -55,7 +80,7 @@ end
 
 Usage:
 ```julia
-fig, ax = plt.subplots()
+fig, ax = figure()
 plot!(ax, p)
 ```
 """
@@ -101,7 +126,7 @@ end
 savefig(fig::PyPlot.Figure, fname::String; kwargs...) = savefig(fig, nothing, fname; kwargs...)
 savefig(p::AbstractPlot; kwargs...) = savefig(plt.gcf(), p; kwargs...)
 
-export plot, plot!, get_tikz_code, savefig
+export figure, plot, plot!, get_tikz_code, savefig
 
 ### Ultilies
 

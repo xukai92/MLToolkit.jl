@@ -1,4 +1,4 @@
-using CuArrays: CuArrays, @cufunc, CuMatOrAdj, CuOrAdj, CUBLAS
+using .CuArrays: CuArrays, @cufunc, CuMatOrAdj, CuOrAdj, CUBLAS
 
 ### Base.:\
 

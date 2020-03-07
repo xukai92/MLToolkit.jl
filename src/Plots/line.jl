@@ -18,7 +18,7 @@ function plot(
     kwargs...
 )
     @unpack x, y1, y2 = lines
-    fig, ax1 = plt.subplots()
+    fig, ax1 = figure()
     ax1.plot(x, y1, fmt; c=colour1, kwargs...)
     xlabel == nothing || ax1.set_xlabel(xlabel)
     ylabel1 == nothing || ax1.set_ylabel(ylabel1; color=colour1)
@@ -67,8 +67,11 @@ A plot of lines with shaded error bar.
 """
 struct LinesWithErrorBar <: AbstractPlot
     x
-    ys
+    y_mean
+    y_std
 end
+
+LinesWithErrorBar(x, ys) = LinesWithErrorBar(x, mean(ys), std(ys))
 
 function plot!(
     ax,
@@ -77,9 +80,9 @@ function plot!(
     alpha=0.5,
     kwargs...
 )
-    @unpack x, ys = linesbar
-    y = mean(ys)
-    dy = nstd * std(ys)
+    @unpack x, y_mean, y_std = linesbar
+    y = y_mean
+    dy = nstd * y_std
     ax.plot(x, y; kwargs...)
     ax.fill_between(x, y - dy, y + dy; alpha=alpha)
     return ax

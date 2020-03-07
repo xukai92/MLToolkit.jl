@@ -1,7 +1,7 @@
 module Neural
 
 using Random: AbstractRNG, GLOBAL_RNG
-using Flux
+using ArgCheck, Flux
 
 import Flux, Zygote, Tracker, Distributions, BSON
 
@@ -47,7 +47,14 @@ export trackerparams, track
 
 using Humanize: Humanize
 
-nparams(m; ishuman=true) = (n = sum(prod.(size.(Flux.params(m)))); ishuman ? Humanize.digitsep(n) : n) 
+nparams(m) = sum(prod.(size.(Flux.params(m))))
+function nparams(T, m)
+    @argcheck T isa AbstractString
+    n = nparams(m)
+    return ishuman ? Humanize.digitsep(n) : n
+end
+
+Zygote.@nograd nparams
 
 export nparams
 

@@ -1,7 +1,6 @@
 module MLToolkit
 
-const MLT = MLToolkit
-export MLT
+export MLToolkit
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
@@ -10,7 +9,7 @@ import Distributions, Reexport, Requires, Tracker, Parameters, LinearAlgebra, Ra
 
 ### Constants
 
-const Float  = Float32
+const Float = Float32
 const Double = Float64
 
 export Float, Double

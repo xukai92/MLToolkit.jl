@@ -9,7 +9,7 @@ function plot!(
     ax, p::TwoDimPath, linestyle="-"; 
     first=nothing, last=nothing, kwargs...
 )
-    ax.plot(p.xs, p.ys, linestyle, kwargs...)
+    ax.plot(p.xs, p.ys, linestyle; kwargs...)
     !isnothing(first) && ax.scatter(
         p.xs[1], p.ys[1]; facecolor="none", marker=first.marker, color=first.color
     )

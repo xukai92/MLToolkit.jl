@@ -1,7 +1,7 @@
 using ..MLToolkit.Plots
 
 function vis(dataset::AbstractDataset, args...; kwargs...)
-    fig, ax = plt.subplots(figsize=(5, 5))
+    fig, ax = figure(figsize=(5, 5))
     vis!(ax, dataset, args...; kwargs...)
     return fig
 end

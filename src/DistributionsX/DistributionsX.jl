@@ -74,19 +74,15 @@ function __init__()
         Flux.adapt(::Type{Array}, x::UniformNoise{T,<:Any,S}) where {T,S} = UniformNoise(T, :cpu, x.size)
         Flux.adapt(::Type{Array}, x::GaussianNoise{T,<:Any,S}) where {T,S} = GaussianNoise(T, :cpu, x.size)
 
-        for T in [
-            GumbelSoftmax,
-            GumbelBernoulli,
-            GumbelBernoulliLogit,
-            BatchBernoulli,
-            BatchBernoulliLogit,
-        ]
-            @eval Flux.@functor $T
-        end
+        @eval Flux.@functor GumbelSoftmax
+        @eval Flux.@functor GumbelBernoulli
+        @eval Flux.@functor GumbelBernoulliLogit
+        @eval Flux.@functor BatchBernoulli
+        @eval Flux.@functor BatchBernoulliLogit
     end
 
     Requires.@require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" begin
-        import CuArrays
+        import .CuArrays
 
         # NOTE: The two functions below achive the following behaviour
         # - Pass `rng` if it's of type `CuArrays.CURAND.RNG`;
