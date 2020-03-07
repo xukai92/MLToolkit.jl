@@ -27,7 +27,7 @@ function build_densenet(Dhs::IntIte, σs; isnorm::Bool=false)
     return Chain(layers...)
 end
 
-build_densenet(Dhs::IntIte, σ::Function, σlast::Function; kwargs...) = 
+build_densenet(Dhs::IntIte, σ::Function, σlast::Function=identity; kwargs...) = 
     build_densenet(Dhs, (fill(σ, length(Dhs) - 2)..., σlast); kwargs...)
 
 build_densenet(Din::Int, Dhs::IntIte, arg...; kwargs...) = 
@@ -89,7 +89,7 @@ function build_convin_mnist(Dout::Int, σs; isnorm::Bool=false)
     )
 end
 
-build_convin_mnist(Dout::Int, σ::Function, σlast::Function; kwargs...) = 
+build_convin_mnist(Dout::Int, σ::Function, σlast::Function=identity; kwargs...) = 
     build_convin_mnist(Dout, (σ, σ, σ, σlast); kwargs...)
 
 
@@ -148,7 +148,7 @@ function build_convin_incifar(Dout::Int, σs; isnorm::Bool=false)
     )
 end
 
-build_convin_incifar(Dout::Int, σ::Function, σlast::Function; kwargs...) = 
+build_convin_incifar(Dout::Int, σ::Function, σlast::Function=identity=identity; kwargs...) = 
     build_convin_incifar(Dout, (σ, σ, σ, σlast); kwargs...)
 
 ## Conv out
@@ -185,7 +185,7 @@ function build_convout_mnist(Din::Int, σs; isnorm::Bool=false)
     )
 end
 
-build_convout_mnist(Din::Int, σ::Function, σlast::Function; kwargs...) = 
+build_convout_mnist(Din::Int, σ::Function, σlast::Function=identity; kwargs...) = 
     build_convout_mnist(Din, (σ, σ, σ, σ, σlast); kwargs...)
 
 # FIXME: make it 5 layers
