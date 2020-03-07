@@ -4,7 +4,7 @@ export MLToolkit
 
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
-# Package level imports all go here
+using ArgCheck
 import Distributions, Reexport, Requires, Tracker, Parameters, LinearAlgebra, Random
 
 ### Constants
@@ -25,7 +25,7 @@ Base.getindex(arr::AbstractArray{<:Any,3}, ::Colon, i) = arr[:,:,i]
 Base.getindex(arr::AbstractArray{<:Any,4}, ::Colon, i) = arr[:,:,:,i]
 
 function Random.shuffle(nt::NamedTuple{K, V}) where {K, V<:Tuple{Vararg{<:AbstractArray}}}
-    ns = [last(size(v)) v in values(nt)]
+    ns = [last(size(v)) for v in values(nt)]
     n = first(ns)
     @argcheck all(n .== ns)
     idcs = Random.shuffle(1:n)
