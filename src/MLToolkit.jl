@@ -63,7 +63,7 @@ include("DistributionsX/DistributionsX.jl")
 Reexport.@reexport using .DistributionsX
 include("MonteCarlo/MonteCarlo.jl")
 Reexport.@reexport using .MonteCarlo
-# TODO: merge `neural.deprecated` (which contains codes for RAVE) and `Neural`
+# TODO: merge `neural.deprecated` (which contains codes for RAVE) and `Neural`; variational layers are also important
 # include("neural.deprecated/neural.jl")
 
 function __init__()
