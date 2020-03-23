@@ -45,8 +45,8 @@ end
 
 ### APIs
 
-function figure(nrows=1, ncols=1, args...; figsize=nothing, kwargs...)
-    fig = mpl.figure.Figure(args...; figsize=figsize, kwargs...)
+function figure(nrows=1, ncols=1, args...; figsize=nothing, dpi=200, kwargs...)
+    fig = mpl.figure.Figure(args...; figsize=figsize, dpi=dpi, kwargs...)
     canvas = backend_agg.FigureCanvas(fig)
     if nrows == ncols == 1
         ax = fig.add_subplot(1, 1, 1)
