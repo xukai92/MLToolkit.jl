@@ -1,24 +1,7 @@
 using Test, MLToolkit.Scripting
+using ArgParse: ArgParseSettings, @add_arg_table
 
 @testset "Scripting" begin
-    @testset "Dict <-> NamedTuple" begin
-        argdict = Dict(:a => 1, :b => "two", :c => true, :d => NaN)
-
-        args = dict2namedtuple(argdict)
-        @test keys(args) |> Set == (:a, :b, :c, :d) |> Set
-        @test values(args) |> Set == (1, "two", true, NaN) |> Set
-        @test args.a == 1
-        @test args.b == "two"
-        @test args.c == true
-        @test isnan(args.d)
-
-        argdict_copy = namedtuple2dict(args)
-        @test argdict_copy[:a] == argdict[:a]
-        @test argdict_copy[:b] == argdict[:b]
-        @test argdict_copy[:c] == argdict[:c]
-        @test isnan(argdict_copy[:d])
-    end
-
     @testset "Addition for NamedTuple" begin
         t1 = (x=1, y=2)
         t2 = (x=3, y=4)
@@ -28,21 +11,62 @@ using Test, MLToolkit.Scripting
         @test t == tsum
     end
 
-    @testset "sweepcmd" begin
-        @test sweepcmd("sleep @Ts @D", "@T" => [1, 2], "@D" => [3, 4]) == [`sleep 1s 3`, `sleep 2s 3`, `sleep 1s 4`, `sleep 2s 4`]
-        @test sweepcmd("sleep @Ts @D", :T => [1, 2], :D => [3, 4]) == [`sleep 1s 3`, `sleep 2s 3`, `sleep 1s 4`, `sleep 2s 4`]
+    @testset "find_latestdir" begin
+        @test DATETIME_FMT == "ddmmyyyy-H-M-S"
+        @test find_latestdir(@__DIR__) == "20051994-12-34-56"
     end
 
-    @testset "sweeprun" begin
-        # Check if runs are in parallel
-        t = @elapsed sweeprun("sleep @Ts", "@T" => [1, 2, 3, 4])
-        @test t < 5
-        # Check if runs are not in parallel
-        t = @elapsed sweeprun("sleep @Ts", "@T" => ones(4); maxasync=1)
-        @test t > 1
+    @testset "parse_toml" begin
+        tomlpath = joinpath(@__DIR__, "Test.toml")
+
+        argdict = parse_toml(tomlpath, (:level1 => "a1", :level2 => "b1",))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 1
+        @test argdict[:f3] == 1
+
+        argdict = parse_toml(tomlpath, (:level1 => "a1", :level2 => "b2",))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 1
+        @test argdict[:f3] == 2
+
+        @test_throws AssertionError parse_toml(tomlpath, (:level1 => "a2", :level2 => "b1",))
+
+        argdict = parse_toml(tomlpath, (:level1 => "a2", :level2 => "b1", :level3 => "c1"))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 2
+        @test argdict[:f3] == 3
+        @test argdict[:f4] == 1
+
+        argdict = parse_toml(tomlpath, (:level1 => "a2", :level2 => "b2",))
+        @test argdict[:f1] == 1
+        @test argdict[:f2] == 2
+        @test argdict[:f3] == 4
     end
 
-    include("args.jl")
+    @testset "parse_argstr" begin
+        s = ArgParseSettings()
+
+        @add_arg_table! s begin
+            "--a"
+                arg_type = Int64
+                required = true
+            "--b"
+                arg_type = Float64
+                required = true
+            "--c"
+                arg_type = String
+                default = nothing
+        end
+
+        argstr = "--a 1 --b 2.0"
+        argdict = parse_argstr(argstr, s; as_symbols=true)
+        @test argdict[:a] == 1
+        @test argdict[:b] == 2.0
+        @test argdict[:c] == nothing
+
+        argdict = parse_argstr(argstr * " --c c", s; as_symbols=true)
+        @test argdict[:c] == "c"
+    end
     
     @testset "Scripting.check" begin
         x = 1

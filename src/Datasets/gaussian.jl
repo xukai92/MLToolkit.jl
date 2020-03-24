@@ -19,7 +19,7 @@ function GaussianDataset(
     X = rand(rng, MvNormal(mean, cov), n_data)
     Xt = rand(rng, MvNormal(mean, cov), n_test)
     D = length(mean)
-    @info "Oh you just get the $D D Gaussian dataset" n_data=n_data n_test=n_test mean=mean cov=cov
+    @info "Oh you just get the $(D)D Gaussian dataset" n_data=n_data n_test=n_test mean=mean cov=cov
     return GaussianDataset{D}(X, Xt)
 end
 

@@ -1,3 +1,5 @@
+# TODO: make build optional
+
 import Conda
 ENVPATH = Conda.ROOTENV
 Conda.add("pip")

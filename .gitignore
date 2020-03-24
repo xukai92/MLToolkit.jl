@@ -4,6 +4,7 @@
 *.tex
 *.pdf
 *.DS_Store
+*.log
 docs/build/
 test/jl_*
 Manifest.toml

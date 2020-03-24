@@ -64,9 +64,9 @@ end
 
 function (m::ConvNet{NTuple{3, Int}, Int})(x::AbstractArray{<:Real,4})
     let (W, H, C) = m.Sin
-        W != size(x, 1) && throw(DimensionMismatch("`WHCin[1]` ($(WHCin[1])) != `size(x, 1)` ($(size(x, 1)))"))
-        H != size(x, 2) && throw(DimensionMismatch("`WHCin[2]` ($(WHCin[2])) != `size(x, 2)` ($(size(x, 2)))"))
-        C != size(x, 3) && throw(DimensionMismatch("`WHCin[3]` ($(WHCin[3])) != `size(x, 3)` ($(size(x, 3)))"))
+        W != size(x, 1) && throw(DimensionMismatch("`Sin[1]` ($W) != `size(x, 1)` ($(size(x, 1)))"))
+        H != size(x, 2) && throw(DimensionMismatch("`Sin[2]` ($H) != `size(x, 2)` ($(size(x, 2)))"))
+        C != size(x, 3) && throw(DimensionMismatch("`Sin[3]` ($C) != `size(x, 3)` ($(size(x, 3)))"))
     end
     return m.f(x)
 end

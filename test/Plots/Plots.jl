@@ -34,9 +34,7 @@ using Test, MLToolkit.Plots
     @testset "count_leadingzeros" begin
         @test count_leadingzeros([0, 0, 1]) == 2
     end
-end
 
-@testset "Plots" begin
     function test_savefig(fig, p, fname; tex=true)
         savefig(fig, p, joinpath(@__DIR__, "$fname.png"))
         tex && savefig(fig, p, joinpath(@__DIR__, "$fname.tex"))
