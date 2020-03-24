@@ -1,12 +1,26 @@
-# TODO: make build optional
+using PyCall, Conda, Pkg
 
-import Conda
-ENVPATH = Conda.ROOTENV
-Conda.add("pip")
-PIP = joinpath(ENVPATH, "bin/pip")
-run(`$PIP install matplotlib tikzplotlib`)
+getpip() = joinpath(split(PyCall.PYTHONHOME, ":")[end], "bin/pip")
 
-import Pkg
-PYTHON = joinpath(ENVPATH, "bin/python")
-ENV["PYTHON"] = PYTHON
-Pkg.build("PyCall")
+try
+    run(`$(getpip()) list`)
+catch
+    println("`pip` is not available in the current PyCall.jl")
+    println("Configuring PyCall.jl to use Conda.jl")
+    ENV["PYTHON"] = joinpath(Conda.PYTHONDIR, "bin/python")
+    rm(Pkg.dir("PyCall", "deps", "PYTHON"))
+    Pkg.build("PyCall")
+end
+
+function pipinstall(pkg)
+    try
+        pyimport(pkg)
+    catch
+        println("`$pkg` is not available in the current PyCall.jl.")
+        println("Installing using pip ...")
+        run(`$(getpip()) install $pkg`)
+    end
+end
+
+pipinstall("matplotlib")
+pipinstall("tikzplotlib")

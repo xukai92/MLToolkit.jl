@@ -1,5 +1,5 @@
 using Test, MLToolkit.Scripting
-using ArgParse: ArgParseSettings, @add_arg_table
+using ArgParse: ArgParseSettings, @add_arg_table!
 
 @testset "Scripting" begin
     @testset "Addition for NamedTuple" begin
