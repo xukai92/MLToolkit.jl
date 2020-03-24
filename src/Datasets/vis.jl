@@ -8,7 +8,7 @@ end
 
 function vis(dataset::AbstractDataset{3}, args...; kwargs...)
     fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(projection="3d")
+    ax = fig.add_subplot(1, 1, 1; projection="3d")
     vis!(ax, dataset, args...; kwargs...)
     return fig
 end
