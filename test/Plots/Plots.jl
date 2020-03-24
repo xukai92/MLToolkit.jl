@@ -74,11 +74,11 @@ using Test, MLToolkit.Plots
 
     @testset "ImageGrid" begin
         x = rand(32, 32, 3, 100)
-        
+
         p = ImageGrid(x)
         fig = plot(p)
 
-        test_savefig(fig, p, "ImageGrid_$dataset")
+        test_savefig(fig, p, "ImageGrid")
     end
 
     @testset "TwoDimFunction" begin
