@@ -1,7 +1,7 @@
 name = "MLToolkit"
 uuid = "519e820e-097c-11e9-2274-1b004aeb0b9b"
 authors = ["Kai Xu <xukai921110@gmail.com>"]
-version = "0.5.0"
+version = "0.6.0"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
