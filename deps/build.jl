@@ -1,14 +1,8 @@
-using PyCall, Conda, Pkg
+run(`julia configure_pycall.jl`)
 
-getpip() = joinpath(split(PyCall.PYTHONHOME, ":")[end], "bin/pip")
+using PyCall
 
-if !isfile(getpip())
-    println("`pip` is not available in the current PyCall.jl")
-    println("Configuring PyCall.jl to use Conda.jl")
-    ENV["PYTHON"] = joinpath(Conda.PYTHONDIR, "bin/python")
-    rm(Pkg.dir("PyCall", "deps", "PYTHON"))
-    Pkg.build("PyCall")
-end
+const PIP = joinpath(split(PyCall.PYTHONHOME, ":")[end], "bin/pip")
 
 function pipinstall(pkg)
     try
@@ -16,7 +10,7 @@ function pipinstall(pkg)
     catch
         println("`$pkg` is not available in the current PyCall.jl.")
         println("Installing using pip ...")
-        run(`$(getpip()) install $pkg`)
+        run(`$PIP install $pkg`)
     end
 end
 
