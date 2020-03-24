@@ -73,17 +73,12 @@ using Test, MLToolkit.Plots
     end
 
     @testset "ImageGrid" begin
-        using MLDatasets
+        x = rand(32, 32, 3, 100)
+        
+        p = ImageGrid(x)
+        fig = plot(p)
 
-        for (dataset, x) in [
-            ("mnist", reshape(permutedims(MNIST.traintensor(Float32, 1:100), (2, 1, 3)), 784, :)),
-            ("cifar10", permutedims(CIFAR10.traintensor(Float32, 1:100), (2, 1, 3, 4))),
-        ]
-            p = ImageGrid(x)
-            fig = plot(p)
-
-            test_savefig(fig, p, "ImageGrid_$dataset")
-        end
+        test_savefig(fig, p, "ImageGrid_$dataset")
     end
 
     @testset "TwoDimFunction" begin
