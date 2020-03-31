@@ -17,7 +17,7 @@ end
 """
     break_logstick_ibp(logν)
 
-Break stick (IBP) in logorithmic space.
+Break stick (IBP) in logarithmic space.
 """
 function break_logstick_ibp(logν)
     Kmax = size(logν, 1)
