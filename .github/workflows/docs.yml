@@ -16,8 +16,12 @@ jobs:
           version: 1.3
       - name: Install dependencies
         run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate();'
-      - name: Build packages
+      - name: Build dependencies
         run: julia --project=@. -e 'using Pkg; Pkg.build();'
+      - name: Build MLToolkit
+        uses: julia-actions/julia-buildpkg@latest
+        env:
+          PYTHON: ""
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
