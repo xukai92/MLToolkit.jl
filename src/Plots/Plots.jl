@@ -4,6 +4,8 @@ using PyCall: PyNULL, pyimport
 using PyPlot: PyPlot, isjulia_display, matplotlib
 using Parameters: @unpack
 
+import FileIO: save
+
 # Pre-allocate Python bindings
 const mpl          = PyNULL()   # Matplotlib
 const plt          = PyNULL()   # mpl.pyplot
@@ -95,37 +97,37 @@ fig = plot(p)
 code = get_tikz_code(fig, p)
 ```
 """
-get_tikz_code(fig::PyPlot.Figure, p::AbstractPlot; kwargs...) = tikzplotlib.get_tikz_code(plot(p); kwargs...)
-get_tikz_code(p::AbstractPlot; kwargs...) = get_tikz_code(plt.gcf(), p; kwargs...)
-function get_tikz_code(fig::PyPlot.Figure, p::Nothing=nothing; kwargs...)
-    @warn "The TeX file by get_tikz_code(fig) may differ from Matplotlib's. Use get_tikz_code(fig, p) whenever possible."
+function get_tikz_code(fig::PyPlot.Figure, p=nothing; kwargs...)
+    if isnothing(p)
+        @warn "The TeX file may differ from Matplotlib's. Use `get_tikz_code(fig, p)` whenever possible."
+    else
+        @warn "Function `get_tikz_code(fig, p::$(typeof(p)))` is not specifically defined. The TeX file may differ from Matplotlib's."
+    end
     return tikzplotlib.get_tikz_code(fig; kwargs...)
 end
 
 """
-    savefig([fig], p::AbstractPlot, fname::String; bbox_inches="tight", kwargs...)
+    save(fn::String, p::AbstractPlot, p=nothing; bbox_inches="tight", kwargs...)
 
 Usage:
 ```julia
 fig = plot(p)
-savefig(fig, p, "fig.png)
-savefig(fig, p, "fig.tex)
+save("fig.png", fig, p)
+save("fig.tex", fig, p)
 ```
 """
-function savefig(fig::PyPlot.Figure, p::Union{AbstractPlot, Nothing}, fname::String; bbox_inches="tight", kwargs...)
-    ext = last(split(fname, "."))
-    if ext == "tex"
-        open(fname, "w") do io
+function save(fn::String, fig::PyPlot.Figure, p=nothing; bbox="tight", kwargs...)
+    fmt = last(split(fn, "."))
+    open(fn, "w") do io
+        if fmt == "tex"
             write(io, get_tikz_code(fig, p; kwargs...))
+        else
+            fig.canvas.print_figure(io; format=fmt, bbox_inches=bbox, kwargs...)
         end
-    else
-        fig.savefig(fname; bbox_inches=bbox_inches, kwargs...)
     end
 end
-savefig(fig::PyPlot.Figure, fname::String; kwargs...) = savefig(fig, nothing, fname; kwargs...)
-savefig(p::AbstractPlot; kwargs...) = savefig(plt.gcf(), p; kwargs...)
 
-export figure, plot, plot!, get_tikz_code, savefig
+export figure, plot, plot!, get_tikz_code, save
 
 ### Ultilies
 

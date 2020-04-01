@@ -36,8 +36,8 @@ using Test, MLToolkit.Plots
     end
 
     function test_savefig(fig, p, fname; tex=true)
-        savefig(fig, p, joinpath(@__DIR__, "$fname.png"))
-        tex && savefig(fig, p, joinpath(@__DIR__, "$fname.tex"))
+        save(joinpath(@__DIR__, "$fname.png"), fig, p)
+        tex && save(joinpath(@__DIR__, "$fname.tex"), fig, p)
     end
     
     @testset "TwoYAxesLines" begin
@@ -67,7 +67,7 @@ using Test, MLToolkit.Plots
         p = LinesWithErrorBar(x, ys)
         
         fig = plot(p; label="Noisy sin(x)")
-        plt.legend()
+        fig.legend()
 
         test_savefig(fig, p, "LinesWithErrorBar")
     end
