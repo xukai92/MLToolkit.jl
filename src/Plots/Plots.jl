@@ -47,14 +47,14 @@ end
 
 ### APIs
 
-function figure(nrows=1, ncols=1, args...; figsize=nothing, dpi=200, kwargs...)
+function figure(nrows=1, ncols=1, args...; figsize=nothing, projection=nothing, dpi=100, kwargs...)
     fig = mpl.figure.Figure(args...; figsize=figsize, dpi=dpi, kwargs...)
     canvas = backend_agg.FigureCanvas(fig)
     if nrows == ncols == 1
-        ax = fig.add_subplot(1, 1, 1)
+        ax = fig.add_subplot(1, 1, 1; projection=projection)
         return fig, ax
     else
-        axes = [fig.add_subplot(nrows, ncols, i) for i in 1:nrows*ncols]
+        axes = [fig.add_subplot(nrows, ncols, i; projection=projection) for i in 1:nrows*ncols]
         return fig, axes
     end
     return 
