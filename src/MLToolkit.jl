@@ -5,7 +5,7 @@ export MLToolkit
 greet() = print("Welcome to Kai's machine learning toolkit!")
 
 using ArgCheck
-import Distributions, Reexport, Requires, Tracker, Parameters, LinearAlgebra, Random
+import Distributions, DistributionsAD, Reexport, Requires, Tracker, Parameters, LinearAlgebra, Random
 
 ### Constants
 

@@ -10,12 +10,3 @@ _lbeta(α, β) = lgamma.(α) + lgamma.(β) - lgamma.(α + β)
 _beta(α, β) = exp.(_lbeta(α, β))
 lbeta(α, β) = _lbeta(α, β)
 beta(α, β) = _beta(α, β)
-
-import StatsFuns: logsumexp
-
-logsumexp(x::Tracker.TrackedArray; dims=:) = Tracker.track(logsumexp, x; dims=dims)
-
-Tracker.@grad function logsumexp(x::Tracker.TrackedArray; dims=:)
-    lse = logsumexp(Tracker.data(x); dims=dims)
-    return lse, Δ -> (Δ .* exp.(x .- lse),)
-end
