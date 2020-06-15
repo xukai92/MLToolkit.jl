@@ -7,4 +7,5 @@
 *.log
 docs/build/
 test/jl_*
+test/Project.toml
 Manifest.toml
