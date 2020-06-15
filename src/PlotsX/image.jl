@@ -26,7 +26,7 @@ end
 
 function ImageGrid(data::AbstractMatrix{<:Number}, shape::Tuple{Vararg{Int,N}}) where {N}
     @assert N == 2 || N == 3
-    img = reshape(data, shape..., last(size(img)))
+    data = reshape(data, shape..., last(size(data)))
     return ImageGrid(data)
 end
 

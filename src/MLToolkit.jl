@@ -50,8 +50,8 @@ include("special.jl")
 include("transformations.jl")
 export break_stick_ibp, break_logstick_ibp
 
-include("PlotRecipes/PlotRecipes.jl")
-Reexport.@reexport using .PlotRecipes
+include("PlotsX/PlotsX.jl")
+Reexport.@reexport using .PlotsX
 include("Datasets/Datasets.jl")
 Reexport.@reexport using .Datasets
 include("Scripting/Scripting.jl")

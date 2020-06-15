@@ -1,4 +1,4 @@
-using Test, MLToolkit.PlotRecipes, Plots
+using Test, MLToolkit.PlotsX, Plots
 pyplot()
 theme(:ggplot2; size=(400, 300))
 

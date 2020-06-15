@@ -1,4 +1,4 @@
-module PlotRecipes
+module PlotsX
 
 using UnPack, Plots
 import FileIO: save

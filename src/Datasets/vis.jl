@@ -1,16 +1,10 @@
-using ..MLToolkit.PlotRecipes
+using ..MLToolkit.PlotsX
+using ..MLToolkit.PlotsX: plot, plot!
 
 function vis(dataset::AbstractDataset, args...; kwargs...)
-    fig, ax = figure(figsize=(5, 5))
-    vis!(ax, dataset, args...; kwargs...)
-    return fig
-end
-
-function vis(dataset::AbstractDataset{3}, args...; kwargs...)
-    fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(1, 1, 1; projection="3d")
-    vis!(ax, dataset, args...; kwargs...)
-    return fig
+    p = plot()
+    vis!(p, dataset, args...; kwargs...)
+    return p
 end
 
 vis!(p, d::AbstractDataset, x) = vis!(p, d, (x=x,))
