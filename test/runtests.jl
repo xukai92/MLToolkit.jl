@@ -3,7 +3,7 @@ using Test, Distributed
 @testset "Tests" begin
     tests = [
         # Cleaned
-        "Plots/Plots.jl",
+        "PlotRecipes/PlotRecipes.jl",
         "Datasets/Datasets.jl",
         "Scripting/Scripting.jl",
         # To clean

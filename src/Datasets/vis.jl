@@ -1,4 +1,4 @@
-using ..MLToolkit.Plots
+using ..MLToolkit.PlotRecipes
 
 function vis(dataset::AbstractDataset, args...; kwargs...)
     fig, ax = figure(figsize=(5, 5))
@@ -13,12 +13,12 @@ function vis(dataset::AbstractDataset{3}, args...; kwargs...)
     return fig
 end
 
-vis!(ax, d::AbstractDataset, x) = vis!(ax, d, (x=x,))
+vis!(p, d::AbstractDataset, x) = vis!(p, d, (x=x,))
 
-function vis!(ax, ::Union{AbstractDataset{2}, AbstractDataset{3}}, nt::NamedTuple)
-    plot!(ax, Scatter(nt))
+function vis!(p, ::Union{AbstractDataset{2}, AbstractDataset{3}}, nt::NamedTuple)
+    plot!(p, LabelledScatter(nt))
 end
 
-function vis!(ax, d::ImageDataset, nt::NamedTuple{T1, <:NTuple{N, T2}}) where {T1, N, T2<:AbstractArray}
-    plot!(ax, ImageGrid(invlink(d, cat(values(nt)...; dims=ndims(T2)))))
+function vis!(p, d::ImageDataset, nt::NamedTuple{T1, <:NTuple{N, T2}}) where {T1, N, T2<:AbstractArray}
+    plot!(p, ImageGrid(invlink(d, cat(values(nt)...; dims=ndims(T2)))))
 end
